@@ -9,6 +9,24 @@ import (
 
 var crRules = []definition.HolidayRule{
 	{
+		Name:             "Jueves Santo",
+		Regions:          []string{"cr"},
+		Month:            0,
+		Wday:             -1,
+		Function:         "easter",
+		FunctionArgs:     []string{"year"},
+		FunctionModifier: -3,
+	},
+	{
+		Name:             "Viernes Santo",
+		Regions:          []string{"cr"},
+		Month:            0,
+		Wday:             -1,
+		Function:         "easter",
+		FunctionArgs:     []string{"year"},
+		FunctionModifier: -2,
+	},
+	{
 		Name:    "Año Nuevo",
 		Regions: []string{"cr"},
 		Month:   1,
@@ -51,35 +69,17 @@ var crRules = []definition.HolidayRule{
 		Wday:    -1,
 	},
 	{
-		Name:    "Día de las Culturas",
-		Regions: []string{"cr"},
-		Month:   10,
-		Mday:    12,
-		Wday:    -1,
-	},
-	{
-		Name:             "Jueves Santo",
-		Regions:          []string{"cr"},
-		Month:            0,
-		Wday:             -1,
-		Function:         "easter",
-		FunctionArgs:     []string{"year"},
-		FunctionModifier: -3,
-	},
-	{
-		Name:             "Viernes Santo",
-		Regions:          []string{"cr"},
-		Month:            0,
-		Wday:             -1,
-		Function:         "easter",
-		FunctionArgs:     []string{"year"},
-		FunctionModifier: -2,
-	},
-	{
 		Name:    "Día de la Independencia",
 		Regions: []string{"cr"},
 		Month:   9,
 		Mday:    15,
+		Wday:    -1,
+	},
+	{
+		Name:    "Día de las Culturas",
+		Regions: []string{"cr"},
+		Month:   10,
+		Mday:    12,
 		Wday:    -1,
 	},
 	{

@@ -9,20 +9,6 @@ import (
 
 var frRules = []definition.HolidayRule{
 	{
-		Name:    "Noël",
-		Regions: []string{"fr"},
-		Month:   12,
-		Mday:    25,
-		Wday:    -1,
-	},
-	{
-		Name:    "Saint-Étienne",
-		Regions: []string{"fr_a", "fr_m"},
-		Month:   12,
-		Mday:    26,
-		Wday:    -1,
-	},
-	{
 		Name:             "Vendredi saint",
 		Regions:          []string{"fr_a", "fr_m"},
 		Month:            0,
@@ -124,6 +110,20 @@ var frRules = []definition.HolidayRule{
 		Regions: []string{"fr"},
 		Month:   11,
 		Mday:    11,
+		Wday:    -1,
+	},
+	{
+		Name:    "Noël",
+		Regions: []string{"fr"},
+		Month:   12,
+		Mday:    25,
+		Wday:    -1,
+	},
+	{
+		Name:    "Saint-Étienne",
+		Regions: []string{"fr_a", "fr_m"},
+		Month:   12,
+		Mday:    26,
 		Wday:    -1,
 	},
 }

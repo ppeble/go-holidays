@@ -9,27 +9,6 @@ import (
 
 var eeRules = []definition.HolidayRule{
 	{
-		Name:    "jõululaupäev",
-		Regions: []string{"ee"},
-		Month:   12,
-		Mday:    24,
-		Wday:    -1,
-	},
-	{
-		Name:    "esimene jõulupüha",
-		Regions: []string{"ee"},
-		Month:   12,
-		Mday:    25,
-		Wday:    -1,
-	},
-	{
-		Name:    "teine jõulupüha",
-		Regions: []string{"ee"},
-		Month:   12,
-		Mday:    26,
-		Wday:    -1,
-	},
-	{
 		Name:             "suur reede",
 		Regions:          []string{"ee"},
 		Month:            0,
@@ -95,6 +74,27 @@ var eeRules = []definition.HolidayRule{
 		Regions: []string{"ee"},
 		Month:   8,
 		Mday:    20,
+		Wday:    -1,
+	},
+	{
+		Name:    "jõululaupäev",
+		Regions: []string{"ee"},
+		Month:   12,
+		Mday:    24,
+		Wday:    -1,
+	},
+	{
+		Name:    "esimene jõulupüha",
+		Regions: []string{"ee"},
+		Month:   12,
+		Mday:    25,
+		Wday:    -1,
+	},
+	{
+		Name:    "teine jõulupüha",
+		Regions: []string{"ee"},
+		Month:   12,
+		Mday:    26,
 		Wday:    -1,
 	},
 }

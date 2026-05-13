@@ -9,47 +9,6 @@ import (
 
 var hrRules = []definition.HolidayRule{
 	{
-		Name:    "Dan neovisnosti",
-		Regions: []string{"hr"},
-		Month:   10,
-		Mday:    8,
-		Wday:    -1,
-		YearRanges: []definition.YearRange{
-			{Kind: definition.YearRangeUntil, Years: []int{2019}},
-		},
-	},
-	{
-		Name:    "Svi sveti",
-		Regions: []string{"hr"},
-		Month:   11,
-		Mday:    1,
-		Wday:    -1,
-	},
-	{
-		Name:    "Dan sjećanja na žrtve Domovinskog rata i Dan sjećanja na žrtvu Vukovara i Škabrnje",
-		Regions: []string{"hr"},
-		Month:   11,
-		Mday:    18,
-		Wday:    -1,
-		YearRanges: []definition.YearRange{
-			{Kind: definition.YearRangeFrom, Years: []int{2020}},
-		},
-	},
-	{
-		Name:    "Božić",
-		Regions: []string{"hr"},
-		Month:   12,
-		Mday:    25,
-		Wday:    -1,
-	},
-	{
-		Name:    "Sveti Stjepan",
-		Regions: []string{"hr"},
-		Month:   12,
-		Mday:    26,
-		Wday:    -1,
-	},
-	{
 		Name:         "Uskrs",
 		Regions:      []string{"hr"},
 		Month:        0,
@@ -135,6 +94,47 @@ var hrRules = []definition.HolidayRule{
 		Regions: []string{"hr"},
 		Month:   8,
 		Mday:    15,
+		Wday:    -1,
+	},
+	{
+		Name:    "Dan neovisnosti",
+		Regions: []string{"hr"},
+		Month:   10,
+		Mday:    8,
+		Wday:    -1,
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeUntil, Years: []int{2019}},
+		},
+	},
+	{
+		Name:    "Svi sveti",
+		Regions: []string{"hr"},
+		Month:   11,
+		Mday:    1,
+		Wday:    -1,
+	},
+	{
+		Name:    "Dan sjećanja na žrtve Domovinskog rata i Dan sjećanja na žrtvu Vukovara i Škabrnje",
+		Regions: []string{"hr"},
+		Month:   11,
+		Mday:    18,
+		Wday:    -1,
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeFrom, Years: []int{2020}},
+		},
+	},
+	{
+		Name:    "Božić",
+		Regions: []string{"hr"},
+		Month:   12,
+		Mday:    25,
+		Wday:    -1,
+	},
+	{
+		Name:    "Sveti Stjepan",
+		Regions: []string{"hr"},
+		Month:   12,
+		Mday:    26,
 		Wday:    -1,
 	},
 }

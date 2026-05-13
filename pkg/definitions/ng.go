@@ -9,6 +9,32 @@ import (
 
 var ngRules = []definition.HolidayRule{
 	{
+		Name:             "Good Friday",
+		Regions:          []string{"ng"},
+		Month:            0,
+		Wday:             -1,
+		Function:         "easter",
+		FunctionArgs:     []string{"year"},
+		FunctionModifier: -2,
+	},
+	{
+		Name:             "Easter Monday",
+		Regions:          []string{"ng"},
+		Month:            0,
+		Wday:             -1,
+		Function:         "easter",
+		FunctionArgs:     []string{"year"},
+		FunctionModifier: 1,
+	},
+	{
+		Name:     "New Year's Day",
+		Regions:  []string{"ng"},
+		Month:    1,
+		Mday:     1,
+		Wday:     -1,
+		Observed: "to_monday_if_weekend",
+	},
+	{
 		Name:     "Workers' Day",
 		Regions:  []string{"ng"},
 		Month:    5,
@@ -57,32 +83,6 @@ var ngRules = []definition.HolidayRule{
 		Mday:     26,
 		Wday:     -1,
 		Observed: "to_weekday_if_boxing_weekend",
-	},
-	{
-		Name:             "Good Friday",
-		Regions:          []string{"ng"},
-		Month:            0,
-		Wday:             -1,
-		Function:         "easter",
-		FunctionArgs:     []string{"year"},
-		FunctionModifier: -2,
-	},
-	{
-		Name:             "Easter Monday",
-		Regions:          []string{"ng"},
-		Month:            0,
-		Wday:             -1,
-		Function:         "easter",
-		FunctionArgs:     []string{"year"},
-		FunctionModifier: 1,
-	},
-	{
-		Name:     "New Year's Day",
-		Regions:  []string{"ng"},
-		Month:    1,
-		Mday:     1,
-		Wday:     -1,
-		Observed: "to_monday_if_weekend",
 	},
 }
 

@@ -9,20 +9,6 @@ import (
 
 var liRules = []definition.HolidayRule{
 	{
-		Name:    "Maria Geburt",
-		Regions: []string{"li"},
-		Month:   9,
-		Mday:    8,
-		Wday:    -1,
-	},
-	{
-		Name:    "Allerheiligen",
-		Regions: []string{"li"},
-		Month:   11,
-		Mday:    1,
-		Wday:    -1,
-	},
-	{
 		Name:             "Fasnachtsdienstag",
 		Regions:          []string{"li"},
 		Month:            0,
@@ -107,10 +93,38 @@ var liRules = []definition.HolidayRule{
 		Wday:    -1,
 	},
 	{
+		Name:    "St. Josef",
+		Regions: []string{"li"},
+		Month:   3,
+		Mday:    19,
+		Wday:    -1,
+	},
+	{
+		Name:    "Tag der Arbeit",
+		Regions: []string{"li"},
+		Month:   5,
+		Mday:    1,
+		Wday:    -1,
+	},
+	{
 		Name:    "Staatsfeiertag",
 		Regions: []string{"li"},
 		Month:   8,
 		Mday:    15,
+		Wday:    -1,
+	},
+	{
+		Name:    "Maria Geburt",
+		Regions: []string{"li"},
+		Month:   9,
+		Mday:    8,
+		Wday:    -1,
+	},
+	{
+		Name:    "Allerheiligen",
+		Regions: []string{"li"},
+		Month:   11,
+		Mday:    1,
 		Wday:    -1,
 	},
 	{
@@ -146,20 +160,6 @@ var liRules = []definition.HolidayRule{
 		Regions: []string{"li"},
 		Month:   12,
 		Mday:    31,
-		Wday:    -1,
-	},
-	{
-		Name:    "St. Josef",
-		Regions: []string{"li"},
-		Month:   3,
-		Mday:    19,
-		Wday:    -1,
-	},
-	{
-		Name:    "Tag der Arbeit",
-		Regions: []string{"li"},
-		Month:   5,
-		Mday:    1,
 		Wday:    -1,
 	},
 }

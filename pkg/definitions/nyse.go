@@ -9,29 +9,13 @@ import (
 
 var nyseRules = []definition.HolidayRule{
 	{
-		Name:    "Memorial Day",
-		Regions: []string{"nyse"},
-		Month:   5,
-		Wday:    1,
-		Week:    -1,
-	},
-	{
-		Name:     "Juneteenth National Independence Day",
-		Regions:  []string{"nyse"},
-		Month:    6,
-		Mday:     19,
-		Wday:     -1,
-		Observed: "to_weekday_if_weekend",
-		YearRanges: []definition.YearRange{
-			{Kind: definition.YearRangeFrom, Years: []int{2022}},
-		},
-	},
-	{
-		Name:    "Thanksgiving",
-		Regions: []string{"nyse"},
-		Month:   11,
-		Wday:    4,
-		Week:    4,
+		Name:             "Good Friday",
+		Regions:          []string{"nyse"},
+		Month:            0,
+		Wday:             -1,
+		Function:         "easter",
+		FunctionArgs:     []string{"year"},
+		FunctionModifier: -2,
 	},
 	{
 		Name:     "New Year's Day",
@@ -56,6 +40,24 @@ var nyseRules = []definition.HolidayRule{
 		Week:    3,
 	},
 	{
+		Name:    "Memorial Day",
+		Regions: []string{"nyse"},
+		Month:   5,
+		Wday:    1,
+		Week:    -1,
+	},
+	{
+		Name:     "Juneteenth National Independence Day",
+		Regions:  []string{"nyse"},
+		Month:    6,
+		Mday:     19,
+		Wday:     -1,
+		Observed: "to_weekday_if_weekend",
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeFrom, Years: []int{2022}},
+		},
+	},
+	{
 		Name:     "Independence Day",
 		Regions:  []string{"nyse"},
 		Month:    7,
@@ -71,21 +73,19 @@ var nyseRules = []definition.HolidayRule{
 		Week:    1,
 	},
 	{
+		Name:    "Thanksgiving",
+		Regions: []string{"nyse"},
+		Month:   11,
+		Wday:    4,
+		Week:    4,
+	},
+	{
 		Name:     "Christmas Day",
 		Regions:  []string{"nyse"},
 		Month:    12,
 		Mday:     25,
 		Wday:     -1,
 		Observed: "to_weekday_if_weekend",
-	},
-	{
-		Name:             "Good Friday",
-		Regions:          []string{"nyse"},
-		Month:            0,
-		Wday:             -1,
-		Function:         "easter",
-		FunctionArgs:     []string{"year"},
-		FunctionModifier: -2,
 	},
 }
 

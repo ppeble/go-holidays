@@ -9,29 +9,6 @@ import (
 
 var ieRules = []definition.HolidayRule{
 	{
-		Name:    "October Bank Holiday",
-		Regions: []string{"ie"},
-		Month:   10,
-		Wday:    1,
-		Week:    -1,
-	},
-	{
-		Name:     "Christmas Day",
-		Regions:  []string{"ie"},
-		Month:    12,
-		Mday:     25,
-		Wday:     -1,
-		Observed: "to_monday_if_weekend",
-	},
-	{
-		Name:     "St. Stephen's Day",
-		Regions:  []string{"ie"},
-		Month:    12,
-		Mday:     26,
-		Wday:     -1,
-		Observed: "to_weekday_if_boxing_weekend",
-	},
-	{
 		Name:             "Easter Monday",
 		Regions:          []string{"ie"},
 		Month:            0,
@@ -76,6 +53,29 @@ var ieRules = []definition.HolidayRule{
 		Month:   8,
 		Wday:    1,
 		Week:    1,
+	},
+	{
+		Name:    "October Bank Holiday",
+		Regions: []string{"ie"},
+		Month:   10,
+		Wday:    1,
+		Week:    -1,
+	},
+	{
+		Name:     "Christmas Day",
+		Regions:  []string{"ie"},
+		Month:    12,
+		Mday:     25,
+		Wday:     -1,
+		Observed: "to_monday_if_weekend",
+	},
+	{
+		Name:     "St. Stephen's Day",
+		Regions:  []string{"ie"},
+		Month:    12,
+		Mday:     26,
+		Wday:     -1,
+		Observed: "to_weekday_if_boxing_weekend",
 	},
 }
 

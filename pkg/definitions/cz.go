@@ -9,34 +9,6 @@ import (
 
 var czRules = []definition.HolidayRule{
 	{
-		Name:    "Den boje za svobodu a demokracii",
-		Regions: []string{"cz"},
-		Month:   11,
-		Mday:    17,
-		Wday:    -1,
-	},
-	{
-		Name:    "Štědrý den",
-		Regions: []string{"cz"},
-		Month:   12,
-		Mday:    24,
-		Wday:    -1,
-	},
-	{
-		Name:    "1. svátek vánoční",
-		Regions: []string{"cz"},
-		Month:   12,
-		Mday:    25,
-		Wday:    -1,
-	},
-	{
-		Name:    "2. svátek vánoční",
-		Regions: []string{"cz"},
-		Month:   12,
-		Mday:    26,
-		Wday:    -1,
-	},
-	{
 		Name:             "Velký pátek",
 		Regions:          []string{"cz"},
 		Month:            0,
@@ -101,6 +73,34 @@ var czRules = []definition.HolidayRule{
 		Regions: []string{"cz"},
 		Month:   10,
 		Mday:    28,
+		Wday:    -1,
+	},
+	{
+		Name:    "Den boje za svobodu a demokracii",
+		Regions: []string{"cz"},
+		Month:   11,
+		Mday:    17,
+		Wday:    -1,
+	},
+	{
+		Name:    "Štědrý den",
+		Regions: []string{"cz"},
+		Month:   12,
+		Mday:    24,
+		Wday:    -1,
+	},
+	{
+		Name:    "1. svátek vánoční",
+		Regions: []string{"cz"},
+		Month:   12,
+		Mday:    25,
+		Wday:    -1,
+	},
+	{
+		Name:    "2. svátek vánoční",
+		Regions: []string{"cz"},
+		Month:   12,
+		Mday:    26,
 		Wday:    -1,
 	},
 }

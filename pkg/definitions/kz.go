@@ -9,6 +9,20 @@ import (
 
 var kzRules = []definition.HolidayRule{
 	{
+		Name:    "Jańa jyl",
+		Regions: []string{"kz"},
+		Month:   1,
+		Mday:    1,
+		Wday:    -1,
+	},
+	{
+		Name:    "Jańa jyl",
+		Regions: []string{"kz"},
+		Month:   1,
+		Mday:    2,
+		Wday:    -1,
+	},
+	{
 		Name:    "Halyqaralyq áıelder kúni",
 		Regions: []string{"kz"},
 		Month:   3,
@@ -90,20 +104,6 @@ var kzRules = []definition.HolidayRule{
 		Regions: []string{"kz"},
 		Month:   12,
 		Mday:    17,
-		Wday:    -1,
-	},
-	{
-		Name:    "Jańa jyl",
-		Regions: []string{"kz"},
-		Month:   1,
-		Mday:    1,
-		Wday:    -1,
-	},
-	{
-		Name:    "Jańa jyl",
-		Regions: []string{"kz"},
-		Month:   1,
-		Mday:    2,
 		Wday:    -1,
 	},
 }

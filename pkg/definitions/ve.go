@@ -9,20 +9,6 @@ import (
 
 var veRules = []definition.HolidayRule{
 	{
-		Name:    "Día de la Resistencia Indígena",
-		Regions: []string{"ve"},
-		Month:   10,
-		Mday:    12,
-		Wday:    -1,
-	},
-	{
-		Name:    "Día de Navidad",
-		Regions: []string{"ve"},
-		Month:   12,
-		Mday:    25,
-		Wday:    -1,
-	},
-	{
 		Name:             "Lunes Carnaval",
 		Regions:          []string{"ve"},
 		Month:            0,
@@ -98,6 +84,20 @@ var veRules = []definition.HolidayRule{
 		Regions: []string{"ve"},
 		Month:   7,
 		Mday:    24,
+		Wday:    -1,
+	},
+	{
+		Name:    "Día de la Resistencia Indígena",
+		Regions: []string{"ve"},
+		Month:   10,
+		Mday:    12,
+		Wday:    -1,
+	},
+	{
+		Name:    "Día de Navidad",
+		Regions: []string{"ve"},
+		Month:   12,
+		Mday:    25,
 		Wday:    -1,
 	},
 }

@@ -9,41 +9,6 @@ import (
 
 var huRules = []definition.HolidayRule{
 	{
-		Name:    "Az államalapítás ünnepe",
-		Regions: []string{"hu"},
-		Month:   8,
-		Mday:    20,
-		Wday:    -1,
-	},
-	{
-		Name:    "1956-os forradalom és szabadságharc ünnepe",
-		Regions: []string{"hu"},
-		Month:   10,
-		Mday:    23,
-		Wday:    -1,
-	},
-	{
-		Name:    "Mindenszentek",
-		Regions: []string{"hu"},
-		Month:   11,
-		Mday:    1,
-		Wday:    -1,
-	},
-	{
-		Name:    "Karácsony",
-		Regions: []string{"hu"},
-		Month:   12,
-		Mday:    25,
-		Wday:    -1,
-	},
-	{
-		Name:    "Karácsony",
-		Regions: []string{"hu"},
-		Month:   12,
-		Mday:    26,
-		Wday:    -1,
-	},
-	{
 		Name:             "Nagypéntek",
 		Regions:          []string{"hu"},
 		Month:            0,
@@ -92,6 +57,41 @@ var huRules = []definition.HolidayRule{
 		Regions: []string{"hu"},
 		Month:   5,
 		Mday:    1,
+		Wday:    -1,
+	},
+	{
+		Name:    "Az államalapítás ünnepe",
+		Regions: []string{"hu"},
+		Month:   8,
+		Mday:    20,
+		Wday:    -1,
+	},
+	{
+		Name:    "1956-os forradalom és szabadságharc ünnepe",
+		Regions: []string{"hu"},
+		Month:   10,
+		Mday:    23,
+		Wday:    -1,
+	},
+	{
+		Name:    "Mindenszentek",
+		Regions: []string{"hu"},
+		Month:   11,
+		Mday:    1,
+		Wday:    -1,
+	},
+	{
+		Name:    "Karácsony",
+		Regions: []string{"hu"},
+		Month:   12,
+		Mday:    25,
+		Wday:    -1,
+	},
+	{
+		Name:    "Karácsony",
+		Regions: []string{"hu"},
+		Month:   12,
+		Mday:    26,
 		Wday:    -1,
 	},
 }

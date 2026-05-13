@@ -9,22 +9,6 @@ import (
 
 var northamericainformalRules = []definition.HolidayRule{
 	{
-		Name:    "Father's Day",
-		Regions: []string{"us", "ca"},
-		Month:   6,
-		Wday:    0,
-		Week:    3,
-		Type:    definition.Informal,
-	},
-	{
-		Name:    "Halloween",
-		Regions: []string{"us", "ca"},
-		Month:   10,
-		Mday:    31,
-		Wday:    -1,
-		Type:    definition.Informal,
-	},
-	{
 		Name:    "Groundhog Day",
 		Regions: []string{"us", "ca"},
 		Month:   2,
@@ -78,6 +62,22 @@ var northamericainformalRules = []definition.HolidayRule{
 		Month:   5,
 		Wday:    6,
 		Week:    3,
+		Type:    definition.Informal,
+	},
+	{
+		Name:    "Father's Day",
+		Regions: []string{"us", "ca"},
+		Month:   6,
+		Wday:    0,
+		Week:    3,
+		Type:    definition.Informal,
+	},
+	{
+		Name:    "Halloween",
+		Regions: []string{"us", "ca"},
+		Month:   10,
+		Mday:    31,
+		Wday:    -1,
 		Type:    definition.Informal,
 	},
 }

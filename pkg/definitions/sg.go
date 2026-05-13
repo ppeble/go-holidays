@@ -9,6 +9,15 @@ import (
 
 var sgRules = []definition.HolidayRule{
 	{
+		Name:             "Good Friday",
+		Regions:          []string{"sg"},
+		Month:            0,
+		Wday:             -1,
+		Function:         "easter",
+		FunctionArgs:     []string{"year"},
+		FunctionModifier: -2,
+	},
+	{
 		Name:     "New Year's Day",
 		Regions:  []string{"sg"},
 		Month:    1,
@@ -54,15 +63,6 @@ var sgRules = []definition.HolidayRule{
 		Mday:     25,
 		Wday:     -1,
 		Observed: "to_weekday_if_weekend",
-	},
-	{
-		Name:             "Good Friday",
-		Regions:          []string{"sg"},
-		Month:            0,
-		Wday:             -1,
-		Function:         "easter",
-		FunctionArgs:     []string{"year"},
-		FunctionModifier: -2,
 	},
 }
 

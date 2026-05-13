@@ -9,41 +9,6 @@ import (
 
 var be_frRules = []definition.HolidayRule{
 	{
-		Name:    "Fête nationale",
-		Regions: []string{"be_fr"},
-		Month:   7,
-		Mday:    21,
-		Wday:    -1,
-	},
-	{
-		Name:    "Assomption",
-		Regions: []string{"be_fr"},
-		Month:   8,
-		Mday:    15,
-		Wday:    -1,
-	},
-	{
-		Name:    "Toussaint",
-		Regions: []string{"be_fr"},
-		Month:   11,
-		Mday:    1,
-		Wday:    -1,
-	},
-	{
-		Name:    "Armistice 1918",
-		Regions: []string{"be_fr"},
-		Month:   11,
-		Mday:    11,
-		Wday:    -1,
-	},
-	{
-		Name:    "Noël",
-		Regions: []string{"be_fr"},
-		Month:   12,
-		Mday:    25,
-		Wday:    -1,
-	},
-	{
 		Name:         "Pâques",
 		Regions:      []string{"be_fr"},
 		Month:        0,
@@ -99,6 +64,41 @@ var be_frRules = []definition.HolidayRule{
 		Regions: []string{"be_fr"},
 		Month:   5,
 		Mday:    1,
+		Wday:    -1,
+	},
+	{
+		Name:    "Fête nationale",
+		Regions: []string{"be_fr"},
+		Month:   7,
+		Mday:    21,
+		Wday:    -1,
+	},
+	{
+		Name:    "Assomption",
+		Regions: []string{"be_fr"},
+		Month:   8,
+		Mday:    15,
+		Wday:    -1,
+	},
+	{
+		Name:    "Toussaint",
+		Regions: []string{"be_fr"},
+		Month:   11,
+		Mday:    1,
+		Wday:    -1,
+	},
+	{
+		Name:    "Armistice 1918",
+		Regions: []string{"be_fr"},
+		Month:   11,
+		Mday:    11,
+		Wday:    -1,
+	},
+	{
+		Name:    "Noël",
+		Regions: []string{"be_fr"},
+		Month:   12,
+		Mday:    25,
 		Wday:    -1,
 	},
 }

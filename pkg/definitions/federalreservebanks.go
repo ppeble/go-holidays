@@ -9,47 +9,6 @@ import (
 
 var federalreservebanksRules = []definition.HolidayRule{
 	{
-		Name:     "Veterans Day",
-		Regions:  []string{"federalreservebanks"},
-		Month:    11,
-		Mday:     11,
-		Wday:     -1,
-		Observed: "to_monday_if_sunday",
-	},
-	{
-		Name:    "Thanksgiving Day",
-		Regions: []string{"federalreservebanks"},
-		Month:   11,
-		Wday:    4,
-		Week:    4,
-	},
-	{
-		Name:     "Christmas Day",
-		Regions:  []string{"federalreservebanks"},
-		Month:    12,
-		Mday:     25,
-		Wday:     -1,
-		Observed: "to_monday_if_sunday",
-	},
-	{
-		Name:     "Juneteenth National Independence Day",
-		Regions:  []string{"federalreservebanks"},
-		Month:    6,
-		Mday:     19,
-		Wday:     -1,
-		Observed: "to_monday_if_sunday",
-		YearRanges: []definition.YearRange{
-			{Kind: definition.YearRangeFrom, Years: []int{2021}},
-		},
-	},
-	{
-		Name:    "Columbus Day",
-		Regions: []string{"federalreservebanks"},
-		Month:   10,
-		Wday:    1,
-		Week:    2,
-	},
-	{
 		Name:     "New Year's Day",
 		Regions:  []string{"federalreservebanks"},
 		Month:    1,
@@ -79,6 +38,17 @@ var federalreservebanksRules = []definition.HolidayRule{
 		Week:    -1,
 	},
 	{
+		Name:     "Juneteenth National Independence Day",
+		Regions:  []string{"federalreservebanks"},
+		Month:    6,
+		Mday:     19,
+		Wday:     -1,
+		Observed: "to_monday_if_sunday",
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeFrom, Years: []int{2021}},
+		},
+	},
+	{
 		Name:     "Independence Day",
 		Regions:  []string{"federalreservebanks"},
 		Month:    7,
@@ -92,6 +62,36 @@ var federalreservebanksRules = []definition.HolidayRule{
 		Month:   9,
 		Wday:    1,
 		Week:    1,
+	},
+	{
+		Name:    "Columbus Day",
+		Regions: []string{"federalreservebanks"},
+		Month:   10,
+		Wday:    1,
+		Week:    2,
+	},
+	{
+		Name:     "Veterans Day",
+		Regions:  []string{"federalreservebanks"},
+		Month:    11,
+		Mday:     11,
+		Wday:     -1,
+		Observed: "to_monday_if_sunday",
+	},
+	{
+		Name:    "Thanksgiving Day",
+		Regions: []string{"federalreservebanks"},
+		Month:   11,
+		Wday:    4,
+		Week:    4,
+	},
+	{
+		Name:     "Christmas Day",
+		Regions:  []string{"federalreservebanks"},
+		Month:    12,
+		Mday:     25,
+		Wday:     -1,
+		Observed: "to_monday_if_sunday",
 	},
 }
 

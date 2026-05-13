@@ -9,27 +9,6 @@ import (
 
 var tnRules = []definition.HolidayRule{
 	{
-		Name:    "Fête de la République",
-		Regions: []string{"tn"},
-		Month:   7,
-		Mday:    25,
-		Wday:    -1,
-	},
-	{
-		Name:    "Fête de la Femme et de la Famille",
-		Regions: []string{"tn"},
-		Month:   8,
-		Mday:    13,
-		Wday:    -1,
-	},
-	{
-		Name:    "Fête de l'Évacuation",
-		Regions: []string{"tn"},
-		Month:   10,
-		Mday:    15,
-		Wday:    -1,
-	},
-	{
 		Name:    "Jour de l'an",
 		Regions: []string{"tn"},
 		Month:   1,
@@ -62,6 +41,27 @@ var tnRules = []definition.HolidayRule{
 		Regions: []string{"tn"},
 		Month:   5,
 		Mday:    1,
+		Wday:    -1,
+	},
+	{
+		Name:    "Fête de la République",
+		Regions: []string{"tn"},
+		Month:   7,
+		Mday:    25,
+		Wday:    -1,
+	},
+	{
+		Name:    "Fête de la Femme et de la Famille",
+		Regions: []string{"tn"},
+		Month:   8,
+		Mday:    13,
+		Wday:    -1,
+	},
+	{
+		Name:    "Fête de l'Évacuation",
+		Regions: []string{"tn"},
+		Month:   10,
+		Mday:    15,
 		Wday:    -1,
 	},
 }

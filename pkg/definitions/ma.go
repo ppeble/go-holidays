@@ -9,20 +9,6 @@ import (
 
 var maRules = []definition.HolidayRule{
 	{
-		Name:    "Eid Al Massira Al Khadra",
-		Regions: []string{"ma"},
-		Month:   11,
-		Mday:    6,
-		Wday:    -1,
-	},
-	{
-		Name:    "Eid Al Istiqulal",
-		Regions: []string{"ma"},
-		Month:   11,
-		Mday:    18,
-		Wday:    -1,
-	},
-	{
 		Name:    "Ras l' âm",
 		Regions: []string{"ma"},
 		Month:   1,
@@ -69,6 +55,20 @@ var maRules = []definition.HolidayRule{
 		Regions: []string{"ma"},
 		Month:   8,
 		Mday:    21,
+		Wday:    -1,
+	},
+	{
+		Name:    "Eid Al Massira Al Khadra",
+		Regions: []string{"ma"},
+		Month:   11,
+		Mday:    6,
+		Wday:    -1,
+	},
+	{
+		Name:    "Eid Al Istiqulal",
+		Regions: []string{"ma"},
+		Month:   11,
+		Mday:    18,
 		Wday:    -1,
 	},
 }

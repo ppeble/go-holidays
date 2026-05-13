@@ -45,6 +45,22 @@ var gbRules = []definition.HolidayRule{
 		FunctionModifier: 1,
 	},
 	{
+		Name:     "New Year's Day",
+		Regions:  []string{"gb"},
+		Month:    1,
+		Mday:     1,
+		Wday:     -1,
+		Observed: "to_monday_if_weekend",
+	},
+	{
+		Name:     "2nd January",
+		Regions:  []string{"gb_sct"},
+		Month:    1,
+		Mday:     2,
+		Wday:     -1,
+		Observed: "to_weekday_if_boxing_weekend",
+	},
+	{
 		Name:    "St. Piran's Day",
 		Regions: []string{"gb_con"},
 		Month:   3,
@@ -137,32 +153,6 @@ var gbRules = []definition.HolidayRule{
 		},
 	},
 	{
-		Name:    "Bank Holiday for the State Funeral of Queen Elizabeth II",
-		Regions: []string{"gb"},
-		Month:   9,
-		Mday:    19,
-		Wday:    -1,
-		YearRanges: []definition.YearRange{
-			{Kind: definition.YearRangeLimited, Years: []int{2022}},
-		},
-	},
-	{
-		Name:     "New Year's Day",
-		Regions:  []string{"gb"},
-		Month:    1,
-		Mday:     1,
-		Wday:     -1,
-		Observed: "to_monday_if_weekend",
-	},
-	{
-		Name:     "2nd January",
-		Regions:  []string{"gb_sct"},
-		Month:    1,
-		Mday:     2,
-		Wday:     -1,
-		Observed: "to_weekday_if_boxing_weekend",
-	},
-	{
 		Name:    "Bank Holiday",
 		Regions: []string{"gb"},
 		Month:   6,
@@ -210,6 +200,16 @@ var gbRules = []definition.HolidayRule{
 		Month:   8,
 		Wday:    1,
 		Week:    -1,
+	},
+	{
+		Name:    "Bank Holiday for the State Funeral of Queen Elizabeth II",
+		Regions: []string{"gb"},
+		Month:   9,
+		Mday:    19,
+		Wday:    -1,
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeLimited, Years: []int{2022}},
+		},
 	},
 	{
 		Name:    "Guy Fawkes Day",

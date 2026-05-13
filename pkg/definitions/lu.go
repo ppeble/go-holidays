@@ -9,27 +9,6 @@ import (
 
 var luRules = []definition.HolidayRule{
 	{
-		Name:    "Allerhellgen",
-		Regions: []string{"lu"},
-		Month:   11,
-		Mday:    1,
-		Wday:    -1,
-	},
-	{
-		Name:    "Chrëschtdag",
-		Regions: []string{"lu"},
-		Month:   12,
-		Mday:    25,
-		Wday:    -1,
-	},
-	{
-		Name:    "Stiefesdag",
-		Regions: []string{"lu"},
-		Month:   12,
-		Mday:    26,
-		Wday:    -1,
-	},
-	{
 		Name:             "Ouschterméindeg",
 		Regions:          []string{"lu"},
 		Month:            0,
@@ -92,6 +71,27 @@ var luRules = []definition.HolidayRule{
 		Regions: []string{"lu"},
 		Month:   8,
 		Mday:    15,
+		Wday:    -1,
+	},
+	{
+		Name:    "Allerhellgen",
+		Regions: []string{"lu"},
+		Month:   11,
+		Mday:    1,
+		Wday:    -1,
+	},
+	{
+		Name:    "Chrëschtdag",
+		Regions: []string{"lu"},
+		Month:   12,
+		Mday:    25,
+		Wday:    -1,
+	},
+	{
+		Name:    "Stiefesdag",
+		Regions: []string{"lu"},
+		Month:   12,
+		Mday:    26,
 		Wday:    -1,
 	},
 }

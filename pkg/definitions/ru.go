@@ -9,20 +9,6 @@ import (
 
 var ruRules = []definition.HolidayRule{
 	{
-		Name:    "День Государственного флага Российской Федерации",
-		Regions: []string{"ru"},
-		Month:   8,
-		Mday:    22,
-		Wday:    -1,
-	},
-	{
-		Name:    "День народного единства",
-		Regions: []string{"ru"},
-		Month:   11,
-		Mday:    4,
-		Wday:    -1,
-	},
-	{
 		Name:    "Новый год",
 		Regions: []string{"ru"},
 		Month:   1,
@@ -97,6 +83,20 @@ var ruRules = []definition.HolidayRule{
 		Regions: []string{"ru"},
 		Month:   6,
 		Mday:    12,
+		Wday:    -1,
+	},
+	{
+		Name:    "День Государственного флага Российской Федерации",
+		Regions: []string{"ru"},
+		Month:   8,
+		Mday:    22,
+		Wday:    -1,
+	},
+	{
+		Name:    "День народного единства",
+		Regions: []string{"ru"},
+		Month:   11,
+		Mday:    4,
 		Wday:    -1,
 	},
 }

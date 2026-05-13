@@ -9,36 +9,6 @@ import (
 
 var mcRules = []definition.HolidayRule{
 	{
-		Name:     "Toussaint",
-		Regions:  []string{"mc"},
-		Month:    11,
-		Mday:     1,
-		Wday:     -1,
-		Observed: "to_monday_if_sunday",
-	},
-	{
-		Name:    "Fête du Prince",
-		Regions: []string{"mc"},
-		Month:   11,
-		Mday:    19,
-		Wday:    -1,
-	},
-	{
-		Name:     "Immaculée Conception",
-		Regions:  []string{"mc"},
-		Month:    12,
-		Mday:     8,
-		Wday:     -1,
-		Observed: "to_monday_if_sunday",
-	},
-	{
-		Name:    "Noël",
-		Regions: []string{"mc"},
-		Month:   12,
-		Mday:    25,
-		Wday:    -1,
-	},
-	{
 		Name:             "Lundi de Pâques",
 		Regions:          []string{"mc"},
 		Month:            0,
@@ -100,6 +70,36 @@ var mcRules = []definition.HolidayRule{
 		Regions: []string{"mc"},
 		Month:   8,
 		Mday:    15,
+		Wday:    -1,
+	},
+	{
+		Name:     "Toussaint",
+		Regions:  []string{"mc"},
+		Month:    11,
+		Mday:     1,
+		Wday:     -1,
+		Observed: "to_monday_if_sunday",
+	},
+	{
+		Name:    "Fête du Prince",
+		Regions: []string{"mc"},
+		Month:   11,
+		Mday:    19,
+		Wday:    -1,
+	},
+	{
+		Name:     "Immaculée Conception",
+		Regions:  []string{"mc"},
+		Month:    12,
+		Mday:     8,
+		Wday:     -1,
+		Observed: "to_monday_if_sunday",
+	},
+	{
+		Name:    "Noël",
+		Regions: []string{"mc"},
+		Month:   12,
+		Mday:    25,
 		Wday:    -1,
 	},
 }

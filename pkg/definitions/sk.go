@@ -9,27 +9,6 @@ import (
 
 var skRules = []definition.HolidayRule{
 	{
-		Name:    "Štedrý deň",
-		Regions: []string{"sk"},
-		Month:   12,
-		Mday:    24,
-		Wday:    -1,
-	},
-	{
-		Name:    "1. sviatok vianočný",
-		Regions: []string{"sk"},
-		Month:   12,
-		Mday:    25,
-		Wday:    -1,
-	},
-	{
-		Name:    "2. sviatok vianočný",
-		Regions: []string{"sk"},
-		Month:   12,
-		Mday:    26,
-		Wday:    -1,
-	},
-	{
 		Name:             "Veľkonočný pondelok",
 		Regions:          []string{"sk"},
 		Month:            0,
@@ -101,6 +80,27 @@ var skRules = []definition.HolidayRule{
 		Regions: []string{"sk"},
 		Month:   11,
 		Mday:    1,
+		Wday:    -1,
+	},
+	{
+		Name:    "Štedrý deň",
+		Regions: []string{"sk"},
+		Month:   12,
+		Mday:    24,
+		Wday:    -1,
+	},
+	{
+		Name:    "1. sviatok vianočný",
+		Regions: []string{"sk"},
+		Month:   12,
+		Mday:    25,
+		Wday:    -1,
+	},
+	{
+		Name:    "2. sviatok vianočný",
+		Regions: []string{"sk"},
+		Month:   12,
+		Mday:    26,
 		Wday:    -1,
 	},
 }

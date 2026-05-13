@@ -9,6 +9,14 @@ import (
 
 var nercRules = []definition.HolidayRule{
 	{
+		Name:     "New Year's Day",
+		Regions:  []string{"nerc"},
+		Month:    1,
+		Mday:     1,
+		Wday:     -1,
+		Observed: "to_monday_if_sunday",
+	},
+	{
 		Name:    "Memorial Day",
 		Regions: []string{"nerc"},
 		Month:   5,
@@ -42,14 +50,6 @@ var nercRules = []definition.HolidayRule{
 		Regions:  []string{"nerc"},
 		Month:    12,
 		Mday:     25,
-		Wday:     -1,
-		Observed: "to_monday_if_sunday",
-	},
-	{
-		Name:     "New Year's Day",
-		Regions:  []string{"nerc"},
-		Month:    1,
-		Mday:     1,
 		Wday:     -1,
 		Observed: "to_monday_if_sunday",
 	},

@@ -9,6 +9,21 @@ import (
 
 var federalreserveRules = []definition.HolidayRule{
 	{
+		Name:     "New Year's Day",
+		Regions:  []string{"federalreserve"},
+		Month:    1,
+		Mday:     1,
+		Wday:     -1,
+		Observed: "to_weekday_if_weekend",
+	},
+	{
+		Name:    "Birthday of Martin Luther King, Jr",
+		Regions: []string{"federalreserve"},
+		Month:   1,
+		Wday:    1,
+		Week:    3,
+	},
+	{
 		Name:    "Washington's Birthday",
 		Regions: []string{"federalreserve"},
 		Month:   2,
@@ -34,6 +49,14 @@ var federalreserveRules = []definition.HolidayRule{
 		},
 	},
 	{
+		Name:     "Independence Day",
+		Regions:  []string{"federalreserve"},
+		Month:    7,
+		Mday:     4,
+		Wday:     -1,
+		Observed: "to_weekday_if_weekend",
+	},
+	{
 		Name:    "Labor Day",
 		Regions: []string{"federalreserve"},
 		Month:   9,
@@ -46,37 +69,6 @@ var federalreserveRules = []definition.HolidayRule{
 		Month:   10,
 		Wday:    1,
 		Week:    2,
-	},
-	{
-		Name:     "Christmas Day",
-		Regions:  []string{"federalreserve"},
-		Month:    12,
-		Mday:     25,
-		Wday:     -1,
-		Observed: "to_weekday_if_weekend",
-	},
-	{
-		Name:     "New Year's Day",
-		Regions:  []string{"federalreserve"},
-		Month:    1,
-		Mday:     1,
-		Wday:     -1,
-		Observed: "to_weekday_if_weekend",
-	},
-	{
-		Name:    "Birthday of Martin Luther King, Jr",
-		Regions: []string{"federalreserve"},
-		Month:   1,
-		Wday:    1,
-		Week:    3,
-	},
-	{
-		Name:     "Independence Day",
-		Regions:  []string{"federalreserve"},
-		Month:    7,
-		Mday:     4,
-		Wday:     -1,
-		Observed: "to_weekday_if_weekend",
 	},
 	{
 		Name:     "Veterans Day",
@@ -92,6 +84,14 @@ var federalreserveRules = []definition.HolidayRule{
 		Month:   11,
 		Wday:    4,
 		Week:    4,
+	},
+	{
+		Name:     "Christmas Day",
+		Regions:  []string{"federalreserve"},
+		Month:    12,
+		Mday:     25,
+		Wday:     -1,
+		Observed: "to_weekday_if_weekend",
 	},
 }
 

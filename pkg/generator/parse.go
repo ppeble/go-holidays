@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 
@@ -114,8 +115,13 @@ func ParseRegionFile(country string, data []byte) (*RegionFile, error) {
 
 	rf := &RegionFile{Country: country, Methods: map[string]MethodSpec{}}
 
-	for month, rules := range root.Months {
-		for i, rr := range rules {
+	months := make([]int, 0, len(root.Months))
+	for m := range root.Months {
+		months = append(months, m)
+	}
+	sort.Ints(months)
+	for _, month := range months {
+		for i, rr := range root.Months[month] {
 			rule, err := convertRule(country, month, rr)
 			if err != nil {
 				return nil, fmt.Errorf("%s.yaml month %d entry %d: %w", country, month, i, err)
