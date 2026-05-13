@@ -99,6 +99,16 @@ func rulesFor(requested []string) []definition.HolidayRule {
 	return out
 }
 
+// rulesForCountry returns the rules registered for the named country file.
+// Method implementations call this at resolve time, after all init() functions
+// have run, to inspect peer rules (e.g. JP substitute-holiday logic needs to
+// know which days are already holidays).
+func rulesForCountry(country string) []definition.HolidayRule {
+	regionMu.RLock()
+	defer regionMu.RUnlock()
+	return countries[country]
+}
+
 // ruleMatchesRequested reports whether a rule applies to any of the requested regions.
 // Matching rules:
 //   - Exact equality: rule region == requested region.
