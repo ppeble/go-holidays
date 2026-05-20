@@ -58,7 +58,7 @@ func init() {
 	RegisterMethod("to_previous_day_if_leap_year", func(a MethodArgs) (time.Time, error) {
 		return calc.ToPreviousDayIfLeapYear(a.Date), nil
 	})
-	// lunar_to_solar is intentionally NOT registered: until pkg/calc/lunar.go
-	// is backed by a real lookup table (hk, kr, vi, cn), regions that depend
-	// on it are skipped at generation time via --allow-unported.
+	RegisterMethod("lunar_to_solar", func(a MethodArgs) (time.Time, error) {
+		return calc.LunarToSolar(a.Year, a.Month, a.Day, a.Region)
+	})
 }

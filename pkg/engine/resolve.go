@@ -69,7 +69,7 @@ func computeDate(rule definition.HolidayRule, year int) (time.Time, error) {
 		if !ok {
 			return time.Time{}, fmt.Errorf("unregistered method %q", rule.Function)
 		}
-		args := MethodArgs{Year: year, Month: rule.Month, Date: base}
+		args := MethodArgs{Year: year, Month: rule.Month, Day: rule.Mday, Date: base}
 		if len(rule.Regions) > 0 {
 			args.Region = rule.Regions[0]
 		}

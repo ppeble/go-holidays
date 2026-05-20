@@ -58,18 +58,29 @@ func ToTuesdayIfSundayOrMondayIfSaturday(date time.Time) time.Time {
 	return date
 }
 
-// ToTheWeekdayAfter returns the next non-weekend day strictly after date.
+// ToTheWeekdayAfter returns the day after date, treating Sunday as a non-working
+// day to skip. Mirrors the upstream gem's `to_the_weekday_after`, which is
+// to_monday_if_sunday(to_monday_if_sunday(date) + 1). Saturday is not skipped.
 func ToTheWeekdayAfter(date time.Time) time.Time {
-	d := date.AddDate(0, 0, 1)
-	for d.Weekday() == time.Saturday || d.Weekday() == time.Sunday {
+	d := date
+	if d.Weekday() == time.Sunday {
+		d = d.AddDate(0, 0, 1)
+	}
+	d = d.AddDate(0, 0, 1)
+	if d.Weekday() == time.Sunday {
 		d = d.AddDate(0, 0, 1)
 	}
 	return d
 }
 
-// ToTheSecondWeekdayAfter returns the second non-weekend day strictly after date.
+// ToTheSecondWeekdayAfter mirrors the upstream gem's `to_the_second_weekday_after`:
+// to_monday_if_sunday(to_the_weekday_after(date) + 1).
 func ToTheSecondWeekdayAfter(date time.Time) time.Time {
-	return ToTheWeekdayAfter(ToTheWeekdayAfter(date))
+	d := ToTheWeekdayAfter(date).AddDate(0, 0, 1)
+	if d.Weekday() == time.Sunday {
+		d = d.AddDate(0, 0, 1)
+	}
+	return d
 }
 
 // ToPreviousDayIfLeapYear shifts date back one day in leap years; otherwise unchanged.
