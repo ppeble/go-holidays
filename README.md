@@ -8,10 +8,8 @@ A Go port of the top-level public API of the Ruby [`holidays`](https://github.co
 |------|-------|
 | Top-level API | `On`, `Between`, `YearHolidays`, `AvailableRegions` |
 | Upstream definitions | Pinned to `v6.1.1` (submodule) |
-| Regions generating | 59 of 79 country/institution YAMLs |
-| Test cases passing | 1180 / 1180 generated tests (100% green; `make test` clean) |
-| Skipped (unported methods) | `ar`, `au`, `ca`, `ch`, `cl`, `co`, `de`, `fi`, `hk`, `is`, `jp`, `kr`, `lv`, `nz`, `ph`, `pl`, `se`, `tr`, `tsx`, `vi` |
-| Known gaps | Lunar calendar (`hk`, `kr`, `vi` use `lunar_to_solar` — needs a data table); a long tail of per-region custom methods (run `bin/gen-holidays --allow-unported` to see the exact list per region) |
+| Regions generating | 79 of 79 country/institution YAMLs |
+| Test cases passing | 1989 / 1989 generated tests (100% green; `make test` clean) |
 
 ## Layout
 
