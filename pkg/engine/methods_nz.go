@@ -22,6 +22,17 @@ func init() {
 	RegisterMethod("next_week", func(a MethodArgs) (time.Time, error) {
 		return a.Date.AddDate(0, 0, 7), nil
 	})
+	RegisterMethod("nz_canterbury_anniversary", func(a MethodArgs) (time.Time, error) {
+		d := time.Date(a.Year, time.November, 1, 0, 0, 0, 0, time.UTC)
+		for d.Weekday() != time.Tuesday {
+			d = d.AddDate(0, 0, 1)
+		}
+		d = d.AddDate(0, 0, 1)
+		for d.Weekday() != time.Friday {
+			d = d.AddDate(0, 0, 1)
+		}
+		return d.AddDate(0, 0, 7), nil
+	})
 	// Matariki is set in New Zealand legislation each year (lunar/astronomical).
 	// We mirror the upstream table verbatim.
 	RegisterMethod("matariki", func(a MethodArgs) (time.Time, error) {

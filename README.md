@@ -7,9 +7,9 @@ A Go port of the top-level public API of the Ruby [`holidays`](https://github.co
 | Item | State |
 |------|-------|
 | Top-level API | `On`, `Between`, `YearHolidays`, `AvailableRegions` |
-| Upstream definitions | Pinned to `v6.1.1` (submodule) |
+| Upstream definitions | Pinned to `v7.0.0` (submodule) |
 | Regions generating | 79 of 79 country/institution YAMLs |
-| Test cases passing | 1989 / 1989 generated tests (100% green; `make test` clean) |
+| Test cases passing | 2002 / 2002 generated tests (100% green; `make test` clean) |
 
 ## Layout
 
@@ -26,7 +26,7 @@ pkg/
                    #   that uses custom Ruby methods we've hand-ported
   generator/       # YAML parser + Go emitter + test emitter
   definitions/     # GENERATED: one <country>.go + <country>_test.go per region
-definitions/       # git submodule -> holidays/definitions @ v6.1.1
+definitions/       # git submodule -> holidays/definitions @ v7.0.0
 ```
 
 ## Install

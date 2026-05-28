@@ -114,6 +114,9 @@ var auRules = []definition.HolidayRule{
 		Wday:         -1,
 		Function:     "march_pub_hol_sa",
 		FunctionArgs: []string{"year"},
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeFrom, Years: []int{2006}},
+		},
 	},
 	{
 		Name:    "Canberra Day",
@@ -159,6 +162,20 @@ var auRules = []definition.HolidayRule{
 		Wday:         -1,
 		Function:     "qld_labour_day_may",
 		FunctionArgs: []string{"year"},
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeUntil, Years: []int{2012}},
+		},
+	},
+	{
+		Name:         "Labour Day",
+		Regions:      []string{"au_qld"},
+		Month:        5,
+		Wday:         -1,
+		Function:     "qld_labour_day_may",
+		FunctionArgs: []string{"year"},
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeFrom, Years: []int{2016}},
+		},
 	},
 	{
 		Name:    "May Day",
@@ -174,6 +191,9 @@ var auRules = []definition.HolidayRule{
 		Wday:         -1,
 		Function:     "may_pub_hol_sa",
 		FunctionArgs: []string{"year"},
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeUntil, Years: []int{2005}},
+		},
 	},
 	{
 		Name:         "Reconciliation Day",
@@ -221,6 +241,9 @@ var auRules = []definition.HolidayRule{
 		Wday:         -1,
 		Function:     "qld_queens_birthday_june",
 		FunctionArgs: []string{"year"},
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeUntil, Years: []int{2015}},
+		},
 	},
 	{
 		Name:    "Queensland Day",
@@ -308,6 +331,20 @@ var auRules = []definition.HolidayRule{
 		Function:     "qld_labour_day_october",
 		FunctionArgs: []string{"year"},
 		Observed:     "to_monday_if_weekend",
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeBetween, Years: []int{2013, 2015}},
+		},
+	},
+	{
+		Name:     "Queen's Birthday",
+		Regions:  []string{"au_qld"},
+		Month:    10,
+		Mday:     1,
+		Wday:     -1,
+		Observed: "to_monday_if_weekend",
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeLimited, Years: []int{2012}},
+		},
 	},
 	{
 		Name:         "Queen's Birthday",
@@ -318,7 +355,7 @@ var auRules = []definition.HolidayRule{
 		FunctionArgs: []string{"year"},
 		Observed:     "to_monday_if_weekend",
 		YearRanges: []definition.YearRange{
-			{Kind: definition.YearRangeUntil, Years: []int{2022}},
+			{Kind: definition.YearRangeBetween, Years: []int{2016, 2022}},
 		},
 	},
 	{
@@ -342,12 +379,14 @@ var auRules = []definition.HolidayRule{
 		FunctionArgs: []string{"year"},
 	},
 	{
-		Name:         "G20 Day",
-		Regions:      []string{"au_qld_brisbane"},
-		Month:        11,
-		Wday:         -1,
-		Function:     "g20_day_2014_only",
-		FunctionArgs: []string{"year"},
+		Name:    "G20 Day",
+		Regions: []string{"au_qld_brisbane"},
+		Month:   11,
+		Mday:    14,
+		Wday:    -1,
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeLimited, Years: []int{2014}},
+		},
 	},
 	{
 		Name:    "Recreation Day",

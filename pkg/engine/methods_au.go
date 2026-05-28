@@ -27,48 +27,23 @@ func init() {
 	})
 
 	RegisterMethod("qld_queens_bday_october", func(a MethodArgs) (time.Time, error) {
-		switch {
-		case a.Year >= 2016:
-			return calc.DayOfMonth(a.Year, time.October, 1, time.Monday), nil
-		case a.Year == 2012:
-			return time.Date(a.Year, time.Month(a.Month), 1, 0, 0, 0, 0, time.UTC), nil
-		}
-		return time.Time{}, nil
+		return calc.DayOfMonth(a.Year, time.October, 1, time.Monday), nil
 	})
 
 	RegisterMethod("qld_kings_bday_october", func(a MethodArgs) (time.Time, error) {
-		if a.Year >= 2023 {
-			return calc.DayOfMonth(a.Year, time.October, 1, time.Monday), nil
-		}
-		return time.Time{}, nil
+		return calc.DayOfMonth(a.Year, time.October, 1, time.Monday), nil
 	})
 
 	RegisterMethod("qld_queens_birthday_june", func(a MethodArgs) (time.Time, error) {
-		if a.Year <= 2015 {
-			return calc.DayOfMonth(a.Year, time.June, 2, time.Monday), nil
-		}
-		return time.Time{}, nil
+		return calc.DayOfMonth(a.Year, time.June, 2, time.Monday), nil
 	})
 
 	RegisterMethod("qld_labour_day_may", func(a MethodArgs) (time.Time, error) {
-		if a.Year < 2013 || a.Year >= 2016 {
-			return calc.DayOfMonth(a.Year, time.May, 1, time.Monday), nil
-		}
-		return time.Time{}, nil
+		return calc.DayOfMonth(a.Year, time.May, 1, time.Monday), nil
 	})
 
 	RegisterMethod("qld_labour_day_october", func(a MethodArgs) (time.Time, error) {
-		if a.Year >= 2013 && a.Year < 2016 {
-			return calc.DayOfMonth(a.Year, time.October, 1, time.Monday), nil
-		}
-		return time.Time{}, nil
-	})
-
-	RegisterMethod("g20_day_2014_only", func(a MethodArgs) (time.Time, error) {
-		if a.Year != 2014 {
-			return time.Time{}, nil
-		}
-		return time.Date(a.Year, time.Month(a.Month), 14, 0, 0, 0, 0, time.UTC), nil
+		return calc.DayOfMonth(a.Year, time.October, 1, time.Monday), nil
 	})
 
 	// Hobart Show Day: Thursday before the 4th Saturday of October.
@@ -77,19 +52,11 @@ func init() {
 		return fourthSat.AddDate(0, 0, -2), nil
 	})
 
-	// March public holiday (SA): from 2006, second Monday of March.
 	RegisterMethod("march_pub_hol_sa", func(a MethodArgs) (time.Time, error) {
-		if a.Year < 2006 {
-			return time.Time{}, nil
-		}
 		return calc.DayOfMonth(a.Year, time.March, 2, time.Monday), nil
 	})
 
-	// May public holiday (SA): pre-2006 only, third Monday of May.
 	RegisterMethod("may_pub_hol_sa", func(a MethodArgs) (time.Time, error) {
-		if a.Year >= 2006 {
-			return time.Time{}, nil
-		}
 		return calc.DayOfMonth(a.Year, time.May, 3, time.Monday), nil
 	})
 

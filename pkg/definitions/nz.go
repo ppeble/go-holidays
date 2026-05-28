@@ -172,11 +172,12 @@ var nzRules = []definition.HolidayRule{
 		Observed: "next_week",
 	},
 	{
-		Name:    "Canterbury Anniversary Day",
-		Regions: []string{"nz_ca"},
-		Month:   11,
-		Wday:    5,
-		Week:    2,
+		Name:         "Canterbury Anniversary Day",
+		Regions:      []string{"nz_ca"},
+		Month:        11,
+		Wday:         -1,
+		Function:     "nz_canterbury_anniversary",
+		FunctionArgs: []string{"year"},
 	},
 	{
 		Name:     "Chatham Island Anniversary Day",

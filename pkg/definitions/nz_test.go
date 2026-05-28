@@ -511,3 +511,57 @@ func TestNZ_027_KingSBirthday(t *testing.T) {
 		}
 	}
 }
+
+func TestNZ_028_CanterburyAnniversaryDay(t *testing.T) {
+	dates := []string{"2023-11-17"}
+	opts := holidays.Options{Regions: []string{"nz_ca"}}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if !hasNamed(hols, "Canterbury Anniversary Day") {
+			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Canterbury Anniversary Day", hols)
+		}
+	}
+}
+
+func TestNZ_029_CanterburyAnniversaryDay(t *testing.T) {
+	dates := []string{"2024-11-15"}
+	opts := holidays.Options{Regions: []string{"nz_ca"}}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if !hasNamed(hols, "Canterbury Anniversary Day") {
+			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Canterbury Anniversary Day", hols)
+		}
+	}
+}
+
+func TestNZ_030_CanterburyAnniversaryDay(t *testing.T) {
+	dates := []string{"2028-11-17"}
+	opts := holidays.Options{Regions: []string{"nz_ca"}}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if !hasNamed(hols, "Canterbury Anniversary Day") {
+			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Canterbury Anniversary Day", hols)
+		}
+	}
+}

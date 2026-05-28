@@ -1915,3 +1915,165 @@ func TestAU_105_ReconciliationDay(t *testing.T) {
 		}
 	}
 }
+
+func TestAU_106_MayPublicHoliday(t *testing.T) {
+	dates := []string{"2004-05-17"}
+	opts := holidays.Options{Regions: []string{"au_sa"}}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if !hasNamed(hols, "May Public Holiday") {
+			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "May Public Holiday", hols)
+		}
+	}
+}
+
+func TestAU_107_MarchPublicHoliday(t *testing.T) {
+	dates := []string{"2006-03-13"}
+	opts := holidays.Options{Regions: []string{"au_sa"}}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if !hasNamed(hols, "March Public Holiday") {
+			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "March Public Holiday", hols)
+		}
+	}
+}
+
+func TestAU_108_Negative(t *testing.T) {
+	dates := []string{"2006-05-15"}
+	opts := holidays.Options{Regions: []string{"au_sa"}}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if len(hols) > 0 {
+			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
+		}
+	}
+}
+
+func TestAU_109_Negative(t *testing.T) {
+	dates := []string{"2011-10-03"}
+	opts := holidays.Options{Regions: []string{"au_qld"}}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if len(hols) > 0 {
+			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
+		}
+	}
+}
+
+func TestAU_110_Negative(t *testing.T) {
+	dates := []string{"2013-05-06"}
+	opts := holidays.Options{Regions: []string{"au_qld"}}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if len(hols) > 0 {
+			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
+		}
+	}
+}
+
+func TestAU_111_Negative(t *testing.T) {
+	dates := []string{"2013-11-14"}
+	opts := holidays.Options{Regions: []string{"au_qld_brisbane"}}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if len(hols) > 0 {
+			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
+		}
+	}
+}
+
+func TestAU_112_Negative(t *testing.T) {
+	dates := []string{"2015-05-04"}
+	opts := holidays.Options{Regions: []string{"au_qld"}}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if len(hols) > 0 {
+			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
+		}
+	}
+}
+
+func TestAU_113_Negative(t *testing.T) {
+	dates := []string{"2016-06-13"}
+	opts := holidays.Options{Regions: []string{"au_qld"}}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if len(hols) > 0 {
+			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
+		}
+	}
+}
+
+func TestAU_114_KingSBirthday(t *testing.T) {
+	dates := []string{"2024-10-07"}
+	opts := holidays.Options{Regions: []string{"au_qld"}}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if !hasNamed(hols, "King's Birthday") {
+			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "King's Birthday", hols)
+		}
+	}
+}

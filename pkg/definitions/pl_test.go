@@ -927,6 +927,24 @@ func TestPL_050_ObjawieniePańskieŚwiętoTrzechKróli(t *testing.T) {
 }
 
 func TestPL_051_ObjawieniePańskieŚwiętoTrzechKróli(t *testing.T) {
+	dates := []string{"2011-01-06"}
+	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
+	for _, s := range dates {
+		d, err := parseFlex(s)
+		if err != nil {
+			t.Fatalf("parse %q: %v", s, err)
+		}
+		hols, err := holidays.On(d, opts)
+		if err != nil {
+			t.Fatalf("On(%s): %v", s, err)
+		}
+		if !hasNamed(hols, "Objawienie Pańskie (święto Trzech Króli)") {
+			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Objawienie Pańskie (święto Trzech Króli)", hols)
+		}
+	}
+}
+
+func TestPL_052_ObjawieniePańskieŚwiętoTrzechKróli(t *testing.T) {
 	dates := []string{"2012-01-06"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -944,7 +962,7 @@ func TestPL_051_ObjawieniePańskieŚwiętoTrzechKróli(t *testing.T) {
 	}
 }
 
-func TestPL_052_ObjawieniePańskieŚwiętoTrzechKróli(t *testing.T) {
+func TestPL_053_ObjawieniePańskieŚwiętoTrzechKróli(t *testing.T) {
 	dates := []string{"2013-01-06"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -962,7 +980,7 @@ func TestPL_052_ObjawieniePańskieŚwiętoTrzechKróli(t *testing.T) {
 	}
 }
 
-func TestPL_053_TłustyCzwartek(t *testing.T) {
+func TestPL_054_TłustyCzwartek(t *testing.T) {
 	dates := []string{"2008-01-31"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -980,7 +998,7 @@ func TestPL_053_TłustyCzwartek(t *testing.T) {
 	}
 }
 
-func TestPL_054_TłustyCzwartek(t *testing.T) {
+func TestPL_055_TłustyCzwartek(t *testing.T) {
 	dates := []string{"2009-02-19"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -998,7 +1016,7 @@ func TestPL_054_TłustyCzwartek(t *testing.T) {
 	}
 }
 
-func TestPL_055_TłustyCzwartek(t *testing.T) {
+func TestPL_056_TłustyCzwartek(t *testing.T) {
 	dates := []string{"2010-02-11"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1016,7 +1034,7 @@ func TestPL_055_TłustyCzwartek(t *testing.T) {
 	}
 }
 
-func TestPL_056_TłustyCzwartek(t *testing.T) {
+func TestPL_057_TłustyCzwartek(t *testing.T) {
 	dates := []string{"2011-03-03"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1034,7 +1052,7 @@ func TestPL_056_TłustyCzwartek(t *testing.T) {
 	}
 }
 
-func TestPL_057_TłustyCzwartek(t *testing.T) {
+func TestPL_058_TłustyCzwartek(t *testing.T) {
 	dates := []string{"2012-02-16"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1052,7 +1070,7 @@ func TestPL_057_TłustyCzwartek(t *testing.T) {
 	}
 }
 
-func TestPL_058_Ostatki(t *testing.T) {
+func TestPL_059_Ostatki(t *testing.T) {
 	dates := []string{"2008-02-05"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1070,7 +1088,7 @@ func TestPL_058_Ostatki(t *testing.T) {
 	}
 }
 
-func TestPL_059_Ostatki(t *testing.T) {
+func TestPL_060_Ostatki(t *testing.T) {
 	dates := []string{"2009-02-24"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1088,7 +1106,7 @@ func TestPL_059_Ostatki(t *testing.T) {
 	}
 }
 
-func TestPL_060_Ostatki(t *testing.T) {
+func TestPL_061_Ostatki(t *testing.T) {
 	dates := []string{"2010-02-16"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1106,7 +1124,7 @@ func TestPL_060_Ostatki(t *testing.T) {
 	}
 }
 
-func TestPL_061_Ostatki(t *testing.T) {
+func TestPL_062_Ostatki(t *testing.T) {
 	dates := []string{"2011-03-08"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1124,7 +1142,7 @@ func TestPL_061_Ostatki(t *testing.T) {
 	}
 }
 
-func TestPL_062_Ostatki(t *testing.T) {
+func TestPL_063_Ostatki(t *testing.T) {
 	dates := []string{"2012-02-21"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1142,7 +1160,7 @@ func TestPL_062_Ostatki(t *testing.T) {
 	}
 }
 
-func TestPL_063_ŚrodaPopielcowa(t *testing.T) {
+func TestPL_064_ŚrodaPopielcowa(t *testing.T) {
 	dates := []string{"2008-02-06"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1160,7 +1178,7 @@ func TestPL_063_ŚrodaPopielcowa(t *testing.T) {
 	}
 }
 
-func TestPL_064_ŚrodaPopielcowa(t *testing.T) {
+func TestPL_065_ŚrodaPopielcowa(t *testing.T) {
 	dates := []string{"2009-02-25"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1178,7 +1196,7 @@ func TestPL_064_ŚrodaPopielcowa(t *testing.T) {
 	}
 }
 
-func TestPL_065_ŚrodaPopielcowa(t *testing.T) {
+func TestPL_066_ŚrodaPopielcowa(t *testing.T) {
 	dates := []string{"2010-02-17"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1196,7 +1214,7 @@ func TestPL_065_ŚrodaPopielcowa(t *testing.T) {
 	}
 }
 
-func TestPL_066_ŚrodaPopielcowa(t *testing.T) {
+func TestPL_067_ŚrodaPopielcowa(t *testing.T) {
 	dates := []string{"2011-03-09"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1214,7 +1232,7 @@ func TestPL_066_ŚrodaPopielcowa(t *testing.T) {
 	}
 }
 
-func TestPL_067_ŚrodaPopielcowa(t *testing.T) {
+func TestPL_068_ŚrodaPopielcowa(t *testing.T) {
 	dates := []string{"2012-02-22"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1232,7 +1250,7 @@ func TestPL_067_ŚrodaPopielcowa(t *testing.T) {
 	}
 }
 
-func TestPL_068_NiedzielaPalmowa(t *testing.T) {
+func TestPL_069_NiedzielaPalmowa(t *testing.T) {
 	dates := []string{"2008-03-16"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1250,7 +1268,7 @@ func TestPL_068_NiedzielaPalmowa(t *testing.T) {
 	}
 }
 
-func TestPL_069_NiedzielaPalmowa(t *testing.T) {
+func TestPL_070_NiedzielaPalmowa(t *testing.T) {
 	dates := []string{"2009-04-05"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1268,7 +1286,7 @@ func TestPL_069_NiedzielaPalmowa(t *testing.T) {
 	}
 }
 
-func TestPL_070_NiedzielaPalmowa(t *testing.T) {
+func TestPL_071_NiedzielaPalmowa(t *testing.T) {
 	dates := []string{"2010-03-28"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1286,7 +1304,7 @@ func TestPL_070_NiedzielaPalmowa(t *testing.T) {
 	}
 }
 
-func TestPL_071_NiedzielaPalmowa(t *testing.T) {
+func TestPL_072_NiedzielaPalmowa(t *testing.T) {
 	dates := []string{"2011-04-17"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1304,7 +1322,7 @@ func TestPL_071_NiedzielaPalmowa(t *testing.T) {
 	}
 }
 
-func TestPL_072_NiedzielaPalmowa(t *testing.T) {
+func TestPL_073_NiedzielaPalmowa(t *testing.T) {
 	dates := []string{"2012-04-01"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1322,7 +1340,7 @@ func TestPL_072_NiedzielaPalmowa(t *testing.T) {
 	}
 }
 
-func TestPL_073_WielkiCzwartek(t *testing.T) {
+func TestPL_074_WielkiCzwartek(t *testing.T) {
 	dates := []string{"2008-03-20"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1340,7 +1358,7 @@ func TestPL_073_WielkiCzwartek(t *testing.T) {
 	}
 }
 
-func TestPL_074_WielkiCzwartek(t *testing.T) {
+func TestPL_075_WielkiCzwartek(t *testing.T) {
 	dates := []string{"2009-04-09"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1358,7 +1376,7 @@ func TestPL_074_WielkiCzwartek(t *testing.T) {
 	}
 }
 
-func TestPL_075_WielkiCzwartek(t *testing.T) {
+func TestPL_076_WielkiCzwartek(t *testing.T) {
 	dates := []string{"2010-04-01"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1376,7 +1394,7 @@ func TestPL_075_WielkiCzwartek(t *testing.T) {
 	}
 }
 
-func TestPL_076_WielkiCzwartek(t *testing.T) {
+func TestPL_077_WielkiCzwartek(t *testing.T) {
 	dates := []string{"2011-04-21"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1394,7 +1412,7 @@ func TestPL_076_WielkiCzwartek(t *testing.T) {
 	}
 }
 
-func TestPL_077_WielkiCzwartek(t *testing.T) {
+func TestPL_078_WielkiCzwartek(t *testing.T) {
 	dates := []string{"2012-04-05"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1412,7 +1430,7 @@ func TestPL_077_WielkiCzwartek(t *testing.T) {
 	}
 }
 
-func TestPL_078_WielkiPiątek(t *testing.T) {
+func TestPL_079_WielkiPiątek(t *testing.T) {
 	dates := []string{"2008-03-21"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1430,7 +1448,7 @@ func TestPL_078_WielkiPiątek(t *testing.T) {
 	}
 }
 
-func TestPL_079_WielkiPiątek(t *testing.T) {
+func TestPL_080_WielkiPiątek(t *testing.T) {
 	dates := []string{"2009-04-10"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1448,7 +1466,7 @@ func TestPL_079_WielkiPiątek(t *testing.T) {
 	}
 }
 
-func TestPL_080_WielkiPiątek(t *testing.T) {
+func TestPL_081_WielkiPiątek(t *testing.T) {
 	dates := []string{"2010-04-02"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1466,7 +1484,7 @@ func TestPL_080_WielkiPiątek(t *testing.T) {
 	}
 }
 
-func TestPL_081_WielkiPiątek(t *testing.T) {
+func TestPL_082_WielkiPiątek(t *testing.T) {
 	dates := []string{"2011-04-22"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1484,7 +1502,7 @@ func TestPL_081_WielkiPiątek(t *testing.T) {
 	}
 }
 
-func TestPL_082_WielkiPiątek(t *testing.T) {
+func TestPL_083_WielkiPiątek(t *testing.T) {
 	dates := []string{"2012-04-06"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1502,7 +1520,7 @@ func TestPL_082_WielkiPiątek(t *testing.T) {
 	}
 }
 
-func TestPL_083_WielkaSobota(t *testing.T) {
+func TestPL_084_WielkaSobota(t *testing.T) {
 	dates := []string{"2008-03-22"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1520,7 +1538,7 @@ func TestPL_083_WielkaSobota(t *testing.T) {
 	}
 }
 
-func TestPL_084_WielkaSobota(t *testing.T) {
+func TestPL_085_WielkaSobota(t *testing.T) {
 	dates := []string{"2009-04-11"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1538,7 +1556,7 @@ func TestPL_084_WielkaSobota(t *testing.T) {
 	}
 }
 
-func TestPL_085_WielkaSobota(t *testing.T) {
+func TestPL_086_WielkaSobota(t *testing.T) {
 	dates := []string{"2010-04-03"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1556,7 +1574,7 @@ func TestPL_085_WielkaSobota(t *testing.T) {
 	}
 }
 
-func TestPL_086_WielkaSobota(t *testing.T) {
+func TestPL_087_WielkaSobota(t *testing.T) {
 	dates := []string{"2011-04-23"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1574,7 +1592,7 @@ func TestPL_086_WielkaSobota(t *testing.T) {
 	}
 }
 
-func TestPL_087_WielkaSobota(t *testing.T) {
+func TestPL_088_WielkaSobota(t *testing.T) {
 	dates := []string{"2012-04-07"}
 	opts := holidays.Options{Regions: []string{"pl"}, Informal: true}
 	for _, s := range dates {
@@ -1592,7 +1610,7 @@ func TestPL_087_WielkaSobota(t *testing.T) {
 	}
 }
 
-func TestPL_088_NiedzielaWielkanocna(t *testing.T) {
+func TestPL_089_NiedzielaWielkanocna(t *testing.T) {
 	dates := []string{"2008-03-23"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1610,7 +1628,7 @@ func TestPL_088_NiedzielaWielkanocna(t *testing.T) {
 	}
 }
 
-func TestPL_089_NiedzielaWielkanocna(t *testing.T) {
+func TestPL_090_NiedzielaWielkanocna(t *testing.T) {
 	dates := []string{"2009-04-12"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1628,7 +1646,7 @@ func TestPL_089_NiedzielaWielkanocna(t *testing.T) {
 	}
 }
 
-func TestPL_090_NiedzielaWielkanocna(t *testing.T) {
+func TestPL_091_NiedzielaWielkanocna(t *testing.T) {
 	dates := []string{"2010-04-04"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1646,7 +1664,7 @@ func TestPL_090_NiedzielaWielkanocna(t *testing.T) {
 	}
 }
 
-func TestPL_091_NiedzielaWielkanocna(t *testing.T) {
+func TestPL_092_NiedzielaWielkanocna(t *testing.T) {
 	dates := []string{"2011-04-24"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1664,7 +1682,7 @@ func TestPL_091_NiedzielaWielkanocna(t *testing.T) {
 	}
 }
 
-func TestPL_092_NiedzielaWielkanocna(t *testing.T) {
+func TestPL_093_NiedzielaWielkanocna(t *testing.T) {
 	dates := []string{"2012-04-08"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1682,7 +1700,7 @@ func TestPL_092_NiedzielaWielkanocna(t *testing.T) {
 	}
 }
 
-func TestPL_093_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
+func TestPL_094_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
 	dates := []string{"2008-03-24"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1700,7 +1718,7 @@ func TestPL_093_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
 	}
 }
 
-func TestPL_094_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
+func TestPL_095_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
 	dates := []string{"2009-04-13"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1718,7 +1736,7 @@ func TestPL_094_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
 	}
 }
 
-func TestPL_095_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
+func TestPL_096_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
 	dates := []string{"2010-04-05"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1736,7 +1754,7 @@ func TestPL_095_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
 	}
 }
 
-func TestPL_096_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
+func TestPL_097_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
 	dates := []string{"2011-04-25"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1754,7 +1772,7 @@ func TestPL_096_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
 	}
 }
 
-func TestPL_097_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
+func TestPL_098_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
 	dates := []string{"2012-04-09"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1772,7 +1790,7 @@ func TestPL_097_PoniedziałekWielkanocnyLanyPoniedziałek(t *testing.T) {
 	}
 }
 
-func TestPL_098_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
+func TestPL_099_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
 	dates := []string{"2008-05-11"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1790,7 +1808,7 @@ func TestPL_098_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
 	}
 }
 
-func TestPL_099_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
+func TestPL_100_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
 	dates := []string{"2009-05-31"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1808,7 +1826,7 @@ func TestPL_099_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
 	}
 }
 
-func TestPL_100_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
+func TestPL_101_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
 	dates := []string{"2010-05-23"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1826,7 +1844,7 @@ func TestPL_100_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
 	}
 }
 
-func TestPL_101_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
+func TestPL_102_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
 	dates := []string{"2011-06-12"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1844,7 +1862,7 @@ func TestPL_101_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
 	}
 }
 
-func TestPL_102_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
+func TestPL_103_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
 	dates := []string{"2012-05-27"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1862,7 +1880,7 @@ func TestPL_102_ZesłanieDuchaŚwiętegoZieloneŚwiątki(t *testing.T) {
 	}
 }
 
-func TestPL_103_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *testing.T) {
+func TestPL_104_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *testing.T) {
 	dates := []string{"2008-05-22"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1880,7 +1898,7 @@ func TestPL_103_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *t
 	}
 }
 
-func TestPL_104_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *testing.T) {
+func TestPL_105_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *testing.T) {
 	dates := []string{"2009-06-11"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1898,7 +1916,7 @@ func TestPL_104_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *t
 	}
 }
 
-func TestPL_105_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *testing.T) {
+func TestPL_106_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *testing.T) {
 	dates := []string{"2010-06-03"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1916,7 +1934,7 @@ func TestPL_105_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *t
 	}
 }
 
-func TestPL_106_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *testing.T) {
+func TestPL_107_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *testing.T) {
 	dates := []string{"2011-06-23"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1934,7 +1952,7 @@ func TestPL_106_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *t
 	}
 }
 
-func TestPL_107_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *testing.T) {
+func TestPL_108_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *testing.T) {
 	dates := []string{"2012-06-07"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {
@@ -1952,7 +1970,7 @@ func TestPL_107_UroczystośćNajświętszegoCiałaIKrwiPańskiejBożeCiało(t *t
 	}
 }
 
-func TestPL_108_WniebowzięcieNajświętszejMaryiPanny(t *testing.T) {
+func TestPL_109_WniebowzięcieNajświętszejMaryiPanny(t *testing.T) {
 	dates := []string{"2011-08-15"}
 	opts := holidays.Options{Regions: []string{"pl"}}
 	for _, s := range dates {

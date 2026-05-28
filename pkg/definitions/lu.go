@@ -33,7 +33,7 @@ var luRules = []definition.HolidayRule{
 		Wday:             -1,
 		Function:         "easter",
 		FunctionArgs:     []string{"year"},
-		FunctionModifier: 49,
+		FunctionModifier: 50,
 	},
 	{
 		Name:    "Neijoerschdag",

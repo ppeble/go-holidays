@@ -153,7 +153,7 @@ func TestLU_007_Stiefesdag(t *testing.T) {
 }
 
 func TestLU_008_Péngschtméindeg(t *testing.T) {
-	dates := []string{"2008-05-11"}
+	dates := []string{"2008-05-12"}
 	opts := holidays.Options{Regions: []string{"lu"}, Informal: true}
 	for _, s := range dates {
 		d, err := parseFlex(s)
