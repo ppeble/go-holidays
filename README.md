@@ -6,7 +6,7 @@ A Go port of the top-level public API of the Ruby [`holidays`](https://github.co
 
 | Item | State |
 |------|-------|
-| Top-level API | `On`, `Between`, `YearHolidays`, `NextHolidays`, `AnyHolidaysDuringWorkWeek`, `CacheBetween`, `ResetCache`, `AvailableRegions` |
+| Top-level API | `On`, `Between`, `YearHolidays`, `NextHolidays`, `AnyHolidaysDuringWorkWeek`, `CacheBetween`, `ResetCache`, `LoadCustom`, `UnloadCustom`, `RegisterMethod`, `AvailableRegions` |
 | Upstream definitions | Pinned to `v7.0.0` (submodule) |
 | Regions generating | 79 of 79 country/institution YAMLs |
 | Test cases passing | 2002 / 2002 generated tests (100% green; `make test` clean) |
@@ -75,6 +75,26 @@ bin/holidays regions
 ```
 
 Flags can appear before or after positional arguments.
+
+## Custom holiday definitions
+
+`LoadCustom` parses YAML files in the same format as upstream `holidays/definitions` and registers their rules at runtime alongside the built-in ones:
+
+```go
+holidays.LoadCustom("my_team.yaml")
+hs, _ := holidays.On(date, holidays.Options{Regions: []string{"my_team"}})
+```
+
+The YAML's `methods:` block (Ruby source) is parsed but ignored — we can't interpret Ruby. Any `function:` or `observed:` reference in a custom rule must point to a method registered in Go first:
+
+```go
+holidays.RegisterMethod("my_method", func(a holidays.MethodArgs) (time.Time, error) {
+    return time.Date(a.Year, time.March, 15, 0, 0, 0, 0, time.UTC), nil
+})
+holidays.LoadCustom("my_team.yaml") // YAML can now use function: my_method(year)
+```
+
+Loading the same path again replaces the prior load; loading distinct paths adds rules. `UnloadCustom(path)` removes them.
 
 ## Regenerating definitions
 

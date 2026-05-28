@@ -64,6 +64,14 @@ func RegisterCountry(country string, rules []definition.HolidayRule) {
 	countries[country] = rules
 }
 
+// UnregisterCountry removes a registered country key. Used by LoadCustom
+// callers (typically tests) to drop runtime-loaded rules.
+func UnregisterCountry(country string) {
+	regionMu.Lock()
+	defer regionMu.Unlock()
+	delete(countries, country)
+}
+
 // AvailableRegions returns every region code mentioned across all registered rules,
 // sorted lexicographically.
 func AvailableRegions() []string {
