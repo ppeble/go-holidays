@@ -6,7 +6,7 @@ A Go port of the top-level public API of the Ruby [`holidays`](https://github.co
 
 | Item | State |
 |------|-------|
-| Top-level API | `On`, `Between`, `YearHolidays`, `NextHolidays`, `AnyHolidaysDuringWorkWeek`, `AvailableRegions` |
+| Top-level API | `On`, `Between`, `YearHolidays`, `NextHolidays`, `AnyHolidaysDuringWorkWeek`, `CacheBetween`, `ResetCache`, `AvailableRegions` |
 | Upstream definitions | Pinned to `v7.0.0` (submodule) |
 | Regions generating | 79 of 79 country/institution YAMLs |
 | Test cases passing | 2002 / 2002 generated tests (100% green; `make test` clean) |

@@ -147,6 +147,75 @@ func TestAnyHolidaysDuringWorkWeek_SundayUsesFollowingWeek(t *testing.T) {
 	}
 }
 
+func TestCacheBetween_PopulatesAndReturnsSameResults(t *testing.T) {
+	holidays.ResetCache()
+	defer holidays.ResetCache()
+	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
+	opts := holidays.Options{Regions: []string{"us"}}
+
+	uncached, err := holidays.Between(from, to, opts)
+	if err != nil {
+		t.Fatalf("uncached Between: %v", err)
+	}
+
+	if err := holidays.CacheBetween(from, to, opts); err != nil {
+		t.Fatalf("CacheBetween: %v", err)
+	}
+
+	cached, err := holidays.Between(from, to, opts)
+	if err != nil {
+		t.Fatalf("cached Between: %v", err)
+	}
+	if len(cached) != len(uncached) {
+		t.Fatalf("cached len=%d, uncached len=%d", len(cached), len(uncached))
+	}
+}
+
+func TestCacheBetween_OnHitsCache(t *testing.T) {
+	// CacheBetween a year, then On for a known holiday date should resolve
+	// without recomputing — verified indirectly by correctness, since Between
+	// is what On delegates to.
+	holidays.ResetCache()
+	defer holidays.ResetCache()
+	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
+	opts := holidays.Options{Regions: []string{"us"}}
+	if err := holidays.CacheBetween(from, to, opts); err != nil {
+		t.Fatalf("CacheBetween: %v", err)
+	}
+	july4 := time.Date(2026, 7, 4, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.On(july4, opts)
+	if err != nil {
+		t.Fatalf("On: %v", err)
+	}
+	if len(hs) == 0 || hs[0].Name != "Independence Day" {
+		t.Fatalf("expected Independence Day, got %+v", hs)
+	}
+}
+
+func TestCacheBetween_NarrowerRangeReturnsSubset(t *testing.T) {
+	holidays.ResetCache()
+	defer holidays.ResetCache()
+	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
+	opts := holidays.Options{Regions: []string{"us"}}
+	if err := holidays.CacheBetween(from, to, opts); err != nil {
+		t.Fatalf("CacheBetween: %v", err)
+	}
+	jul := time.Date(2026, 7, 1, 0, 0, 0, 0, time.UTC)
+	julEnd := time.Date(2026, 7, 31, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.Between(jul, julEnd, opts)
+	if err != nil {
+		t.Fatalf("Between: %v", err)
+	}
+	for _, h := range hs {
+		if h.Date.Before(jul) || h.Date.After(julEnd) {
+			t.Fatalf("date %s outside requested range", h.Date.Format("2006-01-02"))
+		}
+	}
+}
+
 func TestNextHolidays_ResultsSortedAscending(t *testing.T) {
 	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 	hs, err := holidays.NextHolidays(from, 50, holidays.Options{Regions: []string{"us", "ca"}})

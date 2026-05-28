@@ -13,48 +13,25 @@ import (
 )
 
 // On returns every holiday matching the given options on the calendar date of `date`.
+// Mirrors Ruby's Holidays.on, which delegates to Holidays.between(date, date),
+// so a cached range covering `date` will satisfy this call from the cache.
 func On(date time.Time, opts Options) ([]Holiday, error) {
-	resolved, err := engine.ResolveYear(date.Year(), engine.ResolveOptions{
-		Regions:  opts.Regions,
-		Informal: opts.Informal,
-		Observed: opts.Observed,
-	})
-	if err != nil {
-		return nil, err
-	}
-	var out []Holiday
-	for _, r := range resolved {
-		if sameDay(r.Date, date) {
-			out = append(out, Holiday(r))
-		}
-	}
-	return out, nil
+	return Between(date, date, opts)
 }
 
 // Between returns every holiday matching the given options whose date falls in
-// [start, end] (inclusive on both ends, compared by calendar day).
+// [start, end] (inclusive on both ends, compared by calendar day). If a previous
+// CacheBetween call covers [start, end] for the same options, the result is
+// returned from the cache.
 func Between(start, end time.Time, opts Options) ([]Holiday, error) {
 	if end.Before(start) {
 		return nil, fmt.Errorf("holidays.Between: end %s is before start %s",
 			end.Format("2006-01-02"), start.Format("2006-01-02"))
 	}
-	var out []Holiday
-	for y := start.Year(); y <= end.Year(); y++ {
-		resolved, err := engine.ResolveYear(y, engine.ResolveOptions{
-			Regions:  opts.Regions,
-			Informal: opts.Informal,
-			Observed: opts.Observed,
-		})
-		if err != nil {
-			return nil, err
-		}
-		for _, r := range resolved {
-			if inRange(r.Date, start, end) {
-				out = append(out, Holiday(r))
-			}
-		}
+	if hs, ok := cacheFind(truncateToDay(start), truncateToDay(end), opts); ok {
+		return hs, nil
 	}
-	return out, nil
+	return computeBetween(start, end, opts)
 }
 
 // YearHolidays returns every holiday matching the given options in the given year.
@@ -129,12 +106,6 @@ func AnyHolidaysDuringWorkWeek(date time.Time, opts Options) (bool, error) {
 // AvailableRegions returns every region code registered, sorted lexicographically.
 func AvailableRegions() []string {
 	return engine.AvailableRegions()
-}
-
-func sameDay(a, b time.Time) bool {
-	ay, am, ad := a.Date()
-	by, bm, bd := b.Date()
-	return ay == by && am == bm && ad == bd
 }
 
 func inRange(d, start, end time.Time) bool {
