@@ -6,6 +6,7 @@ package holidays
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/ppeble/go-holidays/pkg/engine"
@@ -71,6 +72,58 @@ func YearHolidays(year int, opts Options) ([]Holiday, error) {
 		out[i] = Holiday(r)
 	}
 	return out, nil
+}
+
+// NextHolidays returns the next `count` holidays starting on or after `from`,
+// scanning a fixed 12-month forward window. Mirrors the upstream Ruby gem's
+// Holidays.next_holidays: if fewer than `count` holidays exist in the window,
+// returns fewer; results are sorted by date ascending.
+func NextHolidays(from time.Time, count int, opts Options) ([]Holiday, error) {
+	if count <= 0 {
+		return nil, fmt.Errorf("holidays.NextHolidays: count must be positive, got %d", count)
+	}
+	fromDay := truncateToDay(from)
+	upper := fromDay.AddDate(0, 12, 0)
+	var collected []Holiday
+	for y := fromDay.Year(); y <= upper.Year(); y++ {
+		resolved, err := engine.ResolveYear(y, engine.ResolveOptions{
+			Regions:  opts.Regions,
+			Informal: opts.Informal,
+			Observed: opts.Observed,
+		})
+		if err != nil {
+			return nil, err
+		}
+		for _, r := range resolved {
+			if r.Date.Before(fromDay) || r.Date.After(upper) {
+				continue
+			}
+			collected = append(collected, Holiday(r))
+		}
+	}
+	sort.SliceStable(collected, func(i, j int) bool {
+		return collected[i].Date.Before(collected[j].Date)
+	})
+	if len(collected) > count {
+		collected = collected[:count]
+	}
+	return collected, nil
+}
+
+// AnyHolidaysDuringWorkWeek reports whether any holiday matching opts falls
+// during the Mon-Fri work week containing `date`. Mirrors the upstream Ruby
+// gem's Holidays.any_holidays_during_work_week?: for a Saturday input, the
+// work week is the preceding Mon-Fri; for a Sunday input, the following.
+func AnyHolidaysDuringWorkWeek(date time.Time, opts Options) (bool, error) {
+	d := truncateToDay(date)
+	wday := int(d.Weekday())
+	monday := d.AddDate(0, 0, -(wday - 1))
+	friday := d.AddDate(0, 0, 5-wday)
+	hs, err := Between(monday, friday, opts)
+	if err != nil {
+		return false, err
+	}
+	return len(hs) > 0, nil
 }
 
 // AvailableRegions returns every region code registered, sorted lexicographically.

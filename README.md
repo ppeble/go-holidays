@@ -6,7 +6,7 @@ A Go port of the top-level public API of the Ruby [`holidays`](https://github.co
 
 | Item | State |
 |------|-------|
-| Top-level API | `On`, `Between`, `YearHolidays`, `AvailableRegions` |
+| Top-level API | `On`, `Between`, `YearHolidays`, `NextHolidays`, `AnyHolidaysDuringWorkWeek`, `AvailableRegions` |
 | Upstream definitions | Pinned to `v7.0.0` (submodule) |
 | Regions generating | 79 of 79 country/institution YAMLs |
 | Test cases passing | 2002 / 2002 generated tests (100% green; `make test` clean) |
@@ -69,6 +69,8 @@ make build  # produces bin/holidays and bin/gen-holidays
 bin/holidays year 2024 --regions us
 bin/holidays on 2024-07-04 --regions us
 bin/holidays between 2024-12-20 2024-12-31 --regions us
+bin/holidays next 5 2024-05-28 --regions us
+bin/holidays workweek 2024-11-25 --regions us
 bin/holidays regions
 ```
 

@@ -2,9 +2,11 @@
 //
 // Subcommands:
 //
-//	holidays on DATE       [--regions r1,r2] [--informal] [--observed]
-//	holidays between A B   [--regions r1,r2] [--informal] [--observed]
-//	holidays year YYYY     [--regions r1,r2] [--informal] [--observed]
+//	holidays on DATE         [--regions r1,r2] [--informal] [--observed]
+//	holidays between A B     [--regions r1,r2] [--informal] [--observed]
+//	holidays year YYYY       [--regions r1,r2] [--informal] [--observed]
+//	holidays next N FROM     [--regions r1,r2] [--informal] [--observed]
+//	holidays workweek DATE   [--regions r1,r2] [--informal] [--observed]
 //	holidays regions
 //
 // Dates are YYYY-M-D (single- or double-digit month/day both accepted).
@@ -43,6 +45,10 @@ func run(args []string) error {
 		return cmdBetween(rest)
 	case "year":
 		return cmdYear(rest)
+	case "next":
+		return cmdNext(rest)
+	case "workweek":
+		return cmdWorkweek(rest)
 	case "regions":
 		return cmdRegions(rest)
 	case "-h", "--help", "help":
@@ -56,9 +62,11 @@ func run(args []string) error {
 
 func printUsage() {
 	fmt.Fprintln(os.Stderr, `usage:
-  holidays on DATE       [--regions r1,r2] [--informal] [--observed]
-  holidays between A B   [--regions r1,r2] [--informal] [--observed]
-  holidays year YYYY     [--regions r1,r2] [--informal] [--observed]
+  holidays on DATE         [--regions r1,r2] [--informal] [--observed]
+  holidays between A B     [--regions r1,r2] [--informal] [--observed]
+  holidays year YYYY       [--regions r1,r2] [--informal] [--observed]
+  holidays next N FROM     [--regions r1,r2] [--informal] [--observed]
+  holidays workweek DATE   [--regions r1,r2] [--informal] [--observed]
   holidays regions`)
 }
 
@@ -115,6 +123,45 @@ func cmdYear(args []string) error {
 		return err
 	}
 	return printHolidays(hs)
+}
+
+func cmdNext(args []string) error {
+	fs := newFlags("next")
+	regions, informal, observed := bindCommonFlags(fs)
+	if err := parseLeading(fs, args, 2); err != nil {
+		return err
+	}
+	count, err := strconv.Atoi(fs.Arg(0))
+	if err != nil {
+		return fmt.Errorf("count: %w", err)
+	}
+	from, err := parseDate(fs.Arg(1))
+	if err != nil {
+		return err
+	}
+	hs, err := holidays.NextHolidays(from, count, optionsFrom(regions, informal, observed))
+	if err != nil {
+		return err
+	}
+	return printHolidays(hs)
+}
+
+func cmdWorkweek(args []string) error {
+	fs := newFlags("workweek")
+	regions, informal, observed := bindCommonFlags(fs)
+	if err := parseLeading(fs, args, 1); err != nil {
+		return err
+	}
+	d, err := parseDate(fs.Arg(0))
+	if err != nil {
+		return err
+	}
+	any, err := holidays.AnyHolidaysDuringWorkWeek(d, optionsFrom(regions, informal, observed))
+	if err != nil {
+		return err
+	}
+	fmt.Println(any)
+	return nil
 }
 
 func cmdRegions(args []string) error {
