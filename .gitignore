@@ -13,3 +13,15 @@
 
 # Build output
 /bin/
+
+# Beads / Dolt runtime files
+.dolt/
+*.db
+.beads-credential-key
+
+# Claude / beads orchestration — local only, never checked in
+.claude/
+.beads/
+.worktrees/
+CLAUDE.md
+AGENTS.md
