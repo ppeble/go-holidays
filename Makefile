@@ -2,7 +2,7 @@ GO         ?= go
 GOPATH     := $(shell $(GO) env GOPATH)
 BIN        := bin
 DEFS_REPO  := https://github.com/holidays/definitions.git
-DEFS_TAG   ?= v6.1.1
+DEFS_TAG   ?= v7.0.0
 
 .PHONY: build holidays gen-holidays vet staticcheck test generate update-definitions clean
 
