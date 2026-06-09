@@ -86,6 +86,11 @@
 # 7) available_regions
 #    req:  { "func":"available_regions" }
 #    res:  result = ["ar","at",...]   (sorted array of region-code strings)
+#    This set is DERIVED from the loaded v7.0.0 YAML (the union of every region
+#    code appearing in any holiday rule's `regions:` list), matching exactly how
+#    the Go port computes holidays.AvailableRegions(). It is deliberately NOT
+#    the gem's bundled REGIONS constant, which is baked at compile time from the
+#    gem's own v6.0.0 data and is never refreshed by load_custom.
 #
 # 8) load_custom
 #    req:  { "func":"load_custom", "files":["definitions/us.yaml"] }
@@ -105,20 +110,56 @@
 # v6.0.0; ours are v7.0.0) does NOT duplicate holidays: load_custom merges by
 # region key and overrides cleanly. Verified: loading us.yaml twice still
 # yields exactly one "Christmas Day" on 2024-12-25, and US-2024 = 10 holidays.
+#
+# Note on available_regions: load_custom ingests our v7.0.0 RULES, but it does
+# NOT refresh the gem's compile-time REGIONS constant (still v6.0.0). So the
+# region set cannot come from the gem. Instead, while loading each YAML at
+# startup we collect the union of every region code in that file's holiday
+# entries, and available_regions returns that union. This keeps it apples to
+# apples with the Go port, which derives its region set the same way.
 # ============================================================================
 
 require "holidays"
 require "json"
 require "date"
+require "yaml"
 
 DEFINITIONS_DIR = File.expand_path("../definitions", __dir__)
 
-# Ingest our v7.0.0 YAML into the gem. Returns the count of files loaded.
+# Union of every region code seen across the loaded v7.0.0 YAML rules. Populated
+# by load_all_definitions and returned (sorted) by the available_regions func,
+# matching how the Go port derives holidays.AvailableRegions().
+AVAILABLE_REGIONS = []
+
+# Collect every region code from a single definitions YAML file into +acc+.
+# Each file has months: -> month-number -> [entry, ...], and each entry carries
+# a regions: array of region-code strings.
+def collect_regions_from_file(path, acc)
+  doc = YAML.load_file(path)
+  months = doc.is_a?(Hash) ? doc["months"] : nil
+  return unless months.is_a?(Hash)
+
+  months.each_value do |entries|
+    Array(entries).each do |entry|
+      next unless entry.is_a?(Hash)
+
+      Array(entry["regions"]).each { |r| acc << r.to_s }
+    end
+  end
+end
+
+# Ingest our v7.0.0 YAML into the gem and, alongside, collect the union of every
+# region code across those files. Returns the count of files loaded.
 def load_all_definitions
   files = Dir.glob(File.join(DEFINITIONS_DIR, "*.yaml"))
               .reject { |f| File.basename(f) == "index.yaml" }
               .sort
-  files.each { |f| Holidays.load_custom(f) }
+  seen = []
+  files.each do |f|
+    Holidays.load_custom(f)
+    collect_regions_from_file(f, seen)
+  end
+  AVAILABLE_REGIONS.replace(seen.uniq.sort)
   files.size
 end
 
@@ -196,7 +237,7 @@ def dispatch(req)
     Holidays.any_holidays_during_work_week?(date, *regions_arg(req), *option_flags(req))
 
   when "available_regions"
-    Holidays.available_regions.map(&:to_s).sort
+    AVAILABLE_REGIONS.dup
 
   when "load_custom"
     files = Array(req.fetch("files"))
