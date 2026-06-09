@@ -51,6 +51,34 @@ func YearHolidays(year int, opts Options) ([]Holiday, error) {
 	return out, nil
 }
 
+// YearHolidaysFrom returns every holiday matching the given options from `from`
+// (truncated to its UTC calendar day) through Dec 31 of `from`'s year, sorted by
+// date ascending. Mirrors the upstream Ruby gem's Holidays.year_holidays(options,
+// from_date): a single-year window with no cross-year span.
+func YearHolidaysFrom(from time.Time, opts Options) ([]Holiday, error) {
+	fromDay := truncateToDay(from)
+	upper := time.Date(fromDay.Year(), 12, 31, 0, 0, 0, 0, fromDay.Location())
+	resolved, err := engine.ResolveYear(fromDay.Year(), engine.ResolveOptions{
+		Regions:  opts.Regions,
+		Informal: opts.Informal,
+		Observed: opts.Observed,
+	})
+	if err != nil {
+		return nil, err
+	}
+	var out []Holiday
+	for _, r := range resolved {
+		if r.Date.Before(fromDay) || r.Date.After(upper) {
+			continue
+		}
+		out = append(out, Holiday(r))
+	}
+	sort.SliceStable(out, func(i, j int) bool {
+		return out[i].Date.Before(out[j].Date)
+	})
+	return out, nil
+}
+
 // NextHolidays returns the next `count` holidays starting on or after `from`,
 // scanning a fixed 12-month forward window. Mirrors the upstream Ruby gem's
 // Holidays.next_holidays: if fewer than `count` holidays exist in the window,
