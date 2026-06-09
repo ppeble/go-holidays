@@ -54,24 +54,32 @@ func YearHolidays(year int, opts Options) ([]Holiday, error) {
 // YearHolidaysFrom returns every holiday matching the given options from `from`
 // (truncated to its UTC calendar day) through Dec 31 of `from`'s year, sorted by
 // date ascending. Mirrors the upstream Ruby gem's Holidays.year_holidays(options,
-// from_date): a single-year window with no cross-year span.
+// from_date), which clips a 12-month forward window to Dec 31: this includes
+// next-year holidays whose observed date shifts back on or before Dec 31 of
+// `from`'s year (for example New Year's Day observed on Dec 31). Resolving both
+// `from`'s year and the following year, then applying the [fromDay, Dec31] clip,
+// captures those without duplication: a given holiday instance appears in only
+// one year's ResolveYear.
 func YearHolidaysFrom(from time.Time, opts Options) ([]Holiday, error) {
 	fromDay := truncateToDay(from)
 	upper := time.Date(fromDay.Year(), 12, 31, 0, 0, 0, 0, fromDay.Location())
-	resolved, err := engine.ResolveYear(fromDay.Year(), engine.ResolveOptions{
+	resolveOpts := engine.ResolveOptions{
 		Regions:  opts.Regions,
 		Informal: opts.Informal,
 		Observed: opts.Observed,
-	})
-	if err != nil {
-		return nil, err
 	}
 	var out []Holiday
-	for _, r := range resolved {
-		if r.Date.Before(fromDay) || r.Date.After(upper) {
-			continue
+	for _, year := range []int{fromDay.Year(), fromDay.Year() + 1} {
+		resolved, err := engine.ResolveYear(year, resolveOpts)
+		if err != nil {
+			return nil, err
 		}
-		out = append(out, Holiday(r))
+		for _, r := range resolved {
+			if r.Date.Before(fromDay) || r.Date.After(upper) {
+				continue
+			}
+			out = append(out, Holiday(r))
+		}
 	}
 	sort.SliceStable(out, func(i, j int) bool {
 		return out[i].Date.Before(out[j].Date)

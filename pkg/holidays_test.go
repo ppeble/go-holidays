@@ -260,6 +260,29 @@ func TestYearHolidaysFrom_FromMidYearReturnsRemainder(t *testing.T) {
 	}
 }
 
+func TestYearHolidaysFrom_IncludesNextYearObservedBackIntoRange(t *testing.T) {
+	// Mirrors gem: year_holidays(["us"], Jan 1 2021, observed) => 11 holidays,
+	// including New Year's Day observed on 2021-12-31 (Jan 1 2022 is a Saturday,
+	// observed back to Friday Dec 31 2021).
+	from := time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.YearHolidaysFrom(from, holidays.Options{Regions: []string{"us"}, Observed: true})
+	if err != nil {
+		t.Fatalf("YearHolidaysFrom: %v", err)
+	}
+	if len(hs) != 11 {
+		t.Fatalf("want 11 US holidays for 2021 observed, got %d: %+v", len(hs), hs)
+	}
+	found := false
+	for _, h := range hs {
+		if h.Name == "New Year's Day" && h.Date.Format("2006-01-02") == "2021-12-31" {
+			found = true
+		}
+	}
+	if !found {
+		t.Error("expected New Year's Day observed on 2021-12-31 in results")
+	}
+}
+
 func hasNamedHoliday(hs []holidays.Holiday, name string) bool {
 	for _, h := range hs {
 		if h.Name == name {
