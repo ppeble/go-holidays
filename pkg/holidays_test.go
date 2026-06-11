@@ -69,19 +69,19 @@ func TestNextHolidays_StartsOnFromDate(t *testing.T) {
 	}
 }
 
-func TestNextHolidays_ReturnsFewerWhenWindowExhausted(t *testing.T) {
-	// Asking for 1000 holidays from a single region caps out at whatever the
-	// 12-month window provides; must not error, must not exceed cap.
+func TestNextHolidays_ReturnsAtMostCount(t *testing.T) {
+	// The scan expands forward across years until count are collected; a large
+	// count is satisfied from multiple years without error or exceeding count.
 	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 	hs, err := holidays.NextHolidays(from, 1000, holidays.Options{Regions: []string{"us"}})
 	if err != nil {
 		t.Fatalf("NextHolidays: %v", err)
 	}
-	if len(hs) >= 1000 {
-		t.Fatalf("expected fewer than 1000 holidays in a year for us; got %d", len(hs))
+	if len(hs) > 1000 {
+		t.Fatalf("expected at most 1000 holidays; got %d", len(hs))
 	}
 	if len(hs) == 0 {
-		t.Fatalf("expected some us holidays in 2026")
+		t.Fatalf("expected some us holidays from 2026")
 	}
 }
 
@@ -290,6 +290,86 @@ func hasNamedHoliday(hs []holidays.Holiday, name string) bool {
 		}
 	}
 	return false
+}
+
+// go-holidays-wdp: On/Between must include a next-year holiday whose observed
+// date shifts back into the requested range. New Year's Day Jan 1 2022 is a
+// Saturday, observed back to Friday Dec 31 2021.
+func TestOn_NextYearObservedBackIntoRange(t *testing.T) {
+	date := time.Date(2021, 12, 31, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.On(date, holidays.Options{Regions: []string{"us"}, Observed: true})
+	if err != nil {
+		t.Fatalf("On: %v", err)
+	}
+	if !hasNamedHoliday(hs, "New Year's Day") {
+		t.Fatalf("expected New Year's Day observed on 2021-12-31, got %+v", hs)
+	}
+}
+
+func TestBetween_IncludesNextYearObservedBackIntoRange(t *testing.T) {
+	start := time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
+	end := time.Date(2021, 12, 31, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.Between(start, end, holidays.Options{Regions: []string{"us"}, Observed: true})
+	if err != nil {
+		t.Fatalf("Between: %v", err)
+	}
+	found := false
+	for _, h := range hs {
+		if h.Name == "New Year's Day" && h.Date.Format("2006-01-02") == "2021-12-31" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("expected New Year's Day observed on 2021-12-31 within 2021 range, got %+v", hs)
+	}
+}
+
+// go-holidays-gmc: a multi-region request must not duplicate a holiday defined
+// for more than one of the requested regions. Informal Easter Sunday exists in
+// both us and ca; the gem emits it once.
+func TestBetween_MultiRegionDeduplicatesSharedHoliday(t *testing.T) {
+	start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+	end := time.Date(2024, 12, 31, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.Between(start, end, holidays.Options{Regions: []string{"us", "ca"}, Informal: true})
+	if err != nil {
+		t.Fatalf("Between: %v", err)
+	}
+	easter, goodFriday := 0, 0
+	for _, h := range hs {
+		switch h.Name {
+		case "Easter Sunday":
+			easter++
+		case "Good Friday":
+			goodFriday++
+		}
+	}
+	// Easter Sunday is one identical informal def in both regions: merged to one.
+	if easter != 1 {
+		t.Fatalf("expected Easter Sunday exactly once for [us ca] informal 2024, got %d", easter)
+	}
+	// Good Friday has two distinct defs (us informal vs untagged us-states/ca):
+	// they differ on type, so the gem keeps both. Dedup must not collapse them.
+	if goodFriday != 2 {
+		t.Fatalf("expected Good Friday twice for [us ca] informal 2024, got %d", goodFriday)
+	}
+}
+
+// go-holidays-6vj: NextHolidays must return the full count even when the
+// count-th holiday lands more than 12 months past `from`. From 2024-01-01 the
+// 12th US holiday is MLK Day 2025-01-20, beyond a fixed 12-month window.
+func TestNextHolidays_ExpandsBeyondTwelveMonths(t *testing.T) {
+	from := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.NextHolidays(from, 12, holidays.Options{Regions: []string{"us"}})
+	if err != nil {
+		t.Fatalf("NextHolidays: %v", err)
+	}
+	if len(hs) != 12 {
+		t.Fatalf("want 12 US holidays from 2024-01-01, got %d: %+v", len(hs), hs)
+	}
+	last := hs[11].Date.Format("2006-01-02")
+	if last != "2025-01-20" {
+		t.Fatalf("expected 12th holiday on 2025-01-20, got %s", last)
+	}
 }
 
 func TestNextHolidays_ResultsSortedAscending(t *testing.T) {

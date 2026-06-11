@@ -22,9 +22,18 @@ type ResolveOptions struct {
 }
 
 // ResolveYear walks the registered rules and returns holidays for the given year.
+// Rules that are identical except for their regions are de-duplicated, keeping
+// the first occurrence, so a multi-region request whose regions each define the
+// same holiday (for example informal Easter Sunday in both us and ca) yields it
+// once. This mirrors the gem, which merges definitions at load time when they
+// match on name, wday, mday, week, function, function_modifier, type, observed,
+// and year_ranges (HolidaysByMonth#definition_exists?); definitions that differ
+// on any of those fields (for example us Good Friday tagged informal vs the
+// untagged us-states/ca Good Friday) stay distinct.
 func ResolveYear(year int, opts ResolveOptions) ([]Resolved, error) {
 	rules := rulesFor(opts.Regions)
 	out := make([]Resolved, 0, len(rules))
+	seen := make(map[string]struct{}, len(rules))
 	for _, rule := range rules {
 		if !rule.AppliesIn(year) {
 			continue
@@ -48,9 +57,24 @@ func ResolveYear(year int, opts ResolveOptions) ([]Resolved, error) {
 				return nil, fmt.Errorf("rule %q observed=%s: %w", rule.Name, rule.Observed, err)
 			}
 		}
+		key := ruleSignature(rule)
+		if _, dup := seen[key]; dup {
+			continue
+		}
+		seen[key] = struct{}{}
 		out = append(out, Resolved{Date: date, Name: rule.Name, Regions: rule.Regions})
 	}
 	return out, nil
+}
+
+// ruleSignature renders the fields the gem uses to decide two definitions are
+// the same holiday (and merges their regions): name, wday, mday, week, function,
+// function_modifier, type, observed, and year_ranges. Regions are deliberately
+// excluded, so rules that differ only by region collapse to one Resolved.
+func ruleSignature(r definition.HolidayRule) string {
+	return fmt.Sprintf("%s|%d|%d|%d|%s|%d|%d|%s|%v",
+		r.Name, r.Wday, r.Mday, r.Week, r.Function, r.FunctionModifier,
+		r.Type, r.Observed, r.YearRanges)
 }
 
 func computeDate(rule definition.HolidayRule, year int) (time.Time, error) {
