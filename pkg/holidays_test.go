@@ -216,6 +216,82 @@ func TestCacheBetween_NarrowerRangeReturnsSubset(t *testing.T) {
 	}
 }
 
+func TestYearHolidaysFrom_FromJan1ReturnsFullYear(t *testing.T) {
+	// Mirrors gem: year_holidays(["us"], Jan 1 2024) => all 10 US holidays.
+	from := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.YearHolidaysFrom(from, holidays.Options{Regions: []string{"us"}})
+	if err != nil {
+		t.Fatalf("YearHolidaysFrom: %v", err)
+	}
+	if len(hs) != 10 {
+		t.Fatalf("want 10 US holidays for 2024, got %d", len(hs))
+	}
+	for _, name := range []string{"New Year's Day", "Independence Day", "Thanksgiving", "Christmas Day"} {
+		if !hasNamedHoliday(hs, name) {
+			t.Errorf("expected %q in full-year results", name)
+		}
+	}
+	for i := 1; i < len(hs); i++ {
+		if hs[i].Date.Before(hs[i-1].Date) {
+			t.Fatalf("results not sorted ascending at index %d", i)
+		}
+	}
+}
+
+func TestYearHolidaysFrom_FromMidYearReturnsRemainder(t *testing.T) {
+	// Mirrors gem: year_holidays(["us"], Nov 15 2024) => only Thanksgiving
+	// (2024-11-28) and Christmas (2024-12-25).
+	from := time.Date(2024, 11, 15, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.YearHolidaysFrom(from, holidays.Options{Regions: []string{"us"}})
+	if err != nil {
+		t.Fatalf("YearHolidaysFrom: %v", err)
+	}
+	if len(hs) != 2 {
+		t.Fatalf("want exactly 2 holidays after Nov 15 2024, got %d: %+v", len(hs), hs)
+	}
+	if got, want := hs[0].Date.Format("2006-01-02"), "2024-11-28"; got != want {
+		t.Errorf("hs[0] date: got %s, want %s", got, want)
+	}
+	if got, want := hs[1].Date.Format("2006-01-02"), "2024-12-25"; got != want {
+		t.Errorf("hs[1] date: got %s, want %s", got, want)
+	}
+	if hasNamedHoliday(hs, "New Year's Day") {
+		t.Error("New Year's Day must be absent when starting from Nov 15")
+	}
+}
+
+func TestYearHolidaysFrom_IncludesNextYearObservedBackIntoRange(t *testing.T) {
+	// Mirrors gem: year_holidays(["us"], Jan 1 2021, observed) => 11 holidays,
+	// including New Year's Day observed on 2021-12-31 (Jan 1 2022 is a Saturday,
+	// observed back to Friday Dec 31 2021).
+	from := time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.YearHolidaysFrom(from, holidays.Options{Regions: []string{"us"}, Observed: true})
+	if err != nil {
+		t.Fatalf("YearHolidaysFrom: %v", err)
+	}
+	if len(hs) != 11 {
+		t.Fatalf("want 11 US holidays for 2021 observed, got %d: %+v", len(hs), hs)
+	}
+	found := false
+	for _, h := range hs {
+		if h.Name == "New Year's Day" && h.Date.Format("2006-01-02") == "2021-12-31" {
+			found = true
+		}
+	}
+	if !found {
+		t.Error("expected New Year's Day observed on 2021-12-31 in results")
+	}
+}
+
+func hasNamedHoliday(hs []holidays.Holiday, name string) bool {
+	for _, h := range hs {
+		if h.Name == name {
+			return true
+		}
+	}
+	return false
+}
+
 func TestNextHolidays_ResultsSortedAscending(t *testing.T) {
 	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 	hs, err := holidays.NextHolidays(from, 50, holidays.Options{Regions: []string{"us", "ca"}})
