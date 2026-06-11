@@ -29,6 +29,11 @@ test: vet
 # checked out (the oracle loads our v7.0.0 YAML into the gem via load_custom).
 # See parity/README.md for the design and prerequisites.
 parity:
+	@ls definitions/*.yaml >/dev/null 2>&1 || { \
+		echo "error: definitions/ submodule is empty; the oracle would load no v7.0.0 YAML and every region would mismatch." >&2; \
+		echo "Run: git submodule update --init definitions" >&2; \
+		exit 1; \
+	}
 	$(GO) test -tags parity ./parity/...
 
 generate: gen-holidays
