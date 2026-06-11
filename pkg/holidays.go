@@ -87,31 +87,44 @@ func YearHolidaysFrom(from time.Time, opts Options) ([]Holiday, error) {
 	return out, nil
 }
 
-// NextHolidays returns the next `count` holidays starting on or after `from`,
-// scanning a fixed 12-month forward window. Mirrors the upstream Ruby gem's
-// Holidays.next_holidays: if fewer than `count` holidays exist in the window,
-// returns fewer; results are sorted by date ascending.
+// nextHolidaysMaxForwardYears bounds the forward scan in NextHolidays so a
+// region with too few holidays cannot loop unbounded; the loop stops once it
+// has collected `count` holidays or has scanned this many years past `from`.
+const nextHolidaysMaxForwardYears = 100
+
+// NextHolidays returns the next `count` holidays on or after `from`, sorted by
+// date ascending. Mirrors the upstream Ruby gem's Holidays.next_holidays: it
+// keeps resolving forward, year by year, accumulating holidays with date >=
+// `from` until at least `count` are gathered, then truncates to `count`. Unlike
+// a fixed 12-month window, this returns the full `count` even when the count-th
+// holiday lands more than a year out (for example a January holiday relative to
+// a January start). If the region has fewer than `count` holidays within the
+// safety cap, it returns however many were found.
 func NextHolidays(from time.Time, count int, opts Options) ([]Holiday, error) {
 	if count <= 0 {
 		return nil, fmt.Errorf("holidays.NextHolidays: count must be positive, got %d", count)
 	}
 	fromDay := truncateToDay(from)
-	upper := fromDay.AddDate(0, 12, 0)
+	resolveOpts := engine.ResolveOptions{
+		Regions:  opts.Regions,
+		Informal: opts.Informal,
+		Observed: opts.Observed,
+	}
 	var collected []Holiday
-	for y := fromDay.Year(); y <= upper.Year(); y++ {
-		resolved, err := engine.ResolveYear(y, engine.ResolveOptions{
-			Regions:  opts.Regions,
-			Informal: opts.Informal,
-			Observed: opts.Observed,
-		})
+	startYear := fromDay.Year()
+	for offset := 0; offset <= nextHolidaysMaxForwardYears; offset++ {
+		resolved, err := engine.ResolveYear(startYear+offset, resolveOpts)
 		if err != nil {
 			return nil, err
 		}
 		for _, r := range resolved {
-			if r.Date.Before(fromDay) || r.Date.After(upper) {
+			if r.Date.Before(fromDay) {
 				continue
 			}
 			collected = append(collected, Holiday(r))
+		}
+		if len(collected) >= count {
+			break
 		}
 	}
 	sort.SliceStable(collected, func(i, j int) bool {

@@ -109,7 +109,13 @@ func computeBetween(start, end time.Time, opts Options) ([]Holiday, error) {
 			end.Format("2006-01-02"), start.Format("2006-01-02"))
 	}
 	var out []Holiday
-	for y := start.Year(); y <= end.Year(); y++ {
+	// Resolve one year past end.Year() as well, then clip to [start, end]: a
+	// next-year holiday whose observed date shifts back into range (for example
+	// New Year's Day Jan 1 observed on the preceding Dec 31) lives in the
+	// following year's ResolveYear. The inRange clip keeps only in-window dates,
+	// and a given holiday instance appears in only one year's ResolveYear, so
+	// there is no duplication. Mirrors the gem's forward-windowed between.
+	for y := start.Year(); y <= end.Year()+1; y++ {
 		resolved, err := engine.ResolveYear(y, engine.ResolveOptions{
 			Regions:  opts.Regions,
 			Informal: opts.Informal,
