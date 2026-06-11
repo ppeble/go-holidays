@@ -4,7 +4,7 @@ BIN        := bin
 DEFS_REPO  := https://github.com/holidays/definitions.git
 DEFS_TAG   ?= v7.0.0
 
-.PHONY: build holidays gen-holidays vet staticcheck test generate update-definitions clean
+.PHONY: build holidays gen-holidays vet staticcheck test parity generate update-definitions clean
 
 build: holidays gen-holidays
 
@@ -23,6 +23,13 @@ staticcheck:
 
 test: vet
 	$(GO) test ./...
+
+# parity runs the Ruby<->Go comparison suite (build-tagged, excluded from `test`).
+# Requires Ruby and the `holidays` gem installed, plus the `definitions/` submodule
+# checked out (the oracle loads our v7.0.0 YAML into the gem via load_custom).
+# See parity/README.md for the design and prerequisites.
+parity:
+	$(GO) test -tags parity ./parity/...
 
 generate: gen-holidays
 	$(BIN)/gen-holidays -in definitions -out pkg/definitions
