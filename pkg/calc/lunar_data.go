@@ -481,7 +481,7 @@ func calendarYearInfoForRegion(region string) [][]int {
 	switch region {
 	case "kr":
 		return koreanLunarYearInfo
-	case "vi":
+	case "vn":
 		return vietnameseLunarYearInfo
 	case "hk":
 		return chineseLunarYearInfo
