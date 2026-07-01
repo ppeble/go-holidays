@@ -52,9 +52,10 @@ type MethodCall struct {
 }
 
 type rawRoot struct {
-	Months  map[int][]rawRule    `yaml:"months"`
-	Methods map[string]rawMethod `yaml:"methods"`
-	Tests   []rawTest            `yaml:"tests"`
+	Months      map[int][]rawRule    `yaml:"months"`
+	Methods     map[string]rawMethod `yaml:"methods"`
+	Tests       []rawTest            `yaml:"tests"`
+	RegionNames map[string]string    `yaml:"region_names"`
 }
 
 type rawRule struct {
