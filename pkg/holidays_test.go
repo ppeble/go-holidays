@@ -283,6 +283,33 @@ func TestYearHolidaysFrom_IncludesNextYearObservedBackIntoRange(t *testing.T) {
 	}
 }
 
+// go-holidays-egm: a lunar region at the top of the lunar-table range must not
+// fail its year query just because the year+1 look-ahead cannot resolve. kr's
+// lunar tables end at 2049, so ResolveYear(2050) errors; but every 2050 result
+// is clipped out of the [Jan 1, Dec 31 2049] window anyway, so YearHolidaysFrom
+// for 2049 must succeed rather than propagating the look-ahead error.
+//
+// The assertion stays focused on egm: the call succeeds, clips to 2049, and
+// yields both a lunar (설날) and a gregorian (크리스마스) holiday. It deliberately
+// does NOT pin an exact count: kr 2049 also carries the separate go-holidays-253
+// 설날 연휴 divergence, whose resolution would change the count without bearing on
+// this look-ahead fix.
+func TestYearHolidaysFrom_LunarBoundaryLookAheadTolerant(t *testing.T) {
+	from := time.Date(2049, 1, 1, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.YearHolidaysFrom(from, holidays.Options{Regions: []string{"kr"}})
+	if err != nil {
+		t.Fatalf("YearHolidaysFrom(kr, 2049): unexpected error: %v", err)
+	}
+	if !hasNamedHoliday(hs, "설날") || !hasNamedHoliday(hs, "크리스마스") {
+		t.Fatalf("expected both 설날 and 크리스마스 in kr 2049 results, got %+v", hs)
+	}
+	for _, h := range hs {
+		if h.Date.Year() != 2049 {
+			t.Errorf("result outside 2049 window: %s %s", h.Date.Format("2006-01-02"), h.Name)
+		}
+	}
+}
+
 func hasNamedHoliday(hs []holidays.Holiday, name string) bool {
 	for _, h := range hs {
 		if h.Name == name {

@@ -69,10 +69,20 @@ func YearHolidaysFrom(from time.Time, opts Options) ([]Holiday, error) {
 		Observed: opts.Observed,
 	}
 	var out []Holiday
-	for _, year := range []int{fromDay.Year(), fromDay.Year() + 1} {
+	for i, year := range []int{fromDay.Year(), fromDay.Year() + 1} {
 		resolved, err := engine.ResolveYear(year, resolveOpts)
 		if err != nil {
-			return nil, err
+			// The primary year must resolve. The following year is only a
+			// look-ahead to pull boundary-adjacent holidays whose observed date
+			// shifts back into [fromDay, Dec 31]; if it cannot resolve (e.g. a
+			// lunar region whose tables end at the primary year, so year+1 is out
+			// of range) it contributes no in-window holidays. Skip it rather than
+			// failing the whole query, matching Ruby, which never needs the
+			// look-ahead year's data to answer for the primary year.
+			if i == 0 {
+				return nil, err
+			}
+			break
 		}
 		for _, r := range resolved {
 			if r.Date.Before(fromDay) || r.Date.After(upper) {

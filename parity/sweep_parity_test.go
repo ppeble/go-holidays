@@ -57,8 +57,8 @@ func TestParity_ExhaustiveYearSweep(t *testing.T) {
 		sweepRegion(t, ora, region, &c)
 	}
 
-	t.Logf("exhaustive year sweep: %d comparisons across %d serviceable regions x %d years x %d flag combos; %d mismatches, %d known divergences, %d lunar-range skips",
-		c.comparisons, len(serviceable), years, len(corpusFlags), c.mismatches, c.knownDivs, c.lunarSkips)
+	t.Logf("exhaustive year sweep: %d comparisons across %d serviceable regions x %d years x %d flag combos; %d mismatches, %d known divergences, %d mutual lunar-boundary confirmations",
+		c.comparisons, len(serviceable), years, len(corpusFlags), c.mismatches, c.knownDivs, c.lunarBoundary)
 	if c.mismatches > maxReportedMismatches {
 		t.Errorf("year sweep: %d mismatches total (%d reported above); see summary", c.mismatches, maxReportedMismatches)
 	}
@@ -66,7 +66,7 @@ func TestParity_ExhaustiveYearSweep(t *testing.T) {
 
 // sweepCounters accumulates the sweep tally across all regions.
 type sweepCounters struct {
-	comparisons, mismatches, lunarSkips, knownDivs int
+	comparisons, mismatches, lunarBoundary, knownDivs int
 }
 
 // sweepRegion compares Go against the shared oracle for one region across the
@@ -86,12 +86,23 @@ func compareYear(t *testing.T, ro *oracle, region string, year int, from string,
 	t.Helper()
 	hs, err := holidays.YearHolidaysFrom(mustDate(from), opts([]string{region}, f))
 	if err != nil {
-		// Go's lunar conversion tables stop short of 2050, so lunar regions (hk, kr,
-		// vn) error at the top of the range needing the 2050 lunar new year. That is
-		// a known Go data limitation (go-holidays-egm), not a parity failure; count
-		// and skip it.
+		// Go's lunar tables stop at 2049, so lunar regions (hk, kr, vn) cannot
+		// resolve the primary year 2050. This is a genuine MUTUAL boundary: the
+		// gem's tables end at the same year, so Ruby is equally undefined here.
+		// Rather than blindly skipping, confirm it: query the oracle and require
+		// it to ALSO error. If Ruby instead resolves the year, Go has a real gap.
+		// (go-holidays-egm; the year+1 look-ahead at 2049 is handled in Go's
+		// YearHolidaysFrom, so only the 2050 primary year reaches here.)
 		if isLunarRangeError(err) {
-			c.lunarSkips++
+			if _, oerr := ro.holidayList(request{
+				Func: "year_holidays", From: from, Regions: []string{region},
+				Informal: f.informal, Observed: f.observed,
+			}); oerr != nil {
+				c.lunarBoundary++
+				return
+			}
+			t.Errorf("lunar boundary [region=%s year=%d %s]: Go errored (%v) but Ruby resolved the year",
+				region, year, f.name, err)
 			return
 		}
 		t.Errorf("YearHolidaysFrom(%s, %s, %s) Go error: %v", from, region, f.name, err)
@@ -132,8 +143,9 @@ func compareYear(t *testing.T, ro *oracle, region string, year int, from string,
 }
 
 // isLunarRangeError reports whether a Go error is the lunar-table upper-bound
-// limit (LunarToSolar out of range), which lunar regions hit near 2050. This is
-// a known Go data limitation tracked in a follow-up bead, not a parity failure.
+// limit (LunarToSolar out of range), which lunar regions hit at the primary year
+// 2050. The gem's tables end at the same year, so compareYear confirms it as a
+// mutual boundary rather than treating it as a Go-only failure.
 func isLunarRangeError(err error) bool {
 	return err != nil && strings.Contains(err.Error(), "calc.LunarToSolar") &&
 		strings.Contains(err.Error(), "out of range")
