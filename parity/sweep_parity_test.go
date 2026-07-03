@@ -47,19 +47,14 @@ func TestParity_ExhaustiveYearSweep(t *testing.T) {
 
 	years := sweepYearEnd - sweepYearStart + 1
 	var c sweepCounters
-	// Use a FRESH oracle per region. The installed gem accumulates spurious state
-	// across many load_custom-backed queries (it both duplicates and injects
-	// holidays once it has serviced enough regions, an oracle-side artifact, not a
-	// Go bug). Within a single region's 324 queries the gem stays stable, so a
-	// per-region restart (cheap: startup ~0.3s) eliminates the cross-region drift
-	// while keeping the comparison honest.
+	// Reuse the single shared oracle started in TestMain. Older gems (9.1.0)
+	// accumulated cross-region global-state pollution across many load_custom
+	// queries, which once forced a fresh per-region oracle (spawn ruby + reload
+	// all 80 YAML, ~287x) and made this sweep take minutes. Gem 9.1.2 (#344,
+	// region load-order) and 10.0.0 (#352, function_modifier merge) fixed that,
+	// so one long-lived oracle produces the same tally in a fraction of the time.
 	for _, region := range serviceable {
-		ro, err := startOracle()
-		if err != nil {
-			t.Fatalf("start oracle for region %s: %v", region, err)
-		}
-		sweepRegion(t, ro, region, &c)
-		_ = ro.Close()
+		sweepRegion(t, ora, region, &c)
 	}
 
 	t.Logf("exhaustive year sweep: %d comparisons across %d serviceable regions x %d years x %d flag combos; %d mismatches, %d known divergences, %d lunar-range skips",
@@ -74,7 +69,7 @@ type sweepCounters struct {
 	comparisons, mismatches, lunarSkips, knownDivs int
 }
 
-// sweepRegion compares Go against the (fresh) oracle for one region across the
+// sweepRegion compares Go against the shared oracle for one region across the
 // full year span and all flag combinations.
 func sweepRegion(t *testing.T, ro *oracle, region string, c *sweepCounters) {
 	t.Helper()
@@ -92,7 +87,7 @@ func compareYear(t *testing.T, ro *oracle, region string, year int, from string,
 	hs, err := holidays.YearHolidaysFrom(mustDate(from), opts([]string{region}, f))
 	if err != nil {
 		// Go's lunar conversion tables stop short of 2050, so lunar regions (hk, kr,
-		// vi) error at the top of the range needing the 2050 lunar new year. That is
+		// vn) error at the top of the range needing the 2050 lunar new year. That is
 		// a known Go data limitation (go-holidays-egm), not a parity failure; count
 		// and skip it.
 		if isLunarRangeError(err) {
@@ -102,10 +97,12 @@ func compareYear(t *testing.T, ro *oracle, region string, year int, from string,
 		t.Errorf("YearHolidaysFrom(%s, %s, %s) Go error: %v", from, region, f.name, err)
 		return
 	}
-	// Dedupe both sides on (date, name) as a secondary guard: the per-region fresh
-	// oracle prevents cross-region drift, and comparing as sets rather than
-	// multisets absorbs any residual intra-region duplication without hiding a
-	// genuinely missing or extra distinct holiday.
+	// Compare Go and oracle output as (date, name) SETS, not multisets. The gem
+	// emits benign duplicate rows for some region/flag combos (e.g. br informal
+	// years: Ruby yields 13 rows to Go's 12 for the same distinct holidays), an
+	// artifact of load_custom merge semantics, not a genuinely missing or extra
+	// holiday. This dedupe is empirically required: dropping it surfaces 7290 such
+	// spurious mismatches. It is unrelated to the (now removed) per-region oracle.
 	got := dedupePairs(normalizeGo(hs))
 	want, err := ro.holidayList(request{
 		Func: "year_holidays", From: from, Regions: []string{region},
@@ -142,8 +139,9 @@ func isLunarRangeError(err error) bool {
 		strings.Contains(err.Error(), "out of range")
 }
 
-// dedupePairs collapses a sorted pair slice to distinct (date, name) entries.
-// Used to compare Go and oracle output as sets; see the call site for why.
+// dedupePairs collapses a sorted pair slice to distinct (date, name) entries, so
+// compareYear can compare Go and oracle output as sets; see that call site for
+// why the gem's benign duplicate rows make this necessary.
 func dedupePairs(ps []pair) []pair {
 	if len(ps) < 2 {
 		return ps
@@ -180,9 +178,9 @@ func knownSweepDivergence(region string, onlyGo, onlyRuby []pair) bool {
 }
 
 // knownDivergentHoliday lists the (region, holiday) pairs that genuinely disagree
-// between Go and the gem over identical v7.0.0 data, found by this sweep and each
-// tracked by a follow-up bug bead. These reproduce against a fresh oracle (they
-// are not the global-state artifact handled by the per-region restart + dedupe).
+// between Go and the gem over identical v8.0.0 data, found by this sweep and each
+// tracked by a follow-up bug bead. These reproduce against the shared oracle on
+// gem 11.0.0 (they are genuine engine divergences, not a gem global-state artifact).
 func knownDivergentHoliday(region, name string) bool {
 	switch {
 	case name == "Boxing Day" && (region == "au_nt" || region == "au_tas" ||
