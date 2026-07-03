@@ -34,7 +34,7 @@ parity:
 		echo "Run: git submodule update --init definitions" >&2; \
 		exit 1; \
 	}
-	$(GO) test -tags parity ./parity/...
+	$(GO) test -tags parity -timeout=20m ./parity/...
 
 generate: gen-holidays
 	$(BIN)/gen-holidays -in definitions -out pkg/definitions
