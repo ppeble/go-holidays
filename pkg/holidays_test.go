@@ -310,6 +310,36 @@ func TestYearHolidaysFrom_LunarBoundaryLookAheadTolerant(t *testing.T) {
 	}
 }
 
+// go-holidays-253: Seollal (설날) spans three lunar days, the eve being a
+// month:12/mday:30 rule. lunar_to_solar(Y,12,30) lands in January of Y+1, and
+// the gem rebuilds it as Date.civil(Y, month, day) to pull that eve back into
+// year Y. So Ruby emits two 설날 연휴 per year (Jan eve + Feb day-after); Go must
+// match. For 2022 the eve is 2022-01-21 and the day-after is 2022-02-02.
+func TestYearHolidaysFrom_KRSeollalEmitsBothHolidayDays(t *testing.T) {
+	from := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.YearHolidaysFrom(from, holidays.Options{Regions: []string{"kr"}})
+	if err != nil {
+		t.Fatalf("YearHolidaysFrom(kr, 2022): %v", err)
+	}
+	var got []string
+	for _, h := range hs {
+		if h.Name == "설날 연휴" {
+			got = append(got, h.Date.Format("2006-01-02"))
+		}
+	}
+	want := map[string]bool{"2022-01-21": false, "2022-02-02": false}
+	for _, d := range got {
+		if _, ok := want[d]; ok {
+			want[d] = true
+		}
+	}
+	for d, found := range want {
+		if !found {
+			t.Errorf("expected 설날 연휴 on %s; got 설날 연휴 dates %v", d, got)
+		}
+	}
+}
+
 func hasNamedHoliday(hs []holidays.Holiday, name string) bool {
 	for _, h := range hs {
 		if h.Name == name {

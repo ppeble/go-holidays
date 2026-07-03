@@ -200,8 +200,6 @@ func knownDivergentHoliday(region, name string) bool {
 		return true // go-holidays-coi: AU Boxing Day observed-cascade off-by-one
 	case name == "Proclamation Day" && region == "au_sa":
 		return true // go-holidays-coi: au_sa Proclamation Day observed-cascade off-by-one
-	case region == "kr" && name == "설날 연휴":
-		return true // go-holidays-253: kr Seollal emits one occurrence vs Ruby's two
 	case region == "ph" && name == "National Heroes Day":
 		return true // go-holidays-dz9: ph National Heroes Day date rule divergence
 	}

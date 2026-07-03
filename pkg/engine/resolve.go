@@ -112,6 +112,15 @@ func computeDate(rule definition.HolidayRule, year int) (time.Time, error) {
 	if rule.FunctionModifier != 0 {
 		base = base.AddDate(0, 0, rule.FunctionModifier)
 	}
+	if rule.HasFunction() && !base.IsZero() {
+		// Mirror the gem (finder/context/search.rb: Date.civil(year, result.month,
+		// result.mday)): for a function holiday, keep the computed month/day but
+		// force the resolution year. This is a no-op for mid-year results (they
+		// already fall in `year`); it pulls a lunar month-12 eve, whose solar date
+		// lands in the next gregorian year, back into `year`, so a region like kr
+		// emits both Seollal holiday days (eve + day-after) as the gem does.
+		base = time.Date(year, base.Month(), base.Day(), 0, 0, 0, 0, time.UTC)
+	}
 	return base, nil
 }
 
