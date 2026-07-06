@@ -195,11 +195,6 @@ func knownSweepDivergence(region string, onlyGo, onlyRuby []pair) bool {
 // gem 11.0.0 (they are genuine engine divergences, not a gem global-state artifact).
 func knownDivergentHoliday(region, name string) bool {
 	switch {
-	case name == "Boxing Day" && (region == "au_nt" || region == "au_tas" ||
-		region == "au_tas_north" || region == "au_tas_south"):
-		return true // go-holidays-coi: AU Boxing Day observed-cascade off-by-one
-	case name == "Proclamation Day" && region == "au_sa":
-		return true // go-holidays-coi: au_sa Proclamation Day observed-cascade off-by-one
 	case region == "ph" && name == "National Heroes Day":
 		return true // go-holidays-dz9: ph National Heroes Day date rule divergence
 	}
