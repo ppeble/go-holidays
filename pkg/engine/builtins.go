@@ -33,18 +33,16 @@ func init() {
 		return calc.ToWeekdayIfBoxingWeekend(a.Date), nil
 	})
 	RegisterMethod("to_weekday_if_boxing_weekend_from_year", func(a MethodArgs) (time.Time, error) {
+		// Gem defines this as to_tuesday_if_sunday_or_monday_if_saturday(Dec26):
+		// Sat->+2, Sun->+2, Mon unchanged. (au_tas/au_nt Boxing Day)
 		boxing := time.Date(a.Year, time.December, 26, 0, 0, 0, 0, time.UTC)
-		return calc.ToWeekdayIfBoxingWeekend(boxing), nil
+		return calc.ToTuesdayIfSundayOrMondayIfSaturday(boxing), nil
 	})
 	RegisterMethod("to_weekday_if_boxing_weekend_from_year_or_to_tuesday_if_monday", func(a MethodArgs) (time.Time, error) {
+		// Despite the name, the gem defines this as to_weekday_if_boxing_weekend(Dec26):
+		// Sat->+2, Sun->+2, Mon->+1. (au_sa Proclamation Day)
 		boxing := time.Date(a.Year, time.December, 26, 0, 0, 0, 0, time.UTC)
-		switch boxing.Weekday() {
-		case time.Saturday:
-			return boxing.AddDate(0, 0, 2), nil
-		case time.Sunday, time.Monday:
-			return boxing.AddDate(0, 0, 1), nil
-		}
-		return boxing, nil
+		return calc.ToWeekdayIfBoxingWeekend(boxing), nil
 	})
 	RegisterMethod("to_tuesday_if_sunday_or_monday_if_saturday", func(a MethodArgs) (time.Time, error) {
 		return calc.ToTuesdayIfSundayOrMondayIfSaturday(a.Date), nil

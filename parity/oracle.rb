@@ -5,11 +5,11 @@
 #
 # Ruby "oracle" for apples-to-apples parity testing against the Go port.
 #
-# It runs the installed `holidays` gem (CODE) but loads OUR v7.0.0 region YAML
-# (DATA) from the `definitions/` submodule via Holidays.load_custom on startup.
-# So the holiday RULES are identical to what the Go port compiles, and any
-# difference in output is a real behavioural difference in the engines, not in
-# the data.
+# It runs the installed `holidays` gem (CODE, pinned to 11.0.0 via parity/Gemfile)
+# but loads OUR v8.0.0 region YAML (DATA) from the `definitions/` submodule via
+# Holidays.load_custom on startup. So the holiday RULES are identical to what the
+# Go port compiles, and any difference in output is a real behavioural difference
+# in the engines, not in the data.
 #
 # ============================================================================
 # RUN CONTRACT (stable; the Go harness in a later bead depends on this)
@@ -86,11 +86,11 @@
 # 7) available_regions
 #    req:  { "func":"available_regions" }
 #    res:  result = ["ar","at",...]   (sorted array of region-code strings)
-#    This set is DERIVED from the loaded v7.0.0 YAML (the union of every region
+#    This set is DERIVED from the loaded v8.0.0 YAML (the union of every region
 #    code appearing in any holiday rule's `regions:` list), matching exactly how
 #    the Go port computes holidays.AvailableRegions(). It is deliberately NOT
-#    the gem's bundled REGIONS constant, which is baked at compile time from the
-#    gem's own v6.0.0 data and is never refreshed by load_custom.
+#    the gem's bundled REGIONS constant, which is baked at compile time and is
+#    never refreshed by load_custom.
 #
 # 8) load_custom
 #    req:  { "func":"load_custom", "files":["definitions/us.yaml"] }
@@ -106,18 +106,24 @@
 # to definitions/ is resolved relative to this file (../definitions), so the
 # oracle can be launched from any working directory.
 #
-# Re-loading a region YAML that the gem already knew (its bundled defs are
-# v6.0.0; ours are v7.0.0) does NOT duplicate holidays: load_custom merges by
-# region key and overrides cleanly. Verified: loading us.yaml twice still
-# yields exactly one "Christmas Day" on 2024-12-25, and US-2024 = 10 holidays.
+# Re-loading a region YAML that the gem already knew does NOT duplicate holidays:
+# load_custom merges by region key and overrides cleanly. Verified: loading
+# us.yaml twice still yields exactly one "Christmas Day" on 2024-12-25, and
+# US-2024 = 10 holidays.
 #
-# Note on available_regions: load_custom ingests our v7.0.0 RULES, but it does
-# NOT refresh the gem's compile-time REGIONS constant (still v6.0.0). So the
+# Note on available_regions: load_custom ingests our v8.0.0 RULES, but it does
+# NOT refresh the gem's compile-time REGIONS constant. So the
 # region set cannot come from the gem. Instead, while loading each YAML at
 # startup we collect the union of every region code in that file's holiday
 # entries, and available_regions returns that union. This keeps it apples to
 # apples with the Go port, which derives its region set the same way.
 # ============================================================================
+
+# Activate parity/Gemfile.lock so `holidays` resolves to the pinned 11.0.0 and
+# never silently drifts to whatever is "highest installed". __dir__ is parity/,
+# so this holds no matter what working directory the harness launches us from.
+ENV["BUNDLE_GEMFILE"] ||= File.expand_path("Gemfile", __dir__)
+require "bundler/setup"
 
 require "holidays"
 require "json"
@@ -126,7 +132,7 @@ require "yaml"
 
 DEFINITIONS_DIR = File.expand_path("../definitions", __dir__)
 
-# Union of every region code seen across the loaded v7.0.0 YAML rules. Populated
+# Union of every region code seen across the loaded v8.0.0 YAML rules. Populated
 # by load_all_definitions and returned (sorted) by the available_regions func,
 # matching how the Go port derives holidays.AvailableRegions().
 AVAILABLE_REGIONS = []
@@ -148,7 +154,7 @@ def collect_regions_from_file(path, acc)
   end
 end
 
-# Ingest our v7.0.0 YAML into the gem and, alongside, collect the union of every
+# Ingest our v8.0.0 YAML into the gem and, alongside, collect the union of every
 # region code across those files. Returns the count of files loaded.
 def load_all_definitions
   files = Dir.glob(File.join(DEFINITIONS_DIR, "*.yaml"))

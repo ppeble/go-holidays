@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: unit + vet
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: make test (go vet + go test ./...)
+        run: make test
+
+  parity:
+    name: parity (corpus + exhaustive sweep)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+          working-directory: parity
+      # Runs the curated corpus plus the full 1970-2050 exhaustive sweep against
+      # the holidays gem pinned by parity/Gemfile.lock. Blocking on every PR/push
+      # per project decision; the -timeout=20m (in the Makefile parity target)
+      # covers shared runners being slower than a local box.
+      - name: make parity (Ruby oracle vs Go, full sweep)
+        run: make parity
