@@ -442,3 +442,35 @@ func TestNextHolidays_ResultsSortedAscending(t *testing.T) {
 		}
 	}
 }
+
+// go-holidays-2fc: upstream holidays master 272b549 (PR#343 / issue#396, not yet
+// in the pinned v8.0.0 definitions tag) fixes gb.yaml Christmas Day / Boxing Day
+// observed rules. In 2022 Christmas Day (Dec 25) fell on a Sunday. With the
+// pinned v8.0.0 rules (to_monday_if_weekend for Christmas, to_weekday_if_boxing_weekend
+// for Boxing Day) both the substitute Christmas Day and the actual Boxing Day
+// collide on Monday Dec 26, and no holiday is observed on Dec 27. Upstream's
+// fix (to_tuesday_if_sunday_or_monday_if_saturday for both) observes Boxing Day
+// on its actual date (Mon Dec 26, since Monday needs no substitution) and moves
+// Christmas Day's substitute to Tue Dec 27.
+func TestOn_GB_ChristmasSunday2022_ObservedDatesDoNotCollide(t *testing.T) {
+	t.Skip("go-holidays-2fc: known bug against pinned v8.0.0 gb.yaml; fails until " +
+		"the submodule is bumped past v8.0.0 (upstream master 272b549) and " +
+		"pkg/definitions/gb.go is regenerated. Remove this Skip once that lands.")
+	dec26 := time.Date(2022, 12, 26, 0, 0, 0, 0, time.UTC)
+	hs, err := holidays.On(dec26, holidays.Options{Regions: []string{"gb"}, Observed: true})
+	if err != nil {
+		t.Fatalf("On: %v", err)
+	}
+	if !hasNamedHoliday(hs, "Boxing Day") {
+		t.Errorf("expected Boxing Day observed on 2022-12-26, got %+v", hs)
+	}
+
+	dec27 := time.Date(2022, 12, 27, 0, 0, 0, 0, time.UTC)
+	hs, err = holidays.On(dec27, holidays.Options{Regions: []string{"gb"}, Observed: true})
+	if err != nil {
+		t.Fatalf("On: %v", err)
+	}
+	if !hasNamedHoliday(hs, "Christmas Day") {
+		t.Errorf("expected Christmas Day observed on 2022-12-27 (Sun 25th moved past Boxing Day), got %+v", hs)
+	}
+}
