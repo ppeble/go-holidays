@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"testing"
+
+	. "github.com/onsi/ginkgo/v2"
 
 	holidays "github.com/ppeble/go-holidays/pkg"
 )
@@ -24,44 +25,54 @@ const (
 // bury the summary under tens of thousands of lines.
 const maxReportedMismatches = 50
 
-// TestParity_ExhaustiveYearSweep is the broad equivalence proof. For every
-// region the oracle can serve (the gem resolves some, notably jp, through
-// Ruby-coded modules that load_custom cannot supply), it compares the full
-// year_holidays list from Go's YearHolidaysFrom against the oracle for every
-// year in [sweepYearStart, sweepYearEnd] under all four flag combinations.
+// registerSweepSpecs is the broad equivalence proof. For every region the
+// oracle can serve (the gem resolves some, notably jp, through Ruby-coded
+// modules that load_custom cannot supply), it compares the full year_holidays
+// list from Go's YearHolidaysFrom against the oracle for every year in
+// [sweepYearStart, sweepYearEnd] under all four flag combinations.
 //
 // It first enumerates which of AvailableRegions() the oracle can serve and
 // logs an explicit coverage tally, so skipped regions are accounted for rather
 // than silently passing. Unlike the curated corpus, this exercises every region
 // and a wide year span, turning "we checked a few cases" into "every holiday
 // each engine produces, for every serviceable region and year, matches".
-func TestParity_ExhaustiveYearSweep(t *testing.T) {
-	regions := availableRegionsSorted(t)
+//
+// Called from the single top-level Describe in parity_test.go (see the
+// comment there) so this spec keeps running last, after the shared oracle has
+// already been exercised by the curated-corpus specs, matching the original
+// go test file order.
+func registerSweepSpecs() {
+	Context("ExhaustiveYearSweep", func() {
+		It("matches the oracle for every serviceable region and year in range", func() {
+			t := GinkgoT()
+			regions := availableRegionsSorted(t)
 
-	serviceable, unsupported := partitionByOracleSupport(t, regions)
-	t.Logf("coverage: %d regions total, %d serviceable, %d oracle-unsupported",
-		len(regions), len(serviceable), len(unsupported))
-	if len(unsupported) > 0 {
-		t.Logf("oracle-unsupported regions (skipped, e.g. gem needs a Ruby-coded module): %v", unsupported)
-	}
+			serviceable, unsupported := partitionByOracleSupport(t, regions)
+			t.Logf("coverage: %d regions total, %d serviceable, %d oracle-unsupported",
+				len(regions), len(serviceable), len(unsupported))
+			if len(unsupported) > 0 {
+				t.Logf("oracle-unsupported regions (skipped, e.g. gem needs a Ruby-coded module): %v", unsupported)
+			}
 
-	years := sweepYearEnd - sweepYearStart + 1
-	var c sweepCounters
-	// Reuse the single shared oracle started in TestMain. Older gems (9.1.0)
-	// accumulated cross-region global-state pollution across many load_custom
-	// queries, which once forced a fresh per-region oracle (spawn ruby + reload
-	// all 80 YAML, ~287x) and made this sweep take minutes. Gem 9.1.2 (#344,
-	// region load-order) and 10.0.0 (#352, function_modifier merge) fixed that,
-	// so one long-lived oracle produces the same tally in a fraction of the time.
-	for _, region := range serviceable {
-		sweepRegion(t, ora, region, &c)
-	}
+			years := sweepYearEnd - sweepYearStart + 1
+			var c sweepCounters
+			// Reuse the single shared oracle started in TestMain. Older gems (9.1.0)
+			// accumulated cross-region global-state pollution across many load_custom
+			// queries, which once forced a fresh per-region oracle (spawn ruby + reload
+			// all 80 YAML, ~287x) and made this sweep take minutes. Gem 9.1.2 (#344,
+			// region load-order) and 10.0.0 (#352, function_modifier merge) fixed that,
+			// so one long-lived oracle produces the same tally in a fraction of the time.
+			for _, region := range serviceable {
+				sweepRegion(t, ora, region, &c)
+			}
 
-	t.Logf("exhaustive year sweep: %d comparisons across %d serviceable regions x %d years x %d flag combos; %d mismatches, %d known divergences, %d mutual lunar-boundary confirmations",
-		c.comparisons, len(serviceable), years, len(corpusFlags), c.mismatches, c.knownDivs, c.lunarBoundary)
-	if c.mismatches > maxReportedMismatches {
-		t.Errorf("year sweep: %d mismatches total (%d reported above); see summary", c.mismatches, maxReportedMismatches)
-	}
+			t.Logf("exhaustive year sweep: %d comparisons across %d serviceable regions x %d years x %d flag combos; %d mismatches, %d known divergences, %d mutual lunar-boundary confirmations",
+				c.comparisons, len(serviceable), years, len(corpusFlags), c.mismatches, c.knownDivs, c.lunarBoundary)
+			if c.mismatches > maxReportedMismatches {
+				t.Errorf("year sweep: %d mismatches total (%d reported above); see summary", c.mismatches, maxReportedMismatches)
+			}
+		})
+	})
 }
 
 // sweepCounters accumulates the sweep tally across all regions.
@@ -71,7 +82,7 @@ type sweepCounters struct {
 
 // sweepRegion compares Go against the shared oracle for one region across the
 // full year span and all flag combinations.
-func sweepRegion(t *testing.T, ro *oracle, region string, c *sweepCounters) {
+func sweepRegion(t GinkgoTInterface, ro *oracle, region string, c *sweepCounters) {
 	t.Helper()
 	for year := sweepYearStart; year <= sweepYearEnd; year++ {
 		from := fmt.Sprintf("%04d-01-01", year)
@@ -82,7 +93,7 @@ func sweepRegion(t *testing.T, ro *oracle, region string, c *sweepCounters) {
 }
 
 // compareYear runs one (region, year, flag) comparison and updates the tally.
-func compareYear(t *testing.T, ro *oracle, region string, year int, from string, f flagCombo, c *sweepCounters) {
+func compareYear(t GinkgoTInterface, ro *oracle, region string, year int, from string, f flagCombo, c *sweepCounters) {
 	t.Helper()
 	hs, err := holidays.YearHolidaysFrom(mustDate(from), opts([]string{region}, f))
 	if err != nil {
@@ -207,7 +218,7 @@ func knownDivergentHoliday(region, name string) bool {
 
 // availableRegionsSorted returns the Go region universe, sorted for stable
 // iteration and reporting.
-func availableRegionsSorted(t *testing.T) []string {
+func availableRegionsSorted(t GinkgoTInterface) []string {
 	t.Helper()
 	regions := append([]string(nil), holidays.AvailableRegions()...)
 	sort.Strings(regions)
@@ -217,7 +228,7 @@ func availableRegionsSorted(t *testing.T) []string {
 // partitionByOracleSupport probes each region once (a single year_holidays
 // call) and splits the set into regions the oracle can serve and those it
 // cannot (the gem raising "uninitialized constant Holidays::...").
-func partitionByOracleSupport(t *testing.T, regions []string) (serviceable, unsupported []string) {
+func partitionByOracleSupport(t GinkgoTInterface, regions []string) (serviceable, unsupported []string) {
 	t.Helper()
 	const probeFrom = "2024-01-01"
 	for _, region := range regions {
