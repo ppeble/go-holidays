@@ -3,169 +3,114 @@
 package definitions_test
 
 import (
-	"testing"
+	"fmt"
 
 	holidays "github.com/ppeble/go-holidays/pkg"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
-func TestTH_000_วนจกร(t *testing.T) {
-	dates := []string{"2019-04-06"}
-	opts := holidays.Options{Regions: []string{"th"}, Informal: true}
-	for _, s := range dates {
+var _ = Describe("th", func() {
+	DescribeTable("000_วนจกร", func(s string) {
+		opts := holidays.Options{Regions: []string{"th"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "วันจักรี") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันจักรี", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "วันจักรี")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันจักรี", hols))
+	},
+		Entry("2019-04-06", "2019-04-06"),
+	)
 
-func TestTH_001_วนสงกรานต(t *testing.T) {
-	dates := []string{"2019-04-13", "2019-04-14", "2019-04-15"}
-	opts := holidays.Options{Regions: []string{"th"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("001_วนสงกรานต", func(s string) {
+		opts := holidays.Options{Regions: []string{"th"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "วันสงกรานต์") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันสงกรานต์", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "วันสงกรานต์")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันสงกรานต์", hols))
+	},
+		Entry("2019-04-13", "2019-04-13"),
+		Entry("2019-04-14", "2019-04-14"),
+		Entry("2019-04-15", "2019-04-15"),
+	)
 
-func TestTH_002_วนเฉลมพระชนมพรรษาสมเดจพระเจาอยหวมหาวชราลงกรณบดนทรเทพยวรางกร(t *testing.T) {
-	dates := []string{"2019-07-28"}
-	opts := holidays.Options{Regions: []string{"th"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("002_วนเฉลมพระชนมพรรษาสมเดจพระเจาอยหวมหาวชราลงกรณบดนทรเทพยวรางกร", func(s string) {
+		opts := holidays.Options{Regions: []string{"th"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "วันเฉลิมพระชนมพรรษาสมเด็จพระเจ้าอยู่หัวมหาวชิราลงกรณ บดินทรเทพยวรางกูร") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันเฉลิมพระชนมพรรษาสมเด็จพระเจ้าอยู่หัวมหาวชิราลงกรณ บดินทรเทพยวรางกูร", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "วันเฉลิมพระชนมพรรษาสมเด็จพระเจ้าอยู่หัวมหาวชิราลงกรณ บดินทรเทพยวรางกูร")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันเฉลิมพระชนมพรรษาสมเด็จพระเจ้าอยู่หัวมหาวชิราลงกรณ บดินทรเทพยวรางกูร", hols))
+	},
+		Entry("2019-07-28", "2019-07-28"),
+	)
 
-func TestTH_003_วนเฉลมพระชนมพรรษาสมเดจพระนางเจาสรกตพระบรมราชนนาถในรชกาลท๙(t *testing.T) {
-	dates := []string{"2007-08-12"}
-	opts := holidays.Options{Regions: []string{"th"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("003_วนเฉลมพระชนมพรรษาสมเดจพระนางเจาสรกตพระบรมราชนนาถในรชกาลท๙", func(s string) {
+		opts := holidays.Options{Regions: []string{"th"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "วันเฉลิมพระชนมพรรษาสมเด็จพระนางเจ้าสิริกิติ์ พระบรมราชินีนาถในรัชกาลที่ ๙") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันเฉลิมพระชนมพรรษาสมเด็จพระนางเจ้าสิริกิติ์ พระบรมราชินีนาถในรัชกาลที่ ๙", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "วันเฉลิมพระชนมพรรษาสมเด็จพระนางเจ้าสิริกิติ์ พระบรมราชินีนาถในรัชกาลที่ ๙")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันเฉลิมพระชนมพรรษาสมเด็จพระนางเจ้าสิริกิติ์ พระบรมราชินีนาถในรัชกาลที่ ๙", hols))
+	},
+		Entry("2007-08-12", "2007-08-12"),
+	)
 
-func TestTH_004_วนคลายวนสวรรคตพระบาทสมเดจพระปรมนทรมหาภมพลอดลยเดชบรมนาถบพตร(t *testing.T) {
-	dates := []string{"2019-10-13"}
-	opts := holidays.Options{Regions: []string{"th"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("004_วนคลายวนสวรรคตพระบาทสมเดจพระปรมนทรมหาภมพลอดลยเดชบรมนาถบพตร", func(s string) {
+		opts := holidays.Options{Regions: []string{"th"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "วันคล้ายวันสวรรคตพระบาทสมเด็จพระปรมินทรมหาภูมิพลอดุลยเดช บรมนาถบพิตร") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันคล้ายวันสวรรคตพระบาทสมเด็จพระปรมินทรมหาภูมิพลอดุลยเดช บรมนาถบพิตร", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "วันคล้ายวันสวรรคตพระบาทสมเด็จพระปรมินทรมหาภูมิพลอดุลยเดช บรมนาถบพิตร")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันคล้ายวันสวรรคตพระบาทสมเด็จพระปรมินทรมหาภูมิพลอดุลยเดช บรมนาถบพิตร", hols))
+	},
+		Entry("2019-10-13", "2019-10-13"),
+	)
 
-func TestTH_005_วนปยมหาราช(t *testing.T) {
-	dates := []string{"2019-10-23"}
-	opts := holidays.Options{Regions: []string{"th"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("005_วนปยมหาราช", func(s string) {
+		opts := holidays.Options{Regions: []string{"th"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "วันปิยมหาราช") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันปิยมหาราช", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "วันปิยมหาราช")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันปิยมหาราช", hols))
+	},
+		Entry("2019-10-23", "2019-10-23"),
+	)
 
-func TestTH_006_วนคลายวนเฉลมพระชนมพรรษาพระบาทสมเดจพระปรมนทรมหาภมพลอดลยเดชบรมนาถบพตร(t *testing.T) {
-	dates := []string{"2019-12-05"}
-	opts := holidays.Options{Regions: []string{"th"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("006_วนคลายวนเฉลมพระชนมพรรษาพระบาทสมเดจพระปรมนทรมหาภมพลอดลยเดชบรมนาถบพตร", func(s string) {
+		opts := holidays.Options{Regions: []string{"th"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "วันคล้ายวันเฉลิมพระชนมพรรษาพระบาทสมเด็จพระปรมินทรมหาภูมิพลอดุลยเดช บรมนาถบพิตร") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันคล้ายวันเฉลิมพระชนมพรรษาพระบาทสมเด็จพระปรมินทรมหาภูมิพลอดุลยเดช บรมนาถบพิตร", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "วันคล้ายวันเฉลิมพระชนมพรรษาพระบาทสมเด็จพระปรมินทรมหาภูมิพลอดุลยเดช บรมนาถบพิตร")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันคล้ายวันเฉลิมพระชนมพรรษาพระบาทสมเด็จพระปรมินทรมหาภูมิพลอดุลยเดช บรมนาถบพิตร", hols))
+	},
+		Entry("2019-12-05", "2019-12-05"),
+	)
 
-func TestTH_007_วนรฐธรรมนญ(t *testing.T) {
-	dates := []string{"2019-12-10"}
-	opts := holidays.Options{Regions: []string{"th"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("007_วนรฐธรรมนญ", func(s string) {
+		opts := holidays.Options{Regions: []string{"th"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "วันรัฐธรรมนูญ") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันรัฐธรรมนูญ", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "วันรัฐธรรมนูญ")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันรัฐธรรมนูญ", hols))
+	},
+		Entry("2019-12-10", "2019-12-10"),
+	)
 
-func TestTH_008_วนสนป(t *testing.T) {
-	dates := []string{"2019-12-31"}
-	opts := holidays.Options{Regions: []string{"th"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("008_วนสนป", func(s string) {
+		opts := holidays.Options{Regions: []string{"th"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "วันสิ้นปี") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันสิ้นปี", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "วันสิ้นปี")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "วันสิ้นปี", hols))
+	},
+		Entry("2019-12-31", "2019-12-31"),
+	)
+
+})

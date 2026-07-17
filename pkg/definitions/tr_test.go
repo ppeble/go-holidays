@@ -3,259 +3,188 @@
 package definitions_test
 
 import (
-	"testing"
+	"fmt"
 
 	holidays "github.com/ppeble/go-holidays/pkg"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
-func TestTR_000_Yılbaşı(t *testing.T) {
-	dates := []string{"2017-1-1"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+var _ = Describe("tr", func() {
+	DescribeTable("000_Yılbaşı", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Yılbaşı") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Yılbaşı", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Yılbaşı")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Yılbaşı", hols))
+	},
+		Entry("2017-1-1", "2017-1-1"),
+	)
 
-func TestTR_001_UlusalEgemenlikVeÇocukBayramı(t *testing.T) {
-	dates := []string{"2017-4-23"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("001_UlusalEgemenlikVeÇocukBayramı", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Ulusal Egemenlik ve Çocuk Bayramı") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Ulusal Egemenlik ve Çocuk Bayramı", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Ulusal Egemenlik ve Çocuk Bayramı")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Ulusal Egemenlik ve Çocuk Bayramı", hols))
+	},
+		Entry("2017-4-23", "2017-4-23"),
+	)
 
-func TestTR_002_EmekVeDayanışmaGünü(t *testing.T) {
-	dates := []string{"2017-5-1"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("002_EmekVeDayanışmaGünü", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Emek ve Dayanışma Günü") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Emek ve Dayanışma Günü", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Emek ve Dayanışma Günü")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Emek ve Dayanışma Günü", hols))
+	},
+		Entry("2017-5-1", "2017-5-1"),
+	)
 
-func TestTR_003_AtatürkÜAnmaGençlikVeSporBayramı(t *testing.T) {
-	dates := []string{"2017-5-19"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("003_AtatürkÜAnmaGençlikVeSporBayramı", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Atatürk'ü Anma Gençlik ve Spor Bayramı") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Atatürk'ü Anma Gençlik ve Spor Bayramı", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Atatürk'ü Anma Gençlik ve Spor Bayramı")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Atatürk'ü Anma Gençlik ve Spor Bayramı", hols))
+	},
+		Entry("2017-5-19", "2017-5-19"),
+	)
 
-func TestTR_004_ZaferBayramı(t *testing.T) {
-	dates := []string{"2017-8-30"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("004_ZaferBayramı", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Zafer Bayramı") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Zafer Bayramı", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Zafer Bayramı")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Zafer Bayramı", hols))
+	},
+		Entry("2017-8-30", "2017-8-30"),
+	)
 
-func TestTR_005_CumhuriyetBayramı(t *testing.T) {
-	dates := []string{"2017-10-29"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("005_CumhuriyetBayramı", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Cumhuriyet Bayramı") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Cumhuriyet Bayramı", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Cumhuriyet Bayramı")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Cumhuriyet Bayramı", hols))
+	},
+		Entry("2017-10-29", "2017-10-29"),
+	)
 
-func TestTR_006_RamazanBayramı(t *testing.T) {
-	dates := []string{"2017-6-25", "2018-6-15", "2019-6-4", "2020-5-24"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("006_RamazanBayramı", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Ramazan Bayramı") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Ramazan Bayramı", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Ramazan Bayramı")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Ramazan Bayramı", hols))
+	},
+		Entry("2017-6-25", "2017-6-25"),
+		Entry("2018-6-15", "2018-6-15"),
+		Entry("2019-6-4", "2019-6-4"),
+		Entry("2020-5-24", "2020-5-24"),
+	)
 
-func TestTR_007_RamazanBayramıIkinciTatil(t *testing.T) {
-	dates := []string{"2017-6-26", "2018-6-16", "2019-6-5", "2020-5-25"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("007_RamazanBayramıIkinciTatil", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Ramazan Bayramı (ikinci tatil)") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Ramazan Bayramı (ikinci tatil)", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Ramazan Bayramı (ikinci tatil)")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Ramazan Bayramı (ikinci tatil)", hols))
+	},
+		Entry("2017-6-26", "2017-6-26"),
+		Entry("2018-6-16", "2018-6-16"),
+		Entry("2019-6-5", "2019-6-5"),
+		Entry("2020-5-25", "2020-5-25"),
+	)
 
-func TestTR_008_RamazanBayramıÜçüncüTatil(t *testing.T) {
-	dates := []string{"2017-6-27", "2018-6-17", "2019-6-6", "2020-5-26"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("008_RamazanBayramıÜçüncüTatil", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Ramazan Bayramı (üçüncü tatil)") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Ramazan Bayramı (üçüncü tatil)", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Ramazan Bayramı (üçüncü tatil)")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Ramazan Bayramı (üçüncü tatil)", hols))
+	},
+		Entry("2017-6-27", "2017-6-27"),
+		Entry("2018-6-17", "2018-6-17"),
+		Entry("2019-6-6", "2019-6-6"),
+		Entry("2020-5-26", "2020-5-26"),
+	)
 
-func TestTR_009_DemokrasiVeMilliBirlikGünü(t *testing.T) {
-	dates := []string{"2017-7-15"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("009_DemokrasiVeMilliBirlikGünü", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Demokrasi ve Milli Birlik Günü") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Demokrasi ve Milli Birlik Günü", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Demokrasi ve Milli Birlik Günü")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Demokrasi ve Milli Birlik Günü", hols))
+	},
+		Entry("2017-7-15", "2017-7-15"),
+	)
 
-func TestTR_010_KurbanBayramı(t *testing.T) {
-	dates := []string{"2017-9-1", "2018-8-21", "2019-8-11", "2020-7-31"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("010_KurbanBayramı", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Kurban Bayramı") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Kurban Bayramı", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Kurban Bayramı")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Kurban Bayramı", hols))
+	},
+		Entry("2017-9-1", "2017-9-1"),
+		Entry("2018-8-21", "2018-8-21"),
+		Entry("2019-8-11", "2019-8-11"),
+		Entry("2020-7-31", "2020-7-31"),
+	)
 
-func TestTR_011_KurbanBayramıIkinciTatil(t *testing.T) {
-	dates := []string{"2017-9-2", "2018-8-22", "2019-8-12", "2020-8-01"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("011_KurbanBayramıIkinciTatil", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Kurban Bayramı (ikinci tatil)") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Kurban Bayramı (ikinci tatil)", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Kurban Bayramı (ikinci tatil)")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Kurban Bayramı (ikinci tatil)", hols))
+	},
+		Entry("2017-9-2", "2017-9-2"),
+		Entry("2018-8-22", "2018-8-22"),
+		Entry("2019-8-12", "2019-8-12"),
+		Entry("2020-8-01", "2020-8-01"),
+	)
 
-func TestTR_012_KurbanBayramıÜçüncüTatil(t *testing.T) {
-	dates := []string{"2017-9-3", "2018-8-23", "2019-8-13", "2020-8-02"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("012_KurbanBayramıÜçüncüTatil", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Kurban Bayramı (üçüncü tatil)") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Kurban Bayramı (üçüncü tatil)", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Kurban Bayramı (üçüncü tatil)")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Kurban Bayramı (üçüncü tatil)", hols))
+	},
+		Entry("2017-9-3", "2017-9-3"),
+		Entry("2018-8-23", "2018-8-23"),
+		Entry("2019-8-13", "2019-8-13"),
+		Entry("2020-8-02", "2020-8-02"),
+	)
 
-func TestTR_013_KurbanBayramıDördüncüTatil(t *testing.T) {
-	dates := []string{"2017-9-4", "2018-8-24", "2019-8-14", "2020-8-03"}
-	opts := holidays.Options{Regions: []string{"tr"}}
-	for _, s := range dates {
+	DescribeTable("013_KurbanBayramıDördüncüTatil", func(s string) {
+		opts := holidays.Options{Regions: []string{"tr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Kurban Bayramı (dördüncü tatil)") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Kurban Bayramı (dördüncü tatil)", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Kurban Bayramı (dördüncü tatil)")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Kurban Bayramı (dördüncü tatil)", hols))
+	},
+		Entry("2017-9-4", "2017-9-4"),
+		Entry("2018-8-24", "2018-8-24"),
+		Entry("2019-8-14", "2019-8-14"),
+		Entry("2020-8-03", "2020-8-03"),
+	)
+
+})

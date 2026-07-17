@@ -3,97 +3,69 @@
 package definitions_test
 
 import (
-	"testing"
+	"fmt"
 
 	holidays "github.com/ppeble/go-holidays/pkg"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
-func TestVN_000_TếtDươngLịch(t *testing.T) {
-	dates := []string{"2014-01-01"}
-	opts := holidays.Options{Regions: []string{"vn"}}
-	for _, s := range dates {
+var _ = Describe("vn", func() {
+	DescribeTable("000_TếtDươngLịch", func(s string) {
+		opts := holidays.Options{Regions: []string{"vn"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Tết dương lịch") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tết dương lịch", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Tết dương lịch")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tết dương lịch", hols))
+	},
+		Entry("2014-01-01", "2014-01-01"),
+	)
 
-func TestVN_001_NgàyGiảiPhóngMiềnNamThốngNhấtĐấtNước(t *testing.T) {
-	dates := []string{"2014-04-30"}
-	opts := holidays.Options{Regions: []string{"vn"}}
-	for _, s := range dates {
+	DescribeTable("001_NgàyGiảiPhóngMiềnNamThốngNhấtĐấtNước", func(s string) {
+		opts := holidays.Options{Regions: []string{"vn"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Ngày Giải phóng miền Nam, thống nhất đất nước") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Ngày Giải phóng miền Nam, thống nhất đất nước", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Ngày Giải phóng miền Nam, thống nhất đất nước")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Ngày Giải phóng miền Nam, thống nhất đất nước", hols))
+	},
+		Entry("2014-04-30", "2014-04-30"),
+	)
 
-func TestVN_002_NgàyQuốcTếLaoĐộng(t *testing.T) {
-	dates := []string{"2014-05-01"}
-	opts := holidays.Options{Regions: []string{"vn"}}
-	for _, s := range dates {
+	DescribeTable("002_NgàyQuốcTếLaoĐộng", func(s string) {
+		opts := holidays.Options{Regions: []string{"vn"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Ngày Quốc tế Lao động") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Ngày Quốc tế Lao động", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Ngày Quốc tế Lao động")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Ngày Quốc tế Lao động", hols))
+	},
+		Entry("2014-05-01", "2014-05-01"),
+	)
 
-func TestVN_003_QuốcKhánh(t *testing.T) {
-	dates := []string{"2014-09-02"}
-	opts := holidays.Options{Regions: []string{"vn"}}
-	for _, s := range dates {
+	DescribeTable("003_QuốcKhánh", func(s string) {
+		opts := holidays.Options{Regions: []string{"vn"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Quốc khánh") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Quốc khánh", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Quốc khánh")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Quốc khánh", hols))
+	},
+		Entry("2014-09-02", "2014-09-02"),
+	)
 
-func TestVN_004_GiỗTổHùngVương(t *testing.T) {
-	dates := []string{"2017-04-06", "2018-03-27"}
-	opts := holidays.Options{Regions: []string{"vn"}}
-	for _, s := range dates {
+	DescribeTable("004_GiỗTổHùngVương", func(s string) {
+		opts := holidays.Options{Regions: []string{"vn"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Giỗ tổ Hùng Vương") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Giỗ tổ Hùng Vương", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Giỗ tổ Hùng Vương")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Giỗ tổ Hùng Vương", hols))
+	},
+		Entry("2017-04-06", "2017-04-06"),
+		Entry("2018-03-27", "2018-03-27"),
+	)
+
+})

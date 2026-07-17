@@ -3,2167 +3,1333 @@
 package definitions_test
 
 import (
-	"testing"
+	"fmt"
 
 	holidays "github.com/ppeble/go-holidays/pkg"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
-func TestFEDERALRESERVEBANKS_000_NewYearSDay(t *testing.T) {
-	dates := []string{"2012-01-02"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "New Year's Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_001_BirthdayOfMartinLutherKingJr(t *testing.T) {
-	dates := []string{"2012-01-16"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Birthday of Martin Luther King, Jr") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_002_WashingtonSBirthday(t *testing.T) {
-	dates := []string{"2012-02-20"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Washington's Birthday") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_003_MemorialDay(t *testing.T) {
-	dates := []string{"2012-05-28"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Memorial Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_004_IndependenceDay(t *testing.T) {
-	dates := []string{"2012-07-04"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Independence Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_005_LaborDay(t *testing.T) {
-	dates := []string{"2012-09-03"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Labor Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_006_ColumbusDay(t *testing.T) {
-	dates := []string{"2012-10-08"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Columbus Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_007_VeteransDay(t *testing.T) {
-	dates := []string{"2012-11-12"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Veterans Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_008_ThanksgivingDay(t *testing.T) {
-	dates := []string{"2012-11-22"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Thanksgiving Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_009_ChristmasDay(t *testing.T) {
-	dates := []string{"2012-12-25"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Christmas Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_010_NewYearSDay(t *testing.T) {
-	dates := []string{"2013-01-01"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "New Year's Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_011_BirthdayOfMartinLutherKingJr(t *testing.T) {
-	dates := []string{"2013-01-21"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Birthday of Martin Luther King, Jr") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_012_WashingtonSBirthday(t *testing.T) {
-	dates := []string{"2013-02-18"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Washington's Birthday") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_013_MemorialDay(t *testing.T) {
-	dates := []string{"2013-05-27"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Memorial Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_014_IndependenceDay(t *testing.T) {
-	dates := []string{"2013-07-04"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Independence Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_015_LaborDay(t *testing.T) {
-	dates := []string{"2013-09-02"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Labor Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_016_ColumbusDay(t *testing.T) {
-	dates := []string{"2013-10-14"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Columbus Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_017_VeteransDay(t *testing.T) {
-	dates := []string{"2013-11-11"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Veterans Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_018_ThanksgivingDay(t *testing.T) {
-	dates := []string{"2013-11-28"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Thanksgiving Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_019_ChristmasDay(t *testing.T) {
-	dates := []string{"2013-12-25"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Christmas Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_020_NewYearSDay(t *testing.T) {
-	dates := []string{"2014-01-01"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "New Year's Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_021_BirthdayOfMartinLutherKingJr(t *testing.T) {
-	dates := []string{"2014-01-20"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Birthday of Martin Luther King, Jr") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_022_WashingtonSBirthday(t *testing.T) {
-	dates := []string{"2014-02-17"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Washington's Birthday") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_023_MemorialDay(t *testing.T) {
-	dates := []string{"2014-05-26"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Memorial Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_024_IndependenceDay(t *testing.T) {
-	dates := []string{"2014-07-04"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Independence Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_025_LaborDay(t *testing.T) {
-	dates := []string{"2014-09-01"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Labor Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_026_ColumbusDay(t *testing.T) {
-	dates := []string{"2014-10-13"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Columbus Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_027_VeteransDay(t *testing.T) {
-	dates := []string{"2014-11-11"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Veterans Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_028_ThanksgivingDay(t *testing.T) {
-	dates := []string{"2014-11-27"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Thanksgiving Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_029_ChristmasDay(t *testing.T) {
-	dates := []string{"2014-12-25"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Christmas Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_030_NewYearSDay(t *testing.T) {
-	dates := []string{"2015-01-01"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "New Year's Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_031_BirthdayOfMartinLutherKingJr(t *testing.T) {
-	dates := []string{"2015-01-19"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Birthday of Martin Luther King, Jr") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_032_WashingtonSBirthday(t *testing.T) {
-	dates := []string{"2015-02-16"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Washington's Birthday") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_033_MemorialDay(t *testing.T) {
-	dates := []string{"2015-05-25"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Memorial Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_034_Negative(t *testing.T) {
-	dates := []string{"2015-07-03"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_035_Negative(t *testing.T) {
-	dates := []string{"2015-07-06"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_036_LaborDay(t *testing.T) {
-	dates := []string{"2015-09-07"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Labor Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_037_ColumbusDay(t *testing.T) {
-	dates := []string{"2015-10-12"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Columbus Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_038_VeteransDay(t *testing.T) {
-	dates := []string{"2015-11-11"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Veterans Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_039_ThanksgivingDay(t *testing.T) {
-	dates := []string{"2015-11-26"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Thanksgiving Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_040_ChristmasDay(t *testing.T) {
-	dates := []string{"2015-12-25"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Christmas Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_041_NewYearSDay(t *testing.T) {
-	dates := []string{"2016-01-01"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "New Year's Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_042_BirthdayOfMartinLutherKingJr(t *testing.T) {
-	dates := []string{"2016-01-18"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Birthday of Martin Luther King, Jr") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_043_WashingtonSBirthday(t *testing.T) {
-	dates := []string{"2016-02-15"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Washington's Birthday") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_044_MemorialDay(t *testing.T) {
-	dates := []string{"2016-05-30"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Memorial Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_045_IndependenceDay(t *testing.T) {
-	dates := []string{"2016-07-04"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Independence Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_046_LaborDay(t *testing.T) {
-	dates := []string{"2016-09-05"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Labor Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_047_ColumbusDay(t *testing.T) {
-	dates := []string{"2016-10-10"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Columbus Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_048_VeteransDay(t *testing.T) {
-	dates := []string{"2016-11-11"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Veterans Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_049_ThanksgivingDay(t *testing.T) {
-	dates := []string{"2016-11-24"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Thanksgiving Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_050_ChristmasDay(t *testing.T) {
-	dates := []string{"2016-12-26"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Christmas Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_051_NewYearSDay(t *testing.T) {
-	dates := []string{"2019-01-01"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "New Year's Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_052_BirthdayOfMartinLutherKingJr(t *testing.T) {
-	dates := []string{"2019-01-21"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Birthday of Martin Luther King, Jr") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_053_WashingtonSBirthday(t *testing.T) {
-	dates := []string{"2019-02-18"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Washington's Birthday") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_054_MemorialDay(t *testing.T) {
-	dates := []string{"2019-05-27"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Memorial Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_055_IndependenceDay(t *testing.T) {
-	dates := []string{"2019-07-04"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Independence Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_056_LaborDay(t *testing.T) {
-	dates := []string{"2019-09-02"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Labor Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_057_ColumbusDay(t *testing.T) {
-	dates := []string{"2019-10-14"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Columbus Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_058_VeteransDay(t *testing.T) {
-	dates := []string{"2019-11-11"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Veterans Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_059_ThanksgivingDay(t *testing.T) {
-	dates := []string{"2019-11-28"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Thanksgiving Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_060_ChristmasDay(t *testing.T) {
-	dates := []string{"2019-12-25"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Christmas Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_061_NewYearSDay(t *testing.T) {
-	dates := []string{"2020-01-01"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "New Year's Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_062_BirthdayOfMartinLutherKingJr(t *testing.T) {
-	dates := []string{"2020-01-20"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Birthday of Martin Luther King, Jr") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_063_WashingtonSBirthday(t *testing.T) {
-	dates := []string{"2020-02-17"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Washington's Birthday") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_064_MemorialDay(t *testing.T) {
-	dates := []string{"2020-05-25"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Memorial Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_065_Negative(t *testing.T) {
-	dates := []string{"2020-07-03"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_066_Negative(t *testing.T) {
-	dates := []string{"2020-07-06"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_067_LaborDay(t *testing.T) {
-	dates := []string{"2020-09-07"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Labor Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_068_ColumbusDay(t *testing.T) {
-	dates := []string{"2020-10-12"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Columbus Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_069_VeteransDay(t *testing.T) {
-	dates := []string{"2020-11-11"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Veterans Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_070_ThanksgivingDay(t *testing.T) {
-	dates := []string{"2020-11-26"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Thanksgiving Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_071_ChristmasDay(t *testing.T) {
-	dates := []string{"2020-12-25"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Christmas Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_072_NewYearSDay(t *testing.T) {
-	dates := []string{"2021-01-01"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "New Year's Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_073_BirthdayOfMartinLutherKingJr(t *testing.T) {
-	dates := []string{"2021-01-18"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Birthday of Martin Luther King, Jr") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_074_WashingtonSBirthday(t *testing.T) {
-	dates := []string{"2021-02-15"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Washington's Birthday") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_075_MemorialDay(t *testing.T) {
-	dates := []string{"2021-05-31"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Memorial Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_076_Negative(t *testing.T) {
-	dates := []string{"2021-07-02"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_077_IndependenceDay(t *testing.T) {
-	dates := []string{"2021-07-05"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Independence Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_078_LaborDay(t *testing.T) {
-	dates := []string{"2021-09-06"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Labor Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_079_ColumbusDay(t *testing.T) {
-	dates := []string{"2021-10-11"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Columbus Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_080_VeteransDay(t *testing.T) {
-	dates := []string{"2021-11-11"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Veterans Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_081_ThanksgivingDay(t *testing.T) {
-	dates := []string{"2021-11-25"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Thanksgiving Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_082_Negative(t *testing.T) {
-	dates := []string{"2021-12-24"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_083_Negative(t *testing.T) {
-	dates := []string{"2021-12-27"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_084_Negative(t *testing.T) {
-	dates := []string{"2021-12-31"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_085_Negative(t *testing.T) {
-	dates := []string{"2022-01-03"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_086_BirthdayOfMartinLutherKingJr(t *testing.T) {
-	dates := []string{"2022-01-17"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Birthday of Martin Luther King, Jr") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_087_WashingtonSBirthday(t *testing.T) {
-	dates := []string{"2022-02-21"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Washington's Birthday") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_088_MemorialDay(t *testing.T) {
-	dates := []string{"2022-05-30"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Memorial Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_089_IndependenceDay(t *testing.T) {
-	dates := []string{"2022-07-04"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Independence Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_090_LaborDay(t *testing.T) {
-	dates := []string{"2022-09-05"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Labor Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_091_ColumbusDay(t *testing.T) {
-	dates := []string{"2022-10-10"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Columbus Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_092_VeteransDay(t *testing.T) {
-	dates := []string{"2022-11-11"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Veterans Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_093_ThanksgivingDay(t *testing.T) {
-	dates := []string{"2022-11-24"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Thanksgiving Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_094_Negative(t *testing.T) {
-	dates := []string{"2022-12-23"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_095_ChristmasDay(t *testing.T) {
-	dates := []string{"2022-12-26"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Christmas Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_096_Negative(t *testing.T) {
-	dates := []string{"2022-12-30"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_097_NewYearSDay(t *testing.T) {
-	dates := []string{"2023-01-02"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "New Year's Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_098_BirthdayOfMartinLutherKingJr(t *testing.T) {
-	dates := []string{"2023-01-16"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Birthday of Martin Luther King, Jr") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_099_WashingtonSBirthday(t *testing.T) {
-	dates := []string{"2023-02-20"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Washington's Birthday") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_100_MemorialDay(t *testing.T) {
-	dates := []string{"2023-05-29"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Memorial Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_101_IndependenceDay(t *testing.T) {
-	dates := []string{"2023-07-04"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Independence Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_102_LaborDay(t *testing.T) {
-	dates := []string{"2023-09-04"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Labor Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_103_ColumbusDay(t *testing.T) {
-	dates := []string{"2023-10-09"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Columbus Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_104_Negative(t *testing.T) {
-	dates := []string{"2023-11-10"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_105_Negative(t *testing.T) {
-	dates := []string{"2023-11-13"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if len(hols) > 0 {
-			t.Errorf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_106_ThanksgivingDay(t *testing.T) {
-	dates := []string{"2023-11-23"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Thanksgiving Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_107_ChristmasDay(t *testing.T) {
-	dates := []string{"2023-12-25"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Christmas Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_108_NewYearSDay(t *testing.T) {
-	dates := []string{"2024-01-01"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "New Year's Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_109_BirthdayOfMartinLutherKingJr(t *testing.T) {
-	dates := []string{"2024-01-15"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Birthday of Martin Luther King, Jr") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_110_WashingtonSBirthday(t *testing.T) {
-	dates := []string{"2024-02-19"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Washington's Birthday") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_111_MemorialDay(t *testing.T) {
-	dates := []string{"2024-05-27"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Memorial Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_112_IndependenceDay(t *testing.T) {
-	dates := []string{"2024-07-04"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Independence Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_113_LaborDay(t *testing.T) {
-	dates := []string{"2024-09-02"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Labor Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_114_ColumbusDay(t *testing.T) {
-	dates := []string{"2024-10-14"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Columbus Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_115_VeteransDay(t *testing.T) {
-	dates := []string{"2024-11-11"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Veterans Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_116_ThanksgivingDay(t *testing.T) {
-	dates := []string{"2024-11-28"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Thanksgiving Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_117_ChristmasDay(t *testing.T) {
-	dates := []string{"2024-12-25"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Christmas Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_118_JuneteenthNationalIndependenceDay(t *testing.T) {
-	dates := []string{"2022-06-20"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Juneteenth National Independence Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Juneteenth National Independence Day", hols)
-		}
-	}
-}
-
-func TestFEDERALRESERVEBANKS_119_JuneteenthNationalIndependenceDay(t *testing.T) {
-	dates := []string{"2023-06-19"}
-	opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
-	for _, s := range dates {
-		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
-		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Juneteenth National Independence Day") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Juneteenth National Independence Day", hols)
-		}
-	}
-}
+var _ = Describe("federalreservebanks", func() {
+	DescribeTable("000_NewYearSDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "New Year's Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols))
+	},
+		Entry("2012-01-02", "2012-01-02"),
+	)
+
+	DescribeTable("001_BirthdayOfMartinLutherKingJr", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Birthday of Martin Luther King, Jr")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols))
+	},
+		Entry("2012-01-16", "2012-01-16"),
+	)
+
+	DescribeTable("002_WashingtonSBirthday", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Washington's Birthday")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols))
+	},
+		Entry("2012-02-20", "2012-02-20"),
+	)
+
+	DescribeTable("003_MemorialDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Memorial Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols))
+	},
+		Entry("2012-05-28", "2012-05-28"),
+	)
+
+	DescribeTable("004_IndependenceDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Independence Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols))
+	},
+		Entry("2012-07-04", "2012-07-04"),
+	)
+
+	DescribeTable("005_LaborDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Labor Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols))
+	},
+		Entry("2012-09-03", "2012-09-03"),
+	)
+
+	DescribeTable("006_ColumbusDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Columbus Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols))
+	},
+		Entry("2012-10-08", "2012-10-08"),
+	)
+
+	DescribeTable("007_VeteransDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Veterans Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols))
+	},
+		Entry("2012-11-12", "2012-11-12"),
+	)
+
+	DescribeTable("008_ThanksgivingDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Thanksgiving Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols))
+	},
+		Entry("2012-11-22", "2012-11-22"),
+	)
+
+	DescribeTable("009_ChristmasDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Christmas Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols))
+	},
+		Entry("2012-12-25", "2012-12-25"),
+	)
+
+	DescribeTable("010_NewYearSDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "New Year's Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols))
+	},
+		Entry("2013-01-01", "2013-01-01"),
+	)
+
+	DescribeTable("011_BirthdayOfMartinLutherKingJr", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Birthday of Martin Luther King, Jr")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols))
+	},
+		Entry("2013-01-21", "2013-01-21"),
+	)
+
+	DescribeTable("012_WashingtonSBirthday", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Washington's Birthday")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols))
+	},
+		Entry("2013-02-18", "2013-02-18"),
+	)
+
+	DescribeTable("013_MemorialDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Memorial Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols))
+	},
+		Entry("2013-05-27", "2013-05-27"),
+	)
+
+	DescribeTable("014_IndependenceDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Independence Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols))
+	},
+		Entry("2013-07-04", "2013-07-04"),
+	)
+
+	DescribeTable("015_LaborDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Labor Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols))
+	},
+		Entry("2013-09-02", "2013-09-02"),
+	)
+
+	DescribeTable("016_ColumbusDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Columbus Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols))
+	},
+		Entry("2013-10-14", "2013-10-14"),
+	)
+
+	DescribeTable("017_VeteransDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Veterans Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols))
+	},
+		Entry("2013-11-11", "2013-11-11"),
+	)
+
+	DescribeTable("018_ThanksgivingDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Thanksgiving Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols))
+	},
+		Entry("2013-11-28", "2013-11-28"),
+	)
+
+	DescribeTable("019_ChristmasDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Christmas Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols))
+	},
+		Entry("2013-12-25", "2013-12-25"),
+	)
+
+	DescribeTable("020_NewYearSDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "New Year's Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols))
+	},
+		Entry("2014-01-01", "2014-01-01"),
+	)
+
+	DescribeTable("021_BirthdayOfMartinLutherKingJr", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Birthday of Martin Luther King, Jr")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols))
+	},
+		Entry("2014-01-20", "2014-01-20"),
+	)
+
+	DescribeTable("022_WashingtonSBirthday", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Washington's Birthday")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols))
+	},
+		Entry("2014-02-17", "2014-02-17"),
+	)
+
+	DescribeTable("023_MemorialDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Memorial Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols))
+	},
+		Entry("2014-05-26", "2014-05-26"),
+	)
+
+	DescribeTable("024_IndependenceDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Independence Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols))
+	},
+		Entry("2014-07-04", "2014-07-04"),
+	)
+
+	DescribeTable("025_LaborDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Labor Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols))
+	},
+		Entry("2014-09-01", "2014-09-01"),
+	)
+
+	DescribeTable("026_ColumbusDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Columbus Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols))
+	},
+		Entry("2014-10-13", "2014-10-13"),
+	)
+
+	DescribeTable("027_VeteransDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Veterans Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols))
+	},
+		Entry("2014-11-11", "2014-11-11"),
+	)
+
+	DescribeTable("028_ThanksgivingDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Thanksgiving Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols))
+	},
+		Entry("2014-11-27", "2014-11-27"),
+	)
+
+	DescribeTable("029_ChristmasDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Christmas Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols))
+	},
+		Entry("2014-12-25", "2014-12-25"),
+	)
+
+	DescribeTable("030_NewYearSDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "New Year's Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols))
+	},
+		Entry("2015-01-01", "2015-01-01"),
+	)
+
+	DescribeTable("031_BirthdayOfMartinLutherKingJr", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Birthday of Martin Luther King, Jr")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols))
+	},
+		Entry("2015-01-19", "2015-01-19"),
+	)
+
+	DescribeTable("032_WashingtonSBirthday", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Washington's Birthday")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols))
+	},
+		Entry("2015-02-16", "2015-02-16"),
+	)
+
+	DescribeTable("033_MemorialDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Memorial Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols))
+	},
+		Entry("2015-05-25", "2015-05-25"),
+	)
+
+	DescribeTable("034_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2015-07-03", "2015-07-03"),
+	)
+
+	DescribeTable("035_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2015-07-06", "2015-07-06"),
+	)
+
+	DescribeTable("036_LaborDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Labor Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols))
+	},
+		Entry("2015-09-07", "2015-09-07"),
+	)
+
+	DescribeTable("037_ColumbusDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Columbus Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols))
+	},
+		Entry("2015-10-12", "2015-10-12"),
+	)
+
+	DescribeTable("038_VeteransDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Veterans Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols))
+	},
+		Entry("2015-11-11", "2015-11-11"),
+	)
+
+	DescribeTable("039_ThanksgivingDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Thanksgiving Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols))
+	},
+		Entry("2015-11-26", "2015-11-26"),
+	)
+
+	DescribeTable("040_ChristmasDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Christmas Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols))
+	},
+		Entry("2015-12-25", "2015-12-25"),
+	)
+
+	DescribeTable("041_NewYearSDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "New Year's Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols))
+	},
+		Entry("2016-01-01", "2016-01-01"),
+	)
+
+	DescribeTable("042_BirthdayOfMartinLutherKingJr", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Birthday of Martin Luther King, Jr")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols))
+	},
+		Entry("2016-01-18", "2016-01-18"),
+	)
+
+	DescribeTable("043_WashingtonSBirthday", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Washington's Birthday")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols))
+	},
+		Entry("2016-02-15", "2016-02-15"),
+	)
+
+	DescribeTable("044_MemorialDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Memorial Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols))
+	},
+		Entry("2016-05-30", "2016-05-30"),
+	)
+
+	DescribeTable("045_IndependenceDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Independence Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols))
+	},
+		Entry("2016-07-04", "2016-07-04"),
+	)
+
+	DescribeTable("046_LaborDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Labor Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols))
+	},
+		Entry("2016-09-05", "2016-09-05"),
+	)
+
+	DescribeTable("047_ColumbusDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Columbus Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols))
+	},
+		Entry("2016-10-10", "2016-10-10"),
+	)
+
+	DescribeTable("048_VeteransDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Veterans Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols))
+	},
+		Entry("2016-11-11", "2016-11-11"),
+	)
+
+	DescribeTable("049_ThanksgivingDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Thanksgiving Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols))
+	},
+		Entry("2016-11-24", "2016-11-24"),
+	)
+
+	DescribeTable("050_ChristmasDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Christmas Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols))
+	},
+		Entry("2016-12-26", "2016-12-26"),
+	)
+
+	DescribeTable("051_NewYearSDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "New Year's Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols))
+	},
+		Entry("2019-01-01", "2019-01-01"),
+	)
+
+	DescribeTable("052_BirthdayOfMartinLutherKingJr", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Birthday of Martin Luther King, Jr")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols))
+	},
+		Entry("2019-01-21", "2019-01-21"),
+	)
+
+	DescribeTable("053_WashingtonSBirthday", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Washington's Birthday")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols))
+	},
+		Entry("2019-02-18", "2019-02-18"),
+	)
+
+	DescribeTable("054_MemorialDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Memorial Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols))
+	},
+		Entry("2019-05-27", "2019-05-27"),
+	)
+
+	DescribeTable("055_IndependenceDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Independence Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols))
+	},
+		Entry("2019-07-04", "2019-07-04"),
+	)
+
+	DescribeTable("056_LaborDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Labor Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols))
+	},
+		Entry("2019-09-02", "2019-09-02"),
+	)
+
+	DescribeTable("057_ColumbusDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Columbus Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols))
+	},
+		Entry("2019-10-14", "2019-10-14"),
+	)
+
+	DescribeTable("058_VeteransDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Veterans Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols))
+	},
+		Entry("2019-11-11", "2019-11-11"),
+	)
+
+	DescribeTable("059_ThanksgivingDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Thanksgiving Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols))
+	},
+		Entry("2019-11-28", "2019-11-28"),
+	)
+
+	DescribeTable("060_ChristmasDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Christmas Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols))
+	},
+		Entry("2019-12-25", "2019-12-25"),
+	)
+
+	DescribeTable("061_NewYearSDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "New Year's Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols))
+	},
+		Entry("2020-01-01", "2020-01-01"),
+	)
+
+	DescribeTable("062_BirthdayOfMartinLutherKingJr", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Birthday of Martin Luther King, Jr")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols))
+	},
+		Entry("2020-01-20", "2020-01-20"),
+	)
+
+	DescribeTable("063_WashingtonSBirthday", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Washington's Birthday")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols))
+	},
+		Entry("2020-02-17", "2020-02-17"),
+	)
+
+	DescribeTable("064_MemorialDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Memorial Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols))
+	},
+		Entry("2020-05-25", "2020-05-25"),
+	)
+
+	DescribeTable("065_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2020-07-03", "2020-07-03"),
+	)
+
+	DescribeTable("066_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2020-07-06", "2020-07-06"),
+	)
+
+	DescribeTable("067_LaborDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Labor Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols))
+	},
+		Entry("2020-09-07", "2020-09-07"),
+	)
+
+	DescribeTable("068_ColumbusDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Columbus Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols))
+	},
+		Entry("2020-10-12", "2020-10-12"),
+	)
+
+	DescribeTable("069_VeteransDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Veterans Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols))
+	},
+		Entry("2020-11-11", "2020-11-11"),
+	)
+
+	DescribeTable("070_ThanksgivingDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Thanksgiving Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols))
+	},
+		Entry("2020-11-26", "2020-11-26"),
+	)
+
+	DescribeTable("071_ChristmasDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Christmas Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols))
+	},
+		Entry("2020-12-25", "2020-12-25"),
+	)
+
+	DescribeTable("072_NewYearSDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "New Year's Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols))
+	},
+		Entry("2021-01-01", "2021-01-01"),
+	)
+
+	DescribeTable("073_BirthdayOfMartinLutherKingJr", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Birthday of Martin Luther King, Jr")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols))
+	},
+		Entry("2021-01-18", "2021-01-18"),
+	)
+
+	DescribeTable("074_WashingtonSBirthday", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Washington's Birthday")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols))
+	},
+		Entry("2021-02-15", "2021-02-15"),
+	)
+
+	DescribeTable("075_MemorialDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Memorial Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols))
+	},
+		Entry("2021-05-31", "2021-05-31"),
+	)
+
+	DescribeTable("076_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2021-07-02", "2021-07-02"),
+	)
+
+	DescribeTable("077_IndependenceDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Independence Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols))
+	},
+		Entry("2021-07-05", "2021-07-05"),
+	)
+
+	DescribeTable("078_LaborDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Labor Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols))
+	},
+		Entry("2021-09-06", "2021-09-06"),
+	)
+
+	DescribeTable("079_ColumbusDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Columbus Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols))
+	},
+		Entry("2021-10-11", "2021-10-11"),
+	)
+
+	DescribeTable("080_VeteransDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Veterans Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols))
+	},
+		Entry("2021-11-11", "2021-11-11"),
+	)
+
+	DescribeTable("081_ThanksgivingDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Thanksgiving Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols))
+	},
+		Entry("2021-11-25", "2021-11-25"),
+	)
+
+	DescribeTable("082_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2021-12-24", "2021-12-24"),
+	)
+
+	DescribeTable("083_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2021-12-27", "2021-12-27"),
+	)
+
+	DescribeTable("084_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2021-12-31", "2021-12-31"),
+	)
+
+	DescribeTable("085_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2022-01-03", "2022-01-03"),
+	)
+
+	DescribeTable("086_BirthdayOfMartinLutherKingJr", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Birthday of Martin Luther King, Jr")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols))
+	},
+		Entry("2022-01-17", "2022-01-17"),
+	)
+
+	DescribeTable("087_WashingtonSBirthday", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Washington's Birthday")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols))
+	},
+		Entry("2022-02-21", "2022-02-21"),
+	)
+
+	DescribeTable("088_MemorialDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Memorial Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols))
+	},
+		Entry("2022-05-30", "2022-05-30"),
+	)
+
+	DescribeTable("089_IndependenceDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Independence Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols))
+	},
+		Entry("2022-07-04", "2022-07-04"),
+	)
+
+	DescribeTable("090_LaborDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Labor Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols))
+	},
+		Entry("2022-09-05", "2022-09-05"),
+	)
+
+	DescribeTable("091_ColumbusDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Columbus Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols))
+	},
+		Entry("2022-10-10", "2022-10-10"),
+	)
+
+	DescribeTable("092_VeteransDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Veterans Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols))
+	},
+		Entry("2022-11-11", "2022-11-11"),
+	)
+
+	DescribeTable("093_ThanksgivingDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Thanksgiving Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols))
+	},
+		Entry("2022-11-24", "2022-11-24"),
+	)
+
+	DescribeTable("094_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2022-12-23", "2022-12-23"),
+	)
+
+	DescribeTable("095_ChristmasDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Christmas Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols))
+	},
+		Entry("2022-12-26", "2022-12-26"),
+	)
+
+	DescribeTable("096_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2022-12-30", "2022-12-30"),
+	)
+
+	DescribeTable("097_NewYearSDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "New Year's Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols))
+	},
+		Entry("2023-01-02", "2023-01-02"),
+	)
+
+	DescribeTable("098_BirthdayOfMartinLutherKingJr", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Birthday of Martin Luther King, Jr")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols))
+	},
+		Entry("2023-01-16", "2023-01-16"),
+	)
+
+	DescribeTable("099_WashingtonSBirthday", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Washington's Birthday")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols))
+	},
+		Entry("2023-02-20", "2023-02-20"),
+	)
+
+	DescribeTable("100_MemorialDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Memorial Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols))
+	},
+		Entry("2023-05-29", "2023-05-29"),
+	)
+
+	DescribeTable("101_IndependenceDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Independence Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols))
+	},
+		Entry("2023-07-04", "2023-07-04"),
+	)
+
+	DescribeTable("102_LaborDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Labor Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols))
+	},
+		Entry("2023-09-04", "2023-09-04"),
+	)
+
+	DescribeTable("103_ColumbusDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Columbus Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols))
+	},
+		Entry("2023-10-09", "2023-10-09"),
+	)
+
+	DescribeTable("104_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2023-11-10", "2023-11-10"),
+	)
+
+	DescribeTable("105_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2023-11-13", "2023-11-13"),
+	)
+
+	DescribeTable("106_ThanksgivingDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Thanksgiving Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols))
+	},
+		Entry("2023-11-23", "2023-11-23"),
+	)
+
+	DescribeTable("107_ChristmasDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Christmas Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols))
+	},
+		Entry("2023-12-25", "2023-12-25"),
+	)
+
+	DescribeTable("108_NewYearSDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "New Year's Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "New Year's Day", hols))
+	},
+		Entry("2024-01-01", "2024-01-01"),
+	)
+
+	DescribeTable("109_BirthdayOfMartinLutherKingJr", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Birthday of Martin Luther King, Jr")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Birthday of Martin Luther King, Jr", hols))
+	},
+		Entry("2024-01-15", "2024-01-15"),
+	)
+
+	DescribeTable("110_WashingtonSBirthday", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Washington's Birthday")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Washington's Birthday", hols))
+	},
+		Entry("2024-02-19", "2024-02-19"),
+	)
+
+	DescribeTable("111_MemorialDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Memorial Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Memorial Day", hols))
+	},
+		Entry("2024-05-27", "2024-05-27"),
+	)
+
+	DescribeTable("112_IndependenceDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Independence Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Independence Day", hols))
+	},
+		Entry("2024-07-04", "2024-07-04"),
+	)
+
+	DescribeTable("113_LaborDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Labor Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Labor Day", hols))
+	},
+		Entry("2024-09-02", "2024-09-02"),
+	)
+
+	DescribeTable("114_ColumbusDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Columbus Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Columbus Day", hols))
+	},
+		Entry("2024-10-14", "2024-10-14"),
+	)
+
+	DescribeTable("115_VeteransDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Veterans Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Veterans Day", hols))
+	},
+		Entry("2024-11-11", "2024-11-11"),
+	)
+
+	DescribeTable("116_ThanksgivingDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Thanksgiving Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Thanksgiving Day", hols))
+	},
+		Entry("2024-11-28", "2024-11-28"),
+	)
+
+	DescribeTable("117_ChristmasDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Christmas Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Christmas Day", hols))
+	},
+		Entry("2024-12-25", "2024-12-25"),
+	)
+
+	DescribeTable("118_JuneteenthNationalIndependenceDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Juneteenth National Independence Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Juneteenth National Independence Day", hols))
+	},
+		Entry("2022-06-20", "2022-06-20"),
+	)
+
+	DescribeTable("119_JuneteenthNationalIndependenceDay", func(s string) {
+		opts := holidays.Options{Regions: []string{"federalreservebanks"}, Observed: true}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Juneteenth National Independence Day")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Juneteenth National Independence Day", hols))
+	},
+		Entry("2023-06-19", "2023-06-19"),
+	)
+
+})
