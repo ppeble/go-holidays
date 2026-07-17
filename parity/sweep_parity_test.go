@@ -196,7 +196,11 @@ func knownSweepDivergence(region string, onlyGo, onlyRuby []pair) bool {
 func knownDivergentHoliday(region, name string) bool {
 	switch {
 	case region == "ph" && name == "National Heroes Day":
-		return true // go-holidays-dz9: ph National Heroes Day date rule divergence
+		// Go is intentionally correct (last Monday of August); the gem's
+		// ph.yaml is buggy (Sept 1 when Aug 31 is a Sunday). Tracked upstream
+		// as holidays/definitions#345; remove this once that fix ships in a
+		// tagged release. See pkg/ph_heroes_day_test.go (go-holidays-dz9).
+		return true
 	}
 	return false
 }
