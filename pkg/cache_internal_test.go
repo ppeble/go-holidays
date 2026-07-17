@@ -1,122 +1,118 @@
 package holidays
 
 import (
-	"testing"
 	"time"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
 // Test cache internals directly. Lives in `package holidays` (not _test) so it
-// can poke the unexported store.
+// can poke the unexported store. This file's Describe/It blocks register into
+// the same process-global Ginkgo spec tree as the holidays_test package; the
+// single RunSpecs bootstrap for the whole pkg/ binary lives in
+// holidays_suite_test.go. Do not add another RunSpecs call here.
 
-func TestCacheStoreAndFind_ExactRange(t *testing.T) {
-	ResetCache()
-	defer ResetCache()
-	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
-	to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
-	opts := Options{Regions: []string{"us"}}
-	sentinel := []Holiday{
-		{Date: time.Date(2026, 7, 4, 0, 0, 0, 0, time.UTC), Name: "Test 4", Regions: []string{"us"}},
-		{Date: time.Date(2026, 12, 25, 0, 0, 0, 0, time.UTC), Name: "Test 25", Regions: []string{"us"}},
-	}
-	cacheStore(from, to, opts, sentinel)
-	got, ok := cacheFind(from, to, opts)
-	if !ok {
-		t.Fatal("expected cache hit on exact range")
-	}
-	if len(got) != 2 {
-		t.Fatalf("got %d holidays, want 2", len(got))
-	}
-}
+var _ = Describe("cache internals", func() {
+	BeforeEach(func() {
+		ResetCache()
+	})
+	AfterEach(func() {
+		ResetCache()
+	})
 
-func TestCacheFind_ContainedRangeHits(t *testing.T) {
-	ResetCache()
-	defer ResetCache()
-	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
-	to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
-	opts := Options{Regions: []string{"us"}}
-	sentinel := []Holiday{
-		{Date: time.Date(2026, 7, 4, 0, 0, 0, 0, time.UTC), Name: "Test 4"},
-		{Date: time.Date(2026, 12, 25, 0, 0, 0, 0, time.UTC), Name: "Test 25"},
-	}
-	cacheStore(from, to, opts, sentinel)
-	// Narrower range entirely inside the cached one: should still hit.
-	got, ok := cacheFind(
-		time.Date(2026, 7, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2026, 7, 31, 0, 0, 0, 0, time.UTC),
-		opts,
-	)
-	if !ok {
-		t.Fatal("expected cache hit on contained range")
-	}
-	if len(got) != 1 || got[0].Name != "Test 4" {
-		t.Fatalf("got %+v, want only Test 4", got)
-	}
-}
+	It("stores and finds an exact range", func() {
+		from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+		to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
+		opts := Options{Regions: []string{"us"}}
+		sentinel := []Holiday{
+			{Date: time.Date(2026, 7, 4, 0, 0, 0, 0, time.UTC), Name: "Test 4", Regions: []string{"us"}},
+			{Date: time.Date(2026, 12, 25, 0, 0, 0, 0, time.UTC), Name: "Test 25", Regions: []string{"us"}},
+		}
+		cacheStore(from, to, opts, sentinel)
 
-func TestCacheFind_OutOfRangeMisses(t *testing.T) {
-	ResetCache()
-	defer ResetCache()
-	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
-	to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
-	opts := Options{Regions: []string{"us"}}
-	cacheStore(from, to, opts, nil)
-	// Request range extending past cached upper bound.
-	if _, ok := cacheFind(
-		time.Date(2026, 12, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2027, 1, 31, 0, 0, 0, 0, time.UTC),
-		opts,
-	); ok {
-		t.Fatal("expected cache miss for range extending past cache")
-	}
-	// Request range starting before cached lower bound.
-	if _, ok := cacheFind(
-		time.Date(2025, 12, 1, 0, 0, 0, 0, time.UTC),
-		time.Date(2026, 1, 31, 0, 0, 0, 0, time.UTC),
-		opts,
-	); ok {
-		t.Fatal("expected cache miss for range starting before cache")
-	}
-}
+		got, ok := cacheFind(from, to, opts)
+		Expect(ok).To(BeTrue(), "expected cache hit on exact range")
+		Expect(got).To(HaveLen(2))
+	})
 
-func TestCacheFind_DifferentOptionsMiss(t *testing.T) {
-	ResetCache()
-	defer ResetCache()
-	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
-	to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
-	cacheStore(from, to, Options{Regions: []string{"us"}}, nil)
-	// Different region: miss.
-	if _, ok := cacheFind(from, to, Options{Regions: []string{"gb"}}); ok {
-		t.Fatal("different region should miss")
-	}
-	// Same region but informal flipped: miss.
-	if _, ok := cacheFind(from, to, Options{Regions: []string{"us"}, Informal: true}); ok {
-		t.Fatal("flipping informal should miss")
-	}
-	// Same region but observed flipped: miss.
-	if _, ok := cacheFind(from, to, Options{Regions: []string{"us"}, Observed: true}); ok {
-		t.Fatal("flipping observed should miss")
-	}
-}
+	It("hits the cache for a range contained within the stored range", func() {
+		from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+		to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
+		opts := Options{Regions: []string{"us"}}
+		sentinel := []Holiday{
+			{Date: time.Date(2026, 7, 4, 0, 0, 0, 0, time.UTC), Name: "Test 4"},
+			{Date: time.Date(2026, 12, 25, 0, 0, 0, 0, time.UTC), Name: "Test 25"},
+		}
+		cacheStore(from, to, opts, sentinel)
 
-func TestOptionsKey_RegionOrderInsensitive(t *testing.T) {
-	a := optionsKey(Options{Regions: []string{"us", "gb"}})
-	b := optionsKey(Options{Regions: []string{"gb", "us"}})
-	if a != b {
-		t.Fatalf("options key should be order-insensitive; got %+v vs %+v", a, b)
-	}
-}
+		// Narrower range entirely inside the cached one: should still hit.
+		got, ok := cacheFind(
+			time.Date(2026, 7, 1, 0, 0, 0, 0, time.UTC),
+			time.Date(2026, 7, 31, 0, 0, 0, 0, time.UTC),
+			opts,
+		)
+		Expect(ok).To(BeTrue(), "expected cache hit on contained range")
+		Expect(got).To(HaveLen(1))
+		Expect(got[0].Name).To(Equal("Test 4"))
+	})
 
-func TestResetCache_Clears(t *testing.T) {
-	ResetCache()
-	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
-	to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
-	opts := Options{Regions: []string{"us"}}
-	cacheStore(from, to, opts, []Holiday{{Date: from, Name: "x"}})
-	if _, ok := cacheFind(from, to, opts); !ok {
-		t.Fatal("expected hit before reset")
-	}
-	ResetCache()
-	if _, ok := cacheFind(from, to, opts); ok {
-		t.Fatal("expected miss after reset")
-	}
-}
+	It("misses when the requested range extends outside the cached range", func() {
+		from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+		to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
+		opts := Options{Regions: []string{"us"}}
+		cacheStore(from, to, opts, nil)
+
+		// Request range extending past cached upper bound.
+		_, ok := cacheFind(
+			time.Date(2026, 12, 1, 0, 0, 0, 0, time.UTC),
+			time.Date(2027, 1, 31, 0, 0, 0, 0, time.UTC),
+			opts,
+		)
+		Expect(ok).To(BeFalse(), "expected cache miss for range extending past cache")
+
+		// Request range starting before cached lower bound.
+		_, ok = cacheFind(
+			time.Date(2025, 12, 1, 0, 0, 0, 0, time.UTC),
+			time.Date(2026, 1, 31, 0, 0, 0, 0, time.UTC),
+			opts,
+		)
+		Expect(ok).To(BeFalse(), "expected cache miss for range starting before cache")
+	})
+
+	It("misses when options differ", func() {
+		from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+		to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
+		cacheStore(from, to, Options{Regions: []string{"us"}}, nil)
+
+		_, ok := cacheFind(from, to, Options{Regions: []string{"gb"}})
+		Expect(ok).To(BeFalse(), "different region should miss")
+
+		_, ok = cacheFind(from, to, Options{Regions: []string{"us"}, Informal: true})
+		Expect(ok).To(BeFalse(), "flipping informal should miss")
+
+		_, ok = cacheFind(from, to, Options{Regions: []string{"us"}, Observed: true})
+		Expect(ok).To(BeFalse(), "flipping observed should miss")
+	})
+
+	It("computes an options key that is order-insensitive for regions", func() {
+		a := optionsKey(Options{Regions: []string{"us", "gb"}})
+		b := optionsKey(Options{Regions: []string{"gb", "us"}})
+		Expect(a).To(Equal(b))
+	})
+
+	It("clears the cache on reset", func() {
+		from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+		to := time.Date(2026, 12, 31, 0, 0, 0, 0, time.UTC)
+		opts := Options{Regions: []string{"us"}}
+		cacheStore(from, to, opts, []Holiday{{Date: from, Name: "x"}})
+
+		_, ok := cacheFind(from, to, opts)
+		Expect(ok).To(BeTrue(), "expected hit before reset")
+
+		ResetCache()
+
+		_, ok = cacheFind(from, to, opts)
+		Expect(ok).To(BeFalse(), "expected miss after reset")
+	})
+})
