@@ -3,439 +3,277 @@
 package definitions_test
 
 import (
-	"testing"
+	"fmt"
 
 	holidays "github.com/ppeble/go-holidays/pkg"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
-func TestSE_000_Nyårsdagen(t *testing.T) {
-	dates := []string{"2008-01-01"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+var _ = Describe("se", func() {
+	DescribeTable("000_Nyårsdagen", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Nyårsdagen") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Nyårsdagen", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Nyårsdagen")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Nyårsdagen", hols))
+	},
+		Entry("2008-01-01", "2008-01-01"),
+	)
 
-func TestSE_001_TrettondedagJul(t *testing.T) {
-	dates := []string{"2008-01-06"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("001_TrettondedagJul", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Trettondedag jul") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Trettondedag jul", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Trettondedag jul")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Trettondedag jul", hols))
+	},
+		Entry("2008-01-06", "2008-01-06"),
+	)
 
-func TestSE_002_Långfredagen(t *testing.T) {
-	dates := []string{"2008-03-21"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("002_Långfredagen", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Långfredagen") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Långfredagen", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Långfredagen")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Långfredagen", hols))
+	},
+		Entry("2008-03-21", "2008-03-21"),
+	)
 
-func TestSE_003_Påskafton(t *testing.T) {
-	dates := []string{"2008-03-22"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("003_Påskafton", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Påskafton") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Påskafton", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Påskafton")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Påskafton", hols))
+	},
+		Entry("2008-03-22", "2008-03-22"),
+	)
 
-func TestSE_004_Påskdagen(t *testing.T) {
-	dates := []string{"2008-03-23"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("004_Påskdagen", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Påskdagen") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Påskdagen", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Påskdagen")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Påskdagen", hols))
+	},
+		Entry("2008-03-23", "2008-03-23"),
+	)
 
-func TestSE_005_AnnandagPåsk(t *testing.T) {
-	dates := []string{"2008-03-24"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("005_AnnandagPåsk", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Annandag påsk") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Annandag påsk", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Annandag påsk")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Annandag påsk", hols))
+	},
+		Entry("2008-03-24", "2008-03-24"),
+	)
 
-func TestSE_006_KristiHimmelsfärdsdag(t *testing.T) {
-	dates := []string{"2008-05-01"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("006_KristiHimmelsfärdsdag", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Kristi himmelsfärdsdag") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Kristi himmelsfärdsdag", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Kristi himmelsfärdsdag")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Kristi himmelsfärdsdag", hols))
+	},
+		Entry("2008-05-01", "2008-05-01"),
+	)
 
-func TestSE_007_Pingstdagen(t *testing.T) {
-	dates := []string{"2008-05-11"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("007_Pingstdagen", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Pingstdagen") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Pingstdagen", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Pingstdagen")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Pingstdagen", hols))
+	},
+		Entry("2008-05-11", "2008-05-11"),
+	)
 
-func TestSE_008_Nationaldagen(t *testing.T) {
-	dates := []string{"2008-06-06"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("008_Nationaldagen", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Nationaldagen") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Nationaldagen", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Nationaldagen")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Nationaldagen", hols))
+	},
+		Entry("2008-06-06", "2008-06-06"),
+	)
 
-func TestSE_009_Midsommardagen(t *testing.T) {
-	dates := []string{"2005-06-25"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("009_Midsommardagen", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Midsommardagen") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommardagen", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Midsommardagen")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommardagen", hols))
+	},
+		Entry("2005-06-25", "2005-06-25"),
+	)
 
-func TestSE_010_Midsommardagen(t *testing.T) {
-	dates := []string{"2006-06-24"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("010_Midsommardagen", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Midsommardagen") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommardagen", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Midsommardagen")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommardagen", hols))
+	},
+		Entry("2006-06-24", "2006-06-24"),
+	)
 
-func TestSE_011_Midsommarafton(t *testing.T) {
-	dates := []string{"2006-06-23"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("011_Midsommarafton", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Midsommarafton") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommarafton", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Midsommarafton")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommarafton", hols))
+	},
+		Entry("2006-06-23", "2006-06-23"),
+	)
 
-func TestSE_012_Midsommardagen(t *testing.T) {
-	dates := []string{"2007-06-23"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("012_Midsommardagen", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Midsommardagen") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommardagen", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Midsommardagen")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommardagen", hols))
+	},
+		Entry("2007-06-23", "2007-06-23"),
+	)
 
-func TestSE_013_Midsommarafton(t *testing.T) {
-	dates := []string{"2007-06-22"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("013_Midsommarafton", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Midsommarafton") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommarafton", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Midsommarafton")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommarafton", hols))
+	},
+		Entry("2007-06-22", "2007-06-22"),
+	)
 
-func TestSE_014_Midsommardagen(t *testing.T) {
-	dates := []string{"2008-06-21"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("014_Midsommardagen", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Midsommardagen") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommardagen", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Midsommardagen")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommardagen", hols))
+	},
+		Entry("2008-06-21", "2008-06-21"),
+	)
 
-func TestSE_015_Midsommarafton(t *testing.T) {
-	dates := []string{"2008-06-20"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("015_Midsommarafton", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Midsommarafton") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommarafton", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Midsommarafton")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Midsommarafton", hols))
+	},
+		Entry("2008-06-20", "2008-06-20"),
+	)
 
-func TestSE_016_AllaHelgonsDag(t *testing.T) {
-	dates := []string{"2005-11-05"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("016_AllaHelgonsDag", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Alla helgons dag") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Alla helgons dag", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Alla helgons dag")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Alla helgons dag", hols))
+	},
+		Entry("2005-11-05", "2005-11-05"),
+	)
 
-func TestSE_017_AllaHelgonsDag(t *testing.T) {
-	dates := []string{"2006-11-04"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("017_AllaHelgonsDag", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Alla helgons dag") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Alla helgons dag", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Alla helgons dag")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Alla helgons dag", hols))
+	},
+		Entry("2006-11-04", "2006-11-04"),
+	)
 
-func TestSE_018_AllaHelgonsDag(t *testing.T) {
-	dates := []string{"2007-11-03"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("018_AllaHelgonsDag", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Alla helgons dag") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Alla helgons dag", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Alla helgons dag")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Alla helgons dag", hols))
+	},
+		Entry("2007-11-03", "2007-11-03"),
+	)
 
-func TestSE_019_AllaHelgonsDag(t *testing.T) {
-	dates := []string{"2008-11-01"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("019_AllaHelgonsDag", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Alla helgons dag") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Alla helgons dag", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Alla helgons dag")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Alla helgons dag", hols))
+	},
+		Entry("2008-11-01", "2008-11-01"),
+	)
 
-func TestSE_020_Julafton(t *testing.T) {
-	dates := []string{"2008-12-24"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("020_Julafton", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Julafton") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Julafton", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Julafton")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Julafton", hols))
+	},
+		Entry("2008-12-24", "2008-12-24"),
+	)
 
-func TestSE_021_Juldagen(t *testing.T) {
-	dates := []string{"2008-12-25"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("021_Juldagen", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Juldagen") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Juldagen", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Juldagen")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Juldagen", hols))
+	},
+		Entry("2008-12-25", "2008-12-25"),
+	)
 
-func TestSE_022_AnnandagJul(t *testing.T) {
-	dates := []string{"2008-12-26"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("022_AnnandagJul", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Annandag jul") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Annandag jul", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Annandag jul")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Annandag jul", hols))
+	},
+		Entry("2008-12-26", "2008-12-26"),
+	)
 
-func TestSE_023_Nyårsafton(t *testing.T) {
-	dates := []string{"2008-12-31"}
-	opts := holidays.Options{Regions: []string{"se"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("023_Nyårsafton", func(s string) {
+		opts := holidays.Options{Regions: []string{"se"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Nyårsafton") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Nyårsafton", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Nyårsafton")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Nyårsafton", hols))
+	},
+		Entry("2008-12-31", "2008-12-31"),
+	)
+
+})

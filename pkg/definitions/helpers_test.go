@@ -3,11 +3,20 @@
 package definitions_test
 
 import (
+	"testing"
 	"time"
 
 	holidays "github.com/ppeble/go-holidays/pkg"
 	_ "github.com/ppeble/go-holidays/pkg/definitions"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
+
+func TestDefinitions(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "definitions suite")
+}
 
 func parseFlex(s string) (time.Time, error) {
 	return time.Parse("2006-1-2", s)

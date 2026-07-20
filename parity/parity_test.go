@@ -8,6 +8,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+
 	holidays "github.com/ppeble/go-holidays/pkg"
 	_ "github.com/ppeble/go-holidays/pkg/definitions"
 )
@@ -98,87 +101,120 @@ func panicf(format string, args ...any) {
 	os.Exit(2)
 }
 
+// All parity specs are nested under this single top-level container so they
+// run in the order written here, matching the original `go test` execution
+// order. Ginkgo randomizes the order of top-level containers by default; the
+// specs below share one long-lived Ruby oracle process (see TestMain above),
+// and the LoadCustom spec mutates that process's global region state, so
+// running these out of declaration order previously produced spurious
+// cross-spec pollution failures (de/gb_eng informal mismatches) that do not
+// reproduce when run in file order. Nesting everything in one container
+// sidesteps that without touching the oracle harness itself. The exhaustive
+// sweep (sweep_parity_test.go) is appended last via registerSweepSpecs so it
+// keeps its own file while still sharing this single container.
+var _ = Describe("Parity", func() {
+	registerOnSpec()
+	registerBetweenSpec()
+	registerNextHolidaysSpec()
+	registerYearHolidaysSpec()
+	registerAnyHolidaysDuringWorkWeekSpec()
+	registerAvailableRegionsSpec()
+	registerLoadCustomSpec()
+	registerCacheBetweenSpec()
+	registerSweepSpecs()
+})
+
 // ---- on ----------------------------------------------------------------------
 
-// knownHolidayDates are (region -> date) pairs expected to BE holidays, plus a
-// few dates expected to be empty, exercising the `on` path including the
+// registerOnSpec verifies (region -> date) pairs expected to BE holidays, plus
+// a few dates expected to be empty, exercising the `on` path including the
 // empty==empty case.
-func TestParity_On(t *testing.T) {
-	type onCase struct {
-		region string
-		date   string
-	}
-	cases := []onCase{
-		{"us", "2024-12-25"}, {"us", "2024-07-04"}, {"us", "2024-11-28"},
-		{"us", "2021-07-04"}, {"us", "2021-12-31"}, // observed-shift boundary
-		{"ca", "2024-07-01"}, {"ca", "2024-12-26"},
-		{"gb_eng", "2024-12-26"}, {"gb_eng", "2024-04-01"},
-		{"de", "2024-03-29"}, {"de", "2024-04-01"}, // Good Friday, Easter Monday
-		{"fr", "2024-05-01"}, {"fr", "2024-07-14"},
-		{"jp", "2024-01-01"}, {"jp", "2024-05-03"},
-		{"nz", "2024-02-06"}, {"nz", "2024-04-25"},
-		{"br", "2024-09-07"}, {"br", "2024-11-15"},
-		{"in", "2024-01-26"}, {"in", "2024-08-15"},
-		{"au_nsw", "2024-01-26"}, {"au_nsw", "2024-12-26"},
-		{"il", "2024-05-14"},
-		{"mx", "2024-09-16"}, {"mx", "2024-11-20"},
-		// expected-empty (ordinary weekday, no holiday)
-		{"us", "2024-03-12"}, {"de", "2024-08-13"}, {"jp", "2024-06-18"},
-	}
-	for _, f := range corpusFlags {
-		for _, c := range cases {
-			date := mustDate(c.date)
-			o := opts([]string{c.region}, f)
-			got, err := holidays.On(date, o)
-			if err != nil {
-				t.Errorf("On(%s, %s, %s) Go error: %v", c.date, c.region, f.name, err)
-				continue
+func registerOnSpec() {
+	Context("On", func() {
+		It("matches the oracle for known holiday dates and known-empty dates", func() {
+			t := GinkgoT()
+			type onCase struct {
+				region string
+				date   string
 			}
-			want, err := ora.holidayList(request{
-				Func: "on", Date: c.date, Regions: []string{c.region},
-				Informal: f.informal, Observed: f.observed,
-			})
-			if isOracleUnsupported(err) {
-				t.Logf("SKIP on(%s, %s, %s): oracle cannot serve this region: %v", c.date, c.region, f.name, err)
-				continue
+			cases := []onCase{
+				{"us", "2024-12-25"}, {"us", "2024-07-04"}, {"us", "2024-11-28"},
+				{"us", "2021-07-04"}, {"us", "2021-12-31"}, // observed-shift boundary
+				{"ca", "2024-07-01"}, {"ca", "2024-12-26"},
+				{"gb_eng", "2024-12-26"}, {"gb_eng", "2024-04-01"},
+				{"de", "2024-03-29"}, {"de", "2024-04-01"}, // Good Friday, Easter Monday
+				{"fr", "2024-05-01"}, {"fr", "2024-07-14"},
+				{"jp", "2024-01-01"}, {"jp", "2024-05-03"},
+				{"nz", "2024-02-06"}, {"nz", "2024-04-25"},
+				{"br", "2024-09-07"}, {"br", "2024-11-15"},
+				{"in", "2024-01-26"}, {"in", "2024-08-15"},
+				{"au_nsw", "2024-01-26"}, {"au_nsw", "2024-12-26"},
+				{"il", "2024-05-14"},
+				{"mx", "2024-09-16"}, {"mx", "2024-11-20"},
+				// expected-empty (ordinary weekday, no holiday)
+				{"us", "2024-03-12"}, {"de", "2024-08-13"}, {"jp", "2024-06-18"},
 			}
-			if err != nil {
-				t.Errorf("On(%s, %s, %s) oracle error: %v", c.date, c.region, f.name, err)
-				continue
+			for _, f := range corpusFlags {
+				for _, c := range cases {
+					date := mustDate(c.date)
+					o := opts([]string{c.region}, f)
+					got, err := holidays.On(date, o)
+					if err != nil {
+						t.Errorf("On(%s, %s, %s) Go error: %v", c.date, c.region, f.name, err)
+						continue
+					}
+					want, err := ora.holidayList(request{
+						Func: "on", Date: c.date, Regions: []string{c.region},
+						Informal: f.informal, Observed: f.observed,
+					})
+					if isOracleUnsupported(err) {
+						t.Logf("SKIP on(%s, %s, %s): oracle cannot serve this region: %v", c.date, c.region, f.name, err)
+						continue
+					}
+					if err != nil {
+						t.Errorf("On(%s, %s, %s) oracle error: %v", c.date, c.region, f.name, err)
+						continue
+					}
+					assertPairs(t, "on", flexArgs("date", c.date, c.region, f), normalizeGo(got), want)
+				}
 			}
-			assertPairs(t, "on", flexArgs("date", c.date, c.region, f), normalizeGo(got), want)
-		}
-	}
+		})
+	})
 }
 
 // ---- between -----------------------------------------------------------------
 
-func TestParity_Between(t *testing.T) {
-	type span struct {
-		start, end string
-	}
-	// Full calendar-year ranges for each region/year, plus a few partial ranges.
-	partials := []span{
-		{"2024-06-01", "2024-09-30"},
-		{"2021-12-01", "2022-01-15"}, // straddles year boundary, observed shifts
-		{"2025-03-01", "2025-05-31"},
-	}
-	for _, f := range corpusFlags {
-		for _, regions := range corpusRegions {
-			for _, y := range corpusYears {
-				runBetween(t, regions, f, yearStart(y), yearEnd(y))
+func registerBetweenSpec() {
+	Context("Between", func() {
+		It("matches the oracle across full-year and partial-year ranges", func() {
+			t := GinkgoT()
+			type span struct {
+				start, end string
 			}
-			// partial ranges only on single-region requests to keep the count sane
-			if len(regions) == 1 {
-				for _, p := range partials {
-					runBetween(t, regions, f, p.start, p.end)
+			// Full calendar-year ranges for each region/year, plus a few partial ranges.
+			partials := []span{
+				{"2024-06-01", "2024-09-30"},
+				{"2021-12-01", "2022-01-15"}, // straddles year boundary, observed shifts
+				{"2025-03-01", "2025-05-31"},
+			}
+			for _, f := range corpusFlags {
+				for _, regions := range corpusRegions {
+					for _, y := range corpusYears {
+						runBetween(t, regions, f, yearStart(y), yearEnd(y))
+					}
+					// partial ranges only on single-region requests to keep the count sane
+					if len(regions) == 1 {
+						for _, p := range partials {
+							runBetween(t, regions, f, p.start, p.end)
+						}
+					}
 				}
 			}
-		}
-	}
+		})
+	})
 }
 
-func runBetween(t *testing.T, regions []string, f flagCombo, s, e string) {
+func runBetween(t GinkgoTInterface, regions []string, f flagCombo, s, e string) {
 	t.Helper()
 	o := opts(regions, f)
 	got, err := holidays.Between(mustDate(s), mustDate(e), o)
@@ -203,230 +239,242 @@ func runBetween(t *testing.T, regions []string, f flagCombo, s, e string) {
 
 // ---- next_holidays -----------------------------------------------------------
 
-func TestParity_NextHolidays(t *testing.T) {
-	type nc struct {
-		region string
-		from   string
-		count  int
-	}
-	// Known intentional divergence (not asserted): next_holidays(de, 2024-03-01, 12).
-	// The gem windows its search through a dates_driver that buckets each holiday
-	// by its source month (function/variable holidays in month 0), only out to
-	// from >> 12. For this case the 2025 bucket ends at month 4, so the gem drops
-	// the fixed-date Tag der Arbeit (2025-05-01, month 5) while keeping the
-	// Easter-based Christi Himmelfahrt (2025-05-29, month 0). Go's NextHolidays
-	// instead expands year by year until it has `count` holidays, so it correctly
-	// includes Tag der Arbeit 2025. We deliberately do not replicate the gem's
-	// month-bucketing quirk here; see parity/README.md.
-	cases := []nc{
-		{"us", "2024-01-01", 1}, {"us", "2024-01-01", 3}, {"us", "2024-01-01", 12},
-		{"us", "2024-12-01", 3}, {"us", "2021-12-15", 3}, // boundary
-		{"ca", "2024-06-15", 3},
-		{"jp", "2024-04-01", 12}, {"gb_eng", "2024-01-01", 12},
-		{"nz", "2024-01-01", 12}, {"fr", "2025-01-01", 12},
-	}
-	for _, f := range corpusFlags {
-		for _, c := range cases {
-			o := opts([]string{c.region}, f)
-			got, err := holidays.NextHolidays(mustDate(c.from), c.count, o)
-			if err != nil {
-				t.Errorf("NextHolidays(%s, %d, %s, %s) Go error: %v", c.from, c.count, c.region, f.name, err)
-				continue
+func registerNextHolidaysSpec() {
+	Context("NextHolidays", func() {
+		It("matches the oracle for a curated set of from/count cases", func() {
+			t := GinkgoT()
+			type nc struct {
+				region string
+				from   string
+				count  int
 			}
-			want, err := ora.holidayList(request{
-				Func: "next_holidays", Count: c.count, From: c.from,
-				Regions: []string{c.region}, Informal: f.informal, Observed: f.observed,
-			})
-			if isOracleUnsupported(err) {
-				t.Logf("SKIP next_holidays(%s, %d, %s, %s): oracle cannot serve this region: %v", c.from, c.count, c.region, f.name, err)
-				continue
+			// Known intentional divergence (not asserted): next_holidays(de, 2024-03-01, 12).
+			// The gem windows its search through a dates_driver that buckets each holiday
+			// by its source month (function/variable holidays in month 0), only out to
+			// from >> 12. For this case the 2025 bucket ends at month 4, so the gem drops
+			// the fixed-date Tag der Arbeit (2025-05-01, month 5) while keeping the
+			// Easter-based Christi Himmelfahrt (2025-05-29, month 0). Go's NextHolidays
+			// instead expands year by year until it has `count` holidays, so it correctly
+			// includes Tag der Arbeit 2025. We deliberately do not replicate the gem's
+			// month-bucketing quirk here; see parity/README.md.
+			cases := []nc{
+				{"us", "2024-01-01", 1}, {"us", "2024-01-01", 3}, {"us", "2024-01-01", 12},
+				{"us", "2024-12-01", 3}, {"us", "2021-12-15", 3}, // boundary
+				{"ca", "2024-06-15", 3},
+				{"jp", "2024-04-01", 12}, {"gb_eng", "2024-01-01", 12},
+				{"nz", "2024-01-01", 12}, {"fr", "2025-01-01", 12},
 			}
-			if err != nil {
-				t.Errorf("NextHolidays(%s, %d, %s, %s) oracle error: %v", c.from, c.count, c.region, f.name, err)
-				continue
+			for _, f := range corpusFlags {
+				for _, c := range cases {
+					o := opts([]string{c.region}, f)
+					got, err := holidays.NextHolidays(mustDate(c.from), c.count, o)
+					if err != nil {
+						t.Errorf("NextHolidays(%s, %d, %s, %s) Go error: %v", c.from, c.count, c.region, f.name, err)
+						continue
+					}
+					want, err := ora.holidayList(request{
+						Func: "next_holidays", Count: c.count, From: c.from,
+						Regions: []string{c.region}, Informal: f.informal, Observed: f.observed,
+					})
+					if isOracleUnsupported(err) {
+						t.Logf("SKIP next_holidays(%s, %d, %s, %s): oracle cannot serve this region: %v", c.from, c.count, c.region, f.name, err)
+						continue
+					}
+					if err != nil {
+						t.Errorf("NextHolidays(%s, %d, %s, %s) oracle error: %v", c.from, c.count, c.region, f.name, err)
+						continue
+					}
+					args := flexNextArgs(c.from, c.count, c.region, f)
+					assertPairs(t, "next_holidays", args, normalizeGo(got), want)
+				}
 			}
-			args := flexNextArgs(c.from, c.count, c.region, f)
-			assertPairs(t, "next_holidays", args, normalizeGo(got), want)
-		}
-	}
+		})
+	})
 }
 
 // ---- year_holidays -----------------------------------------------------------
 
-func TestParity_YearHolidays(t *testing.T) {
-	type yc struct {
-		region string
-		from   string
-	}
-	cases := []yc{
-		{"us", "2024-01-01"}, {"us", "2024-06-15"}, // mid-year
-		{"us", "2021-01-01"}, // C1 weekend-boundary case (run with observed below)
-		{"ca", "2024-01-01"}, {"de", "2025-01-01"}, {"jp", "2024-01-01"},
-		{"gb_eng", "2024-03-01"}, {"nz", "2024-01-01"}, {"fr", "2026-01-01"},
-		{"br", "2024-01-01"}, {"au_nsw", "2024-01-01"},
-	}
-	for _, f := range corpusFlags {
-		for _, c := range cases {
-			o := opts([]string{c.region}, f)
-			got, err := holidays.YearHolidaysFrom(mustDate(c.from), o)
-			if err != nil {
-				t.Errorf("YearHolidaysFrom(%s, %s, %s) Go error: %v", c.from, c.region, f.name, err)
-				continue
+func registerYearHolidaysSpec() {
+	Context("YearHolidays", func() {
+		It("matches the oracle for a curated set of from cases", func() {
+			t := GinkgoT()
+			type yc struct {
+				region string
+				from   string
 			}
-			want, err := ora.holidayList(request{
-				Func: "year_holidays", From: c.from, Regions: []string{c.region},
-				Informal: f.informal, Observed: f.observed,
-			})
-			if isOracleUnsupported(err) {
-				t.Logf("SKIP year_holidays(%s, %s, %s): oracle cannot serve this region: %v", c.from, c.region, f.name, err)
-				continue
+			cases := []yc{
+				{"us", "2024-01-01"}, {"us", "2024-06-15"}, // mid-year
+				{"us", "2021-01-01"}, // C1 weekend-boundary case (run with observed below)
+				{"ca", "2024-01-01"}, {"de", "2025-01-01"}, {"jp", "2024-01-01"},
+				{"gb_eng", "2024-03-01"}, {"nz", "2024-01-01"}, {"fr", "2026-01-01"},
+				{"br", "2024-01-01"}, {"au_nsw", "2024-01-01"},
 			}
-			if err != nil {
-				t.Errorf("YearHolidaysFrom(%s, %s, %s) oracle error: %v", c.from, c.region, f.name, err)
-				continue
+			for _, f := range corpusFlags {
+				for _, c := range cases {
+					o := opts([]string{c.region}, f)
+					got, err := holidays.YearHolidaysFrom(mustDate(c.from), o)
+					if err != nil {
+						t.Errorf("YearHolidaysFrom(%s, %s, %s) Go error: %v", c.from, c.region, f.name, err)
+						continue
+					}
+					want, err := ora.holidayList(request{
+						Func: "year_holidays", From: c.from, Regions: []string{c.region},
+						Informal: f.informal, Observed: f.observed,
+					})
+					if isOracleUnsupported(err) {
+						t.Logf("SKIP year_holidays(%s, %s, %s): oracle cannot serve this region: %v", c.from, c.region, f.name, err)
+						continue
+					}
+					if err != nil {
+						t.Errorf("YearHolidaysFrom(%s, %s, %s) oracle error: %v", c.from, c.region, f.name, err)
+						continue
+					}
+					args := flexYearArgs(c.from, c.region, f)
+					assertPairs(t, "year_holidays", args, normalizeGo(got), want)
+				}
 			}
-			args := flexYearArgs(c.from, c.region, f)
-			assertPairs(t, "year_holidays", args, normalizeGo(got), want)
-		}
-	}
+		})
+	})
 }
 
 // ---- any_holidays_during_work_week? ------------------------------------------
 
-func TestParity_AnyHolidaysDuringWorkWeek(t *testing.T) {
-	type wc struct {
-		region string
-		date   string
-	}
-	cases := []wc{
-		{"us", "2024-12-24"}, // Christmas week -> true
-		{"us", "2024-03-12"}, // ordinary week -> false
-		{"us", "2024-07-02"}, // July 4 week -> true
-		{"de", "2024-03-26"}, // ordinary week -> false
-		{"de", "2024-12-23"}, // Christmas week -> true
-		{"jp", "2024-05-01"}, // Golden Week -> true
-		{"gb_eng", "2024-08-26"},
-	}
-	for _, f := range corpusFlags {
-		for _, c := range cases {
-			o := opts([]string{c.region}, f)
-			got, err := holidays.AnyHolidaysDuringWorkWeek(mustDate(c.date), o)
-			if err != nil {
-				t.Errorf("AnyHolidaysDuringWorkWeek(%s, %s, %s) Go error: %v", c.date, c.region, f.name, err)
-				continue
+func registerAnyHolidaysDuringWorkWeekSpec() {
+	Context("AnyHolidaysDuringWorkWeek", func() {
+		It("matches the oracle boolean result for a curated set of dates", func() {
+			t := GinkgoT()
+			type wc struct {
+				region string
+				date   string
 			}
-			want, err := ora.boolResult(request{
-				Func: "any_holidays_during_work_week?", Date: c.date,
-				Regions: []string{c.region}, Informal: f.informal, Observed: f.observed,
-			})
-			if isOracleUnsupported(err) {
-				t.Logf("SKIP any_holidays_during_work_week?(%s, %s, %s): oracle cannot serve this region: %v", c.date, c.region, f.name, err)
-				continue
+			cases := []wc{
+				{"us", "2024-12-24"}, // Christmas week -> true
+				{"us", "2024-03-12"}, // ordinary week -> false
+				{"us", "2024-07-02"}, // July 4 week -> true
+				{"de", "2024-03-26"}, // ordinary week -> false
+				{"de", "2024-12-23"}, // Christmas week -> true
+				{"jp", "2024-05-01"}, // Golden Week -> true
+				{"gb_eng", "2024-08-26"},
 			}
-			if err != nil {
-				t.Errorf("AnyHolidaysDuringWorkWeek(%s, %s, %s) oracle error: %v", c.date, c.region, f.name, err)
-				continue
+			for _, f := range corpusFlags {
+				for _, c := range cases {
+					o := opts([]string{c.region}, f)
+					got, err := holidays.AnyHolidaysDuringWorkWeek(mustDate(c.date), o)
+					if err != nil {
+						t.Errorf("AnyHolidaysDuringWorkWeek(%s, %s, %s) Go error: %v", c.date, c.region, f.name, err)
+						continue
+					}
+					want, err := ora.boolResult(request{
+						Func: "any_holidays_during_work_week?", Date: c.date,
+						Regions: []string{c.region}, Informal: f.informal, Observed: f.observed,
+					})
+					if isOracleUnsupported(err) {
+						t.Logf("SKIP any_holidays_during_work_week?(%s, %s, %s): oracle cannot serve this region: %v", c.date, c.region, f.name, err)
+						continue
+					}
+					if err != nil {
+						t.Errorf("AnyHolidaysDuringWorkWeek(%s, %s, %s) oracle error: %v", c.date, c.region, f.name, err)
+						continue
+					}
+					if got != want {
+						t.Errorf("any_holidays_during_work_week?(date=%s region=%s %s): Go=%v Ruby=%v",
+							c.date, c.region, f.name, got, want)
+					}
+				}
 			}
-			if got != want {
-				t.Errorf("any_holidays_during_work_week?(date=%s region=%s %s): Go=%v Ruby=%v",
-					c.date, c.region, f.name, got, want)
-			}
-		}
-	}
+		})
+	})
 }
 
 // ---- available_regions -------------------------------------------------------
 
-func TestParity_AvailableRegions(t *testing.T) {
-	goRegions := holidays.AvailableRegions()
-	rubyRegions, err := ora.stringList(request{Func: "available_regions"})
-	if err != nil {
-		t.Fatalf("available_regions oracle error: %v", err)
-	}
-	onlyGo, onlyRuby := diffStrings(goRegions, rubyRegions)
-	if len(onlyGo) > 0 || len(onlyRuby) > 0 {
-		t.Errorf("available_regions mismatch (Go has %d, Ruby has %d)\n  only in Go: %v\n  only in Ruby: %v",
-			len(goRegions), len(rubyRegions), onlyGo, onlyRuby)
-	}
+func registerAvailableRegionsSpec() {
+	Context("AvailableRegions", func() {
+		It("matches the oracle's region universe exactly", func() {
+			t := GinkgoT()
+			goRegions := holidays.AvailableRegions()
+			rubyRegions, err := ora.stringList(request{Func: "available_regions"})
+			if err != nil {
+				t.Fatalf("available_regions oracle error: %v", err)
+			}
+			onlyGo, onlyRuby := diffStrings(goRegions, rubyRegions)
+			if len(onlyGo) > 0 || len(onlyRuby) > 0 {
+				t.Errorf("available_regions mismatch (Go has %d, Ruby has %d)\n  only in Go: %v\n  only in Ruby: %v",
+					len(goRegions), len(rubyRegions), onlyGo, onlyRuby)
+			}
+		})
+	})
 }
 
 // ---- load_custom round-trip --------------------------------------------------
 
-// TestParity_LoadCustom is a light smoke test: both sides ingest the same tiny
+// registerLoadCustomSpec is a light smoke test: both sides ingest the same tiny
 // throwaway YAML. The oracle reports {"loaded":1}; Go's LoadCustom returns no
 // error and the custom rule resolves. We do not output-compare the gem's
 // load_custom (it merges into global state); we assert both sides accept it.
-func TestParity_LoadCustom(t *testing.T) {
-	body := "" +
-		"months:\n" +
-		"  4:\n" +
-		"  - name: Parity Smoke Holiday\n" +
-		"    regions: [parity_smoke]\n" +
-		"    mday: 9\n"
-	dir := t.TempDir()
-	path := filepath.Join(dir, "parity_smoke.yaml")
-	if err := os.WriteFile(path, []byte(body), 0o644); err != nil {
-		t.Fatalf("write fixture: %v", err)
-	}
+func registerLoadCustomSpec() {
+	Context("LoadCustom", func() {
+		It("loads the same custom rule on both sides and Go resolves it", func() {
+			body := "" +
+				"months:\n" +
+				"  4:\n" +
+				"  - name: Parity Smoke Holiday\n" +
+				"    regions: [parity_smoke]\n" +
+				"    mday: 9\n"
+			dir := GinkgoT().TempDir()
+			path := filepath.Join(dir, "parity_smoke.yaml")
+			Expect(os.WriteFile(path, []byte(body), 0o644)).To(Succeed())
 
-	loaded, err := ora.loadCount(request{Func: "load_custom", Files: []string{path}})
-	if err != nil {
-		t.Fatalf("oracle load_custom error: %v", err)
-	}
-	if loaded != 1 {
-		t.Errorf("oracle load_custom loaded=%d, want 1", loaded)
-	}
+			loaded, err := ora.loadCount(request{Func: "load_custom", Files: []string{path}})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(loaded).To(Equal(1))
 
-	if err := holidays.LoadCustom(path); err != nil {
-		t.Fatalf("Go LoadCustom error: %v", err)
-	}
-	defer holidays.UnloadCustom(path)
+			Expect(holidays.LoadCustom(path)).To(Succeed())
+			defer holidays.UnloadCustom(path)
 
-	got, err := holidays.On(mustDate("2024-04-09"), holidays.Options{Regions: []string{"parity_smoke"}})
-	if err != nil {
-		t.Fatalf("Go On after LoadCustom: %v", err)
-	}
-	if len(got) != 1 || got[0].Name != "Parity Smoke Holiday" {
-		t.Errorf("Go custom rule not visible after LoadCustom: %+v", got)
-	}
+			got, err := holidays.On(mustDate("2024-04-09"), holidays.Options{Regions: []string{"parity_smoke"}})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(got).To(HaveLen(1))
+			Expect(got[0].Name).To(Equal("Parity Smoke Holiday"))
+		})
+	})
 }
 
 // ---- cache_between transparency ----------------------------------------------
 
-// TestParity_CacheBetween exercises Go's cache path: CacheBetween over a wide
+// registerCacheBetweenSpec exercises Go's cache path: CacheBetween over a wide
 // range, then Between over a sub-range must still equal the oracle's `between`
 // for that sub-range. (Go's CacheBetween returns only error, so we do NOT
 // output-compare it directly; the gem's cache_between return is irrelevant.)
-func TestParity_CacheBetween(t *testing.T) {
-	holidays.ResetCache()
-	defer holidays.ResetCache()
+func registerCacheBetweenSpec() {
+	Context("CacheBetween", func() {
+		It("keeps a cached sub-range equal to the oracle", func() {
+			t := GinkgoT()
+			holidays.ResetCache()
+			defer holidays.ResetCache()
 
-	regions := []string{"us"}
-	o := holidays.Options{Regions: regions}
-	wideStart, wideEnd := "2024-01-01", "2024-12-31"
-	if err := holidays.CacheBetween(mustDate(wideStart), mustDate(wideEnd), o); err != nil {
-		t.Fatalf("CacheBetween error: %v", err)
-	}
+			regions := []string{"us"}
+			o := holidays.Options{Regions: regions}
+			wideStart, wideEnd := "2024-01-01", "2024-12-31"
+			Expect(holidays.CacheBetween(mustDate(wideStart), mustDate(wideEnd), o)).To(Succeed())
 
-	subStart, subEnd := "2024-06-01", "2024-08-31"
-	got, err := holidays.Between(mustDate(subStart), mustDate(subEnd), o)
-	if err != nil {
-		t.Fatalf("Between (cached sub-range) error: %v", err)
-	}
-	want, err := ora.holidayList(request{
-		Func: "between", Start: subStart, End: subEnd, Regions: regions,
+			subStart, subEnd := "2024-06-01", "2024-08-31"
+			got, err := holidays.Between(mustDate(subStart), mustDate(subEnd), o)
+			Expect(err).NotTo(HaveOccurred())
+			want, err := ora.holidayList(request{
+				Func: "between", Start: subStart, End: subEnd, Regions: regions,
+			})
+			Expect(err).NotTo(HaveOccurred())
+			assertPairs(t, "cache_between(sub-range)",
+				flexBetweenArgs(subStart, subEnd, regions, flagCombo{name: "plain"}),
+				normalizeGo(got), want)
+		})
 	})
-	if err != nil {
-		t.Fatalf("oracle between error: %v", err)
-	}
-	assertPairs(t, "cache_between(sub-range)",
-		flexBetweenArgs(subStart, subEnd, regions, flagCombo{name: "plain"}),
-		normalizeGo(got), want)
 }
 
 // ---- assertion + arg-formatting helpers --------------------------------------
 
-func assertPairs(t *testing.T, fn, args string, got, want []pair) {
+func assertPairs(t GinkgoTInterface, fn, args string, got, want []pair) {
 	t.Helper()
 	if pairsEqual(got, want) {
 		return

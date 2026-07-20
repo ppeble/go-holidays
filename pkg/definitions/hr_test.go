@@ -3,313 +3,200 @@
 package definitions_test
 
 import (
-	"testing"
+	"fmt"
 
 	holidays "github.com/ppeble/go-holidays/pkg"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
-func TestHR_000_NovaGodina(t *testing.T) {
-	dates := []string{"2012-01-01"}
-	opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
-	for _, s := range dates {
+var _ = Describe("hr", func() {
+	DescribeTable("000_NovaGodina", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Nova godina") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Nova godina", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Nova godina")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Nova godina", hols))
+	},
+		Entry("2012-01-01", "2012-01-01"),
+	)
 
-func TestHR_001_BogojavljenjeIliSvetaTriKralja(t *testing.T) {
-	dates := []string{"2012-01-06"}
-	opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("001_BogojavljenjeIliSvetaTriKralja", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Bogojavljenje ili Sveta tri kralja") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Bogojavljenje ili Sveta tri kralja", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Bogojavljenje ili Sveta tri kralja")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Bogojavljenje ili Sveta tri kralja", hols))
+	},
+		Entry("2012-01-06", "2012-01-06"),
+	)
 
-func TestHR_002_PraznikRada(t *testing.T) {
-	dates := []string{"2012-05-01"}
-	opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("002_PraznikRada", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Praznik rada") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Praznik rada", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Praznik rada")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Praznik rada", hols))
+	},
+		Entry("2012-05-01", "2012-05-01"),
+	)
 
-func TestHR_003_DanAntifašističkeBorbe(t *testing.T) {
-	dates := []string{"2012-06-22"}
-	opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("003_DanAntifašističkeBorbe", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Dan antifašističke borbe") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Dan antifašističke borbe", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Dan antifašističke borbe")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Dan antifašističke borbe", hols))
+	},
+		Entry("2012-06-22", "2012-06-22"),
+	)
 
-func TestHR_004_DanDržavnosti(t *testing.T) {
-	dates := []string{"2020-05-30"}
-	opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("004_DanDržavnosti", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Dan državnosti") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Dan državnosti", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Dan državnosti")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Dan državnosti", hols))
+	},
+		Entry("2020-05-30", "2020-05-30"),
+	)
 
-func TestHR_005_DanPobjedeIDomovinskeZahvalnostiIDanHrvatskihBranitelja(t *testing.T) {
-	dates := []string{"2012-08-05"}
-	opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("005_DanPobjedeIDomovinskeZahvalnostiIDanHrvatskihBranitelja", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Dan pobjede i domovinske zahvalnosti i Dan hrvatskih branitelja") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Dan pobjede i domovinske zahvalnosti i Dan hrvatskih branitelja", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Dan pobjede i domovinske zahvalnosti i Dan hrvatskih branitelja")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Dan pobjede i domovinske zahvalnosti i Dan hrvatskih branitelja", hols))
+	},
+		Entry("2012-08-05", "2012-08-05"),
+	)
 
-func TestHR_006_VelikaGospa(t *testing.T) {
-	dates := []string{"2012-08-15"}
-	opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("006_VelikaGospa", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Velika Gospa") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Velika Gospa", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Velika Gospa")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Velika Gospa", hols))
+	},
+		Entry("2012-08-15", "2012-08-15"),
+	)
 
-func TestHR_007_DanSjećanjaNaŽrtveDomovinskogRataIDanSjećanjaNaŽrtvuVukovaraIŠkabrnje(t *testing.T) {
-	dates := []string{"2020-11-18"}
-	opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("007_DanSjećanjaNaŽrtveDomovinskogRataIDanSjećanjaNaŽrtvuVukovaraIŠkabrnje", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Dan sjećanja na žrtve Domovinskog rata i Dan sjećanja na žrtvu Vukovara i Škabrnje") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Dan sjećanja na žrtve Domovinskog rata i Dan sjećanja na žrtvu Vukovara i Škabrnje", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Dan sjećanja na žrtve Domovinskog rata i Dan sjećanja na žrtvu Vukovara i Škabrnje")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Dan sjećanja na žrtve Domovinskog rata i Dan sjećanja na žrtvu Vukovara i Škabrnje", hols))
+	},
+		Entry("2020-11-18", "2020-11-18"),
+	)
 
-func TestHR_008_SviSveti(t *testing.T) {
-	dates := []string{"2012-11-01"}
-	opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("008_SviSveti", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Svi sveti") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Svi sveti", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Svi sveti")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Svi sveti", hols))
+	},
+		Entry("2012-11-01", "2012-11-01"),
+	)
 
-func TestHR_009_Božić(t *testing.T) {
-	dates := []string{"2012-12-25"}
-	opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("009_Božić", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Božić") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Božić", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Božić")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Božić", hols))
+	},
+		Entry("2012-12-25", "2012-12-25"),
+	)
 
-func TestHR_010_SvetiStjepan(t *testing.T) {
-	dates := []string{"2012-12-26"}
-	opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
-	for _, s := range dates {
+	DescribeTable("010_SvetiStjepan", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}, Informal: true}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Sveti Stjepan") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Sveti Stjepan", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Sveti Stjepan")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Sveti Stjepan", hols))
+	},
+		Entry("2012-12-26", "2012-12-26"),
+	)
 
-func TestHR_011_Tijelovo(t *testing.T) {
-	dates := []string{"2008-05-22"}
-	opts := holidays.Options{Regions: []string{"hr"}}
-	for _, s := range dates {
+	DescribeTable("011_Tijelovo", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Tijelovo") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tijelovo", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Tijelovo")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tijelovo", hols))
+	},
+		Entry("2008-05-22", "2008-05-22"),
+	)
 
-func TestHR_012_Tijelovo(t *testing.T) {
-	dates := []string{"2009-06-11"}
-	opts := holidays.Options{Regions: []string{"hr"}}
-	for _, s := range dates {
+	DescribeTable("012_Tijelovo", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Tijelovo") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tijelovo", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Tijelovo")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tijelovo", hols))
+	},
+		Entry("2009-06-11", "2009-06-11"),
+	)
 
-func TestHR_013_Tijelovo(t *testing.T) {
-	dates := []string{"2010-06-03"}
-	opts := holidays.Options{Regions: []string{"hr"}}
-	for _, s := range dates {
+	DescribeTable("013_Tijelovo", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Tijelovo") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tijelovo", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Tijelovo")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tijelovo", hols))
+	},
+		Entry("2010-06-03", "2010-06-03"),
+	)
 
-func TestHR_014_Tijelovo(t *testing.T) {
-	dates := []string{"2012-06-07"}
-	opts := holidays.Options{Regions: []string{"hr"}}
-	for _, s := range dates {
+	DescribeTable("014_Tijelovo", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Tijelovo") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tijelovo", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Tijelovo")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tijelovo", hols))
+	},
+		Entry("2012-06-07", "2012-06-07"),
+	)
 
-func TestHR_015_Tijelovo(t *testing.T) {
-	dates := []string{"2013-05-30"}
-	opts := holidays.Options{Regions: []string{"hr"}}
-	for _, s := range dates {
+	DescribeTable("015_Tijelovo", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Tijelovo") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tijelovo", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Tijelovo")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tijelovo", hols))
+	},
+		Entry("2013-05-30", "2013-05-30"),
+	)
 
-func TestHR_016_Tijelovo(t *testing.T) {
-	dates := []string{"2014-06-19"}
-	opts := holidays.Options{Regions: []string{"hr"}}
-	for _, s := range dates {
+	DescribeTable("016_Tijelovo", func(s string) {
+		opts := holidays.Options{Regions: []string{"hr"}}
 		d, err := parseFlex(s)
-		if err != nil {
-			t.Fatalf("parse %q: %v", s, err)
-		}
+		Expect(err).NotTo(HaveOccurred())
 		hols, err := holidays.On(d, opts)
-		if err != nil {
-			t.Fatalf("On(%s): %v", s, err)
-		}
-		if !hasNamed(hols, "Tijelovo") {
-			t.Errorf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tijelovo", hols)
-		}
-	}
-}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Tijelovo")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Tijelovo", hols))
+	},
+		Entry("2014-06-19", "2014-06-19"),
+	)
+
+})
