@@ -130,6 +130,48 @@ require "json"
 require "date"
 require "yaml"
 
+# Keep the oracle a closed world over definitions/*.yaml.
+#
+# The gem ships its OWN vendored copy of the definitions under
+# lib/generated_definitions/, frozen at whatever data the gem release was cut
+# with. Holidays.load_custom merges our YAML into the same repository those
+# vendored rules land in; it does not replace or lock them out. So both can be
+# live at once, and then a region resolves to two rule sets.
+#
+# The gem loads them lazily: for a requested region it looks up a parent region
+# and requires that parent's vendored file if it is not already loaded
+# (finder/context/parse_options.rb:63-70 -> definition/context/load.rb:11-12).
+# Five of our 288 regions map to an aggregate parent we never define, so they
+# trigger it:
+#   europe <- si, sk     southamerica <- ve     bg <- bg_bg, bg_en
+# Querying si therefore pulls in generated_definitions/europe.rb, which carries
+# the gem's stale gb rules (pre-fix Christmas/Boxing observed functions). After
+# that, gb resolves to BOTH its v8.0.1 rules and the stale ones, and the sweep
+# reports a mismatch that is not real (go-holidays-2z0).
+#
+# Note we cannot refuse the vendored load outright: load_custom does NOT mark a
+# region as loaded, so every query runs this path, and short-circuiting all of
+# it leaves the finder with no regions and every query returns nothing.
+#
+# The distinction that matters is WHAT gets merged. Loading a region's own file
+# (target :gb -> gb.rb) re-merges only that region and our v8.0.1 rules still
+# win. Loading an aggregate (target :europe -> europe.rb) merges every European
+# region's rules in one go, which is what appends a second, stale set of gb
+# rules. So: delegate for real regions, skip for aggregates.
+#
+# Testing membership against the region set derived from our own YAML keeps this
+# self-maintaining. Any aggregate upstream invents later is absent from our data
+# too, so it is skipped without needing a hardcoded list.
+Holidays::Definition::Context::Load.class_eval do
+  alias_method :vendored_call, :call
+
+  def call(region)
+    return [] unless AVAILABLE_REGIONS.include?(region.to_s)
+
+    vendored_call(region)
+  end
+end
+
 DEFINITIONS_DIR = File.expand_path("../definitions", __dir__)
 
 # Union of every region code seen across the loaded v8.0.0 YAML rules. Populated
