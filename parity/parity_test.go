@@ -121,6 +121,7 @@ var _ = Describe("Parity", func() {
 	registerAvailableRegionsSpec()
 	registerLoadCustomSpec()
 	registerCacheBetweenSpec()
+	registerVendoredIsolationSpec()
 	registerSweepSpecs()
 })
 
@@ -436,6 +437,50 @@ func registerLoadCustomSpec() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(got).To(HaveLen(1))
 			Expect(got[0].Name).To(Equal("Parity Smoke Holiday"))
+		})
+	})
+}
+
+// ---- vendored-definition isolation -------------------------------------------
+
+// registerVendoredIsolationSpec guards go-holidays-2z0: asking the oracle about
+// one region must never change another region's answer.
+//
+// The gem ships its own vendored copy of the definitions and lazily requires the
+// file for a requested region's parent. Five regions map to an aggregate parent
+// (si/sk -> europe, ve -> southamerica, bg_bg/bg_en -> bg), and loading an
+// aggregate merges EVERY region in it, which appended a second, stale set of gb
+// rules. gb then resolved to both rule sets and the sweep reported a mismatch
+// that was not real. oracle.rb now skips aggregate loads; this fails if that
+// protection is removed.
+//
+// 1977 is the probe year because Christmas falls on a Sunday, so the stale rules
+// (to_monday_if_weekend) and the current ones
+// (to_tuesday_if_sunday_or_monday_if_saturday) disagree and the extra rules show
+// up as duplicate dates rather than being silently absorbed.
+func registerVendoredIsolationSpec() {
+	Context("VendoredDefinitionIsolation", func() {
+		It("does not let an unrelated region query alter gb", func() {
+			gbReq := request{
+				Func: "year_holidays", From: "1977-01-01",
+				Regions: []string{"gb"}, Observed: true,
+			}
+
+			before, err := ora.holidayList(gbReq)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(before).NotTo(BeEmpty())
+
+			for _, r := range []string{"si", "sk", "ve", "bg_bg"} {
+				_, err := ora.holidayList(request{
+					Func: "year_holidays", From: "2024-01-01", Regions: []string{r},
+				})
+				Expect(err).NotTo(HaveOccurred(), "querying %s must succeed", r)
+			}
+
+			after, err := ora.holidayList(gbReq)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(after).To(Equal(before),
+				"gb resolved differently after querying regions whose parent is an aggregate")
 		})
 	})
 }
