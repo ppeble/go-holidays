@@ -10,9 +10,9 @@ The challenge is comparing two engines fairly: the gem carries its own bundled
 data set, which we do not want to depend on. We close that gap by separating
 CODE from DATA:
 
-- **CODE** is the installed gem (`holidays`, pinned to 11.0.0 via `Gemfile`): its
+- **CODE** is the installed gem (`holidays`, pinned to 11.3.0 via `Gemfile`): its
   real resolution logic.
-- **DATA** is our `definitions/` submodule (v8.0.0 YAML), loaded into the running
+- **DATA** is our `definitions/` submodule (v8.1.0 YAML), loaded into the running
   gem on startup via `Holidays.load_custom`, so the comparison never rides on
   whatever data the gem happens to bundle.
 
@@ -22,11 +22,11 @@ a real behavioural difference between the engines, not a difference in the data.
 ## How it works
 
 ```
-parity_test.go  --NDJSON request-->  oracle.rb  (gem 11.0.0 + our v8.0.0 YAML)
+parity_test.go  --NDJSON request-->  oracle.rb  (gem 11.3.0 + our v8.1.0 YAML)
    (Go side)     <--NDJSON result--             
 ```
 
-- `oracle.rb` runs the gem, loads our v8.0.0 YAML, and answers one
+- `oracle.rb` runs the gem, loads our v8.1.0 YAML, and answers one
   line-delimited JSON (NDJSON) request per line on stdin, one response per line
   on stdout (see its RUN CONTRACT header).
 - `oracle_client.go` starts the oracle as a subprocess and speaks that contract.
@@ -46,10 +46,10 @@ runs it and stays Ruby-free.
 
 **Prerequisites:**
 - Ruby with the pinned `holidays` gem installed. The oracle activates
-  `parity/Gemfile` via `bundler/setup`, so `holidays 11.0.0` must be available
-  (`gem install holidays -v 11.0.0`, or `bundle install` from `parity/`).
+  `parity/Gemfile` via `bundler/setup`, so `holidays 11.3.0` must be available
+  (`gem install holidays -v 11.3.0`, or `bundle install` from `parity/`).
 - The `definitions/` submodule checked out (`git submodule update --init
-  definitions`). The oracle loads its v8.0.0 YAML; without it the gem falls back
+  definitions`). The oracle loads its v8.1.0 YAML; without it the gem falls back
   to its own bundled data and regions diverge.
 
 ## Scope

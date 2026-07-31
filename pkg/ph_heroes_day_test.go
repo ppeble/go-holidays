@@ -21,11 +21,13 @@ func assertHeroesDay(opts holidays.Options, date time.Time, want bool) {
 
 // ph National Heroes Day is the last Monday of August. This is the Go engine's
 // authoritative behavior and is asserted here directly, independent of the Ruby
-// gem: upstream ph.yaml has an off-by-one (holidays/definitions#345) that emits
-// September 1 in years where August 31 is a Sunday. Go intentionally does NOT
-// reproduce that quirk, so the parity sweep carries ph National Heroes Day in
-// knownDivergentHoliday until the upstream fix ships. These cases lock the Go
-// side so a future refactor cannot silently regress it to the buggy date.
+// gem. Upstream ph.yaml used to carry an off-by-one (holidays/definitions#345)
+// that emitted September 1 in years where August 31 is a Sunday; Go always
+// refused to reproduce that quirk, which made it the parity sweep's last known
+// divergence. The fix shipped in definitions v8.0.2 as function: ph_heroes_day(year)
+// with a matching implementation in gem 11.2.0, so both engines now agree and the
+// sweep allowlist is gone. These cases stay to lock the Go side so a future
+// refactor cannot silently regress it to the buggy date.
 var _ = Describe("PH National Heroes Day", func() {
 	It("falls on the last Monday of August", func() {
 		opts := holidays.Options{Regions: []string{"ph"}}

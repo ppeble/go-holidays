@@ -66,8 +66,8 @@ func registerSweepSpecs() {
 				sweepRegion(t, ora, region, &c)
 			}
 
-			t.Logf("exhaustive year sweep: %d comparisons across %d serviceable regions x %d years x %d flag combos; %d mismatches, %d known divergences, %d mutual lunar-boundary confirmations",
-				c.comparisons, len(serviceable), years, len(corpusFlags), c.mismatches, c.knownDivs, c.lunarBoundary)
+			t.Logf("exhaustive year sweep: %d comparisons across %d serviceable regions x %d years x %d flag combos; %d mismatches, %d mutual lunar-boundary confirmations",
+				c.comparisons, len(serviceable), years, len(corpusFlags), c.mismatches, c.lunarBoundary)
 			if c.mismatches > maxReportedMismatches {
 				t.Errorf("year sweep: %d mismatches total (%d reported above); see summary", c.mismatches, maxReportedMismatches)
 			}
@@ -77,7 +77,7 @@ func registerSweepSpecs() {
 
 // sweepCounters accumulates the sweep tally across all regions.
 type sweepCounters struct {
-	comparisons, mismatches, lunarBoundary, knownDivs int
+	comparisons, mismatches, lunarBoundary int
 }
 
 // sweepRegion compares Go against the shared oracle for one region across the
@@ -142,10 +142,6 @@ func compareYear(t GinkgoTInterface, ro *oracle, region string, year int, from s
 		return
 	}
 	onlyGo, onlyRuby := diffPairs(got, want)
-	if knownSweepDivergence(region, onlyGo, onlyRuby) {
-		c.knownDivs++
-		return
-	}
 	c.mismatches++
 	if c.mismatches <= maxReportedMismatches {
 		t.Errorf("year sweep mismatch [region=%s year=%d %s]: Go=%d Ruby=%d%s",
@@ -178,43 +174,12 @@ func dedupePairs(ps []pair) []pair {
 	return out
 }
 
-// knownSweepDivergence reports whether a residual mismatch consists ENTIRELY of
-// documented, genuine engine divergences (each tracked by a follow-up bug bead).
-// It tolerates a mismatch only when every differing entry, on both sides, is a
-// known case, so the broad sweep stays green on the known issues while still
-// failing loudly on anything new or unrelated.
-func knownSweepDivergence(region string, onlyGo, onlyRuby []pair) bool {
-	if len(onlyGo) == 0 && len(onlyRuby) == 0 {
-		return false
-	}
-	for _, p := range onlyGo {
-		if !knownDivergentHoliday(region, p.Name) {
-			return false
-		}
-	}
-	for _, p := range onlyRuby {
-		if !knownDivergentHoliday(region, p.Name) {
-			return false
-		}
-	}
-	return true
-}
-
-// knownDivergentHoliday lists the (region, holiday) pairs that genuinely disagree
-// between Go and the gem over identical v8.0.0 data, found by this sweep and each
-// tracked by a follow-up bug bead. These reproduce against the shared oracle on
-// gem 11.0.0 (they are genuine engine divergences, not a gem global-state artifact).
-func knownDivergentHoliday(region, name string) bool {
-	switch {
-	case region == "ph" && name == "National Heroes Day":
-		// Go is intentionally correct (last Monday of August); the gem's
-		// ph.yaml is buggy (Sept 1 when Aug 31 is a Sunday). Tracked upstream
-		// as holidays/definitions#345; remove this once that fix ships in a
-		// tagged release. See pkg/ph_heroes_day_test.go (go-holidays-dz9).
-		return true
-	}
-	return false
-}
+// The sweep carried an allowlist here for (region, holiday) pairs that genuinely
+// disagreed between Go and the gem. Its last entry was ph National Heroes Day,
+// where Go was intentionally correct (last Monday of August) against a buggy
+// ph.yaml. Upstream fixed that in holidays/definitions#345, which shipped in
+// v8.0.2 as function: ph_heroes_day(year) with a matching implementation in gem
+// 11.2.0, so both engines now agree and the sweep tolerates nothing.
 
 // availableRegionsSorted returns the Go region universe, sorted for stable
 // iteration and reporting.
