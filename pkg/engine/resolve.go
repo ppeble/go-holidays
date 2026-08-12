@@ -52,7 +52,7 @@ func ResolveYear(year int, opts ResolveOptions) ([]Resolved, error) {
 			continue
 		}
 		if opts.Observed && rule.HasObserved() {
-			date, err = applyObserved(rule.Observed, date)
+			date, err = applyObserved(rule.Observed, date, requestedRegion(opts.Regions))
 			if err != nil {
 				return nil, fmt.Errorf("rule %q observed=%s: %w", rule.Name, rule.Observed, err)
 			}
@@ -124,12 +124,33 @@ func computeDate(rule definition.HolidayRule, year int) (time.Time, error) {
 	return base, nil
 }
 
-func applyObserved(methodName string, date time.Time) (time.Time, error) {
+// requestedRegion picks the region an observed method sees. The gem builds an
+// observed method's input with the holiday's own regions left out
+// (finder/context/search.rb build_observed_date), so the region is the first
+// region the caller ASKED for, not the first the rule declares. That distinction
+// is what lets one shared definition observe differently in a sub-region: us
+// Juneteenth is defined once for [us], and only a us_ut request gets Utah's
+// substitution rule. An all-regions request has no queried region, matching the
+// gem's :any.
+func requestedRegion(regions []string) string {
+	if len(regions) == 0 {
+		return ""
+	}
+	return regions[0]
+}
+
+func applyObserved(methodName string, date time.Time, region string) (time.Time, error) {
 	fn, ok := LookupMethod(methodName)
 	if !ok {
 		return time.Time{}, fmt.Errorf("unregistered observed method %q", methodName)
 	}
-	return fn(MethodArgs{Date: date, Year: date.Year(), Month: int(date.Month()), Day: date.Day()})
+	return fn(MethodArgs{
+		Date:   date,
+		Year:   date.Year(),
+		Month:  int(date.Month()),
+		Day:    date.Day(),
+		Region: region,
+	})
 }
 
 func nthOrLastWeekday(year int, month time.Month, week int, wday time.Weekday) time.Time {

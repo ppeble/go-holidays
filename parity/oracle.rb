@@ -5,8 +5,8 @@
 #
 # Ruby "oracle" for apples-to-apples parity testing against the Go port.
 #
-# It runs the installed `holidays` gem (CODE, pinned to 11.0.0 via parity/Gemfile)
-# but loads OUR v8.0.0 region YAML (DATA) from the `definitions/` submodule via
+# It runs the installed `holidays` gem (CODE, pinned to 11.3.0 via parity/Gemfile)
+# but loads OUR v8.1.0 region YAML (DATA) from the `definitions/` submodule via
 # Holidays.load_custom on startup. So the holiday RULES are identical to what the
 # Go port compiles, and any difference in output is a real behavioural difference
 # in the engines, not in the data.
@@ -86,7 +86,7 @@
 # 7) available_regions
 #    req:  { "func":"available_regions" }
 #    res:  result = ["ar","at",...]   (sorted array of region-code strings)
-#    This set is DERIVED from the loaded v8.0.0 YAML (the union of every region
+#    This set is DERIVED from the loaded v8.1.0 YAML (the union of every region
 #    code appearing in any holiday rule's `regions:` list), matching exactly how
 #    the Go port computes holidays.AvailableRegions(). It is deliberately NOT
 #    the gem's bundled REGIONS constant, which is baked at compile time and is
@@ -111,7 +111,7 @@
 # us.yaml twice still yields exactly one "Christmas Day" on 2024-12-25, and
 # US-2024 = 10 holidays.
 #
-# Note on available_regions: load_custom ingests our v8.0.0 RULES, but it does
+# Note on available_regions: load_custom ingests our v8.1.0 RULES, but it does
 # NOT refresh the gem's compile-time REGIONS constant. So the
 # region set cannot come from the gem. Instead, while loading each YAML at
 # startup we collect the union of every region code in that file's holiday
@@ -119,7 +119,7 @@
 # apples with the Go port, which derives its region set the same way.
 # ============================================================================
 
-# Activate parity/Gemfile.lock so `holidays` resolves to the pinned 11.0.0 and
+# Activate parity/Gemfile.lock so `holidays` resolves to the pinned 11.3.0 and
 # never silently drifts to whatever is "highest installed". __dir__ is parity/,
 # so this holds no matter what working directory the harness launches us from.
 ENV["BUNDLE_GEMFILE"] ||= File.expand_path("Gemfile", __dir__)
@@ -146,7 +146,7 @@ require "yaml"
 #   europe <- si, sk     southamerica <- ve     bg <- bg_bg, bg_en
 # Querying si therefore pulls in generated_definitions/europe.rb, which carries
 # the gem's stale gb rules (pre-fix Christmas/Boxing observed functions). After
-# that, gb resolves to BOTH its v8.0.1 rules and the stale ones, and the sweep
+# that, gb resolves to BOTH its v8.1.0 rules and the stale ones, and the sweep
 # reports a mismatch that is not real (go-holidays-2z0).
 #
 # Note we cannot refuse the vendored load outright: load_custom does NOT mark a
@@ -154,7 +154,7 @@ require "yaml"
 # it leaves the finder with no regions and every query returns nothing.
 #
 # The distinction that matters is WHAT gets merged. Loading a region's own file
-# (target :gb -> gb.rb) re-merges only that region and our v8.0.1 rules still
+# (target :gb -> gb.rb) re-merges only that region and our v8.1.0 rules still
 # win. Loading an aggregate (target :europe -> europe.rb) merges every European
 # region's rules in one go, which is what appends a second, stale set of gb
 # rules. So: delegate for real regions, skip for aggregates.
@@ -174,7 +174,7 @@ end
 
 DEFINITIONS_DIR = File.expand_path("../definitions", __dir__)
 
-# Union of every region code seen across the loaded v8.0.0 YAML rules. Populated
+# Union of every region code seen across the loaded v8.1.0 YAML rules. Populated
 # by load_all_definitions and returned (sorted) by the available_regions func,
 # matching how the Go port derives holidays.AvailableRegions().
 AVAILABLE_REGIONS = []
@@ -196,7 +196,7 @@ def collect_regions_from_file(path, acc)
   end
 end
 
-# Ingest our v8.0.0 YAML into the gem and, alongside, collect the union of every
+# Ingest our v8.1.0 YAML into the gem and, alongside, collect the union of every
 # region code across those files. Returns the count of files loaded.
 def load_all_definitions
   files = Dir.glob(File.join(DEFINITIONS_DIR, "*.yaml"))
@@ -207,8 +207,38 @@ def load_all_definitions
     Holidays.load_custom(f)
     collect_regions_from_file(f, seen)
   end
+  backfill_observed_arguments!
   AVAILABLE_REGIONS.replace(seen.uniq.sort)
   files.size
+end
+
+# WORKAROUND for a gem bug: load_custom never sets :observed_arguments.
+#
+# An observed method may declare arguments other than the date, e.g. us.yaml's
+# `observed: juneteenth_national_independence_day(region, date)` for Utah. When
+# the gem PRE-COMPILES its shipped definitions it records those arguments
+# (definition/context/generator.rb writes :observed_arguments), and
+# finder/context/search.rb#build_observed_date reads them back as
+# `h[:observed_arguments] || [:date]`. The runtime YAML path that load_custom
+# uses never populates the key, so it silently falls back to [:date] and calls a
+# two-parameter proc with one argument: region receives the Date and date is
+# nil, raising "undefined method 'wday' for nil".
+#
+# We parse the same arguments out of the observed string the gem itself stores,
+# which is precisely what its generator does at build time. This makes the
+# load_custom path behave like the gem's own definitions, verified by comparing
+# against the gem's vendored us: both give us_ut 2024-06-17, 2027-06-21,
+# 2033-06-20. Delete this once the gem populates :observed_arguments itself.
+def backfill_observed_arguments!
+  repo = Holidays::Factory::Definition.holidays_by_month_repository
+  repo.all.each_value do |defs|
+    defs.each do |d|
+      next unless d[:observed].is_a?(String)
+      next if d.key?(:observed_arguments)
+      args = d[:observed][/\(([^)]*)\)/, 1].to_s.split(",").map { |a| a.strip.to_sym }
+      d[:observed_arguments] = args.empty? ? [:date] : args
+    end
+  end
 end
 
 # Normalize a "bare string or array" region argument to an array of symbols.

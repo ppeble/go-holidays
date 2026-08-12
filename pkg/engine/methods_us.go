@@ -91,4 +91,33 @@ func init() {
 		thanksgiving := calc.DayOfMonth(a.Year, time.November, 4, time.Thursday)
 		return thanksgiving.AddDate(0, 0, 1), nil
 	})
+
+	// Juneteenth's observed date is region-dependent, so this reads a.Region
+	// (the region the caller requested; see requestedRegion in resolve.go).
+	// Utah moves it to a Monday from either direction: Tue-Fri back to the
+	// preceding Monday, Sat/Sun forward to the next one. Everywhere else it
+	// behaves as to_weekday_if_weekend.
+	RegisterMethod("juneteenth_national_independence_day", func(a MethodArgs) (time.Time, error) {
+		w := a.Date.Weekday()
+		if a.Region == "us_ut" {
+			switch w {
+			case time.Sunday:
+				return a.Date.AddDate(0, 0, 1), nil
+			case time.Saturday:
+				return a.Date.AddDate(0, 0, 2), nil
+			case time.Monday:
+				return a.Date, nil
+			default:
+				return a.Date.AddDate(0, 0, -(int(w) - 1)), nil
+			}
+		}
+		switch w {
+		case time.Sunday:
+			return a.Date.AddDate(0, 0, 1), nil
+		case time.Saturday:
+			return a.Date.AddDate(0, 0, -1), nil
+		default:
+			return a.Date, nil
+		}
+	})
 }
