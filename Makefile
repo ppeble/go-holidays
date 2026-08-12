@@ -2,7 +2,7 @@ GO         ?= go
 GOPATH     := $(shell $(GO) env GOPATH)
 BIN        := bin
 DEFS_REPO  := https://github.com/holidays/definitions.git
-DEFS_TAG   ?= v8.1.0
+DEFS_TAG   ?= v8.2.0
 
 .PHONY: build holidays gen-holidays vet staticcheck test parity generate update-definitions clean
 
@@ -26,11 +26,11 @@ test: vet
 
 # parity runs the Ruby<->Go comparison suite (build-tagged, excluded from `test`).
 # Requires Ruby and the `holidays` gem installed, plus the `definitions/` submodule
-# checked out (the oracle loads our v8.1.0 YAML into the gem via load_custom).
+# checked out (the oracle loads our v8.2.0 YAML into the gem via load_custom).
 # See parity/README.md for the design and prerequisites.
 parity:
 	@ls definitions/*.yaml >/dev/null 2>&1 || { \
-		echo "error: definitions/ submodule is empty; the oracle would load no v8.1.0 YAML and every region would mismatch." >&2; \
+		echo "error: definitions/ submodule is empty; the oracle would load no v8.2.0 YAML and every region would mismatch." >&2; \
 		echo "Run: git submodule update --init definitions" >&2; \
 		exit 1; \
 	}
