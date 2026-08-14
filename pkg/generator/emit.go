@@ -12,10 +12,6 @@ import (
 	"github.com/ppeble/go-holidays/pkg/engine"
 )
 
-// SourceTag identifies the upstream version this code was generated from.
-// Embedded into the file header for traceability.
-var SourceTag = "v8.2.0"
-
 // ValidationError reports method references that have no registered Go implementation.
 type ValidationError struct {
 	Country string

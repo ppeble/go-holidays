@@ -31,6 +31,10 @@ func run(args []string) error {
 		return err
 	}
 
+	if err := generator.LoadSourceTag(*inDir); err != nil {
+		return err
+	}
+
 	files, err := selectInputFiles(*inDir, *regionsArg)
 	if err != nil {
 		return err
