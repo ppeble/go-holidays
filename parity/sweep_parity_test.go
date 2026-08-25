@@ -68,8 +68,12 @@ func registerSweepSpecs() {
 
 			t.Logf("exhaustive year sweep: %d comparisons across %d serviceable regions x %d years x %d flag combos; %d mismatches, %d mutual lunar-boundary confirmations",
 				c.comparisons, len(serviceable), years, len(corpusFlags), c.mismatches, c.lunarBoundary)
-			if c.mismatches > maxReportedMismatches {
-				t.Errorf("year sweep: %d mismatches total (%d reported above); see summary", c.mismatches, maxReportedMismatches)
+			for _, msg := range c.failMessages {
+				t.Log(msg)
+			}
+			if c.failCount > 0 {
+				t.Errorf("year sweep: %d failures total (%d reported above); see messages and summary tally",
+					c.failCount, len(c.failMessages))
 			}
 		})
 	})
@@ -78,6 +82,20 @@ func registerSweepSpecs() {
 // sweepCounters accumulates the sweep tally across all regions.
 type sweepCounters struct {
 	comparisons, mismatches, lunarBoundary int
+
+	// failCount is uncapped; failMessages holds up to maxReportedMismatches.
+	failCount    int
+	failMessages []string
+}
+
+// recordFailure accumulates one compareYear failure without aborting the
+// sweep. Only the first maxReportedMismatches messages are retained; failCount
+// stays uncapped so the final summary reports the true total.
+func (c *sweepCounters) recordFailure(format string, args ...any) {
+	c.failCount++
+	if len(c.failMessages) < maxReportedMismatches {
+		c.failMessages = append(c.failMessages, fmt.Sprintf(format, args...))
+	}
 }
 
 // sweepRegion compares Go against the shared oracle for one region across the
@@ -112,11 +130,11 @@ func compareYear(t GinkgoTInterface, ro *oracle, region string, year int, from s
 				c.lunarBoundary++
 				return
 			}
-			t.Errorf("lunar boundary [region=%s year=%d %s]: Go errored (%v) but Ruby resolved the year",
+			c.recordFailure("lunar boundary [region=%s year=%d %s]: Go errored (%v) but Ruby resolved the year",
 				region, year, f.name, err)
 			return
 		}
-		t.Errorf("YearHolidaysFrom(%s, %s, %s) Go error: %v", from, region, f.name, err)
+		c.recordFailure("YearHolidaysFrom(%s, %s, %s) Go error: %v", from, region, f.name, err)
 		return
 	}
 	// Compare Go and oracle output as (date, name) SETS, not multisets. The gem
@@ -133,7 +151,7 @@ func compareYear(t GinkgoTInterface, ro *oracle, region string, year int, from s
 	if err != nil {
 		// A region serviceable at the probe year should stay serviceable; treat any
 		// later oracle error as a real failure to investigate.
-		t.Errorf("year_holidays(%s, %s, %s) oracle error: %v", from, region, f.name, err)
+		c.recordFailure("year_holidays(%s, %s, %s) oracle error: %v", from, region, f.name, err)
 		return
 	}
 	want = dedupePairs(want)
@@ -143,10 +161,8 @@ func compareYear(t GinkgoTInterface, ro *oracle, region string, year int, from s
 	}
 	onlyGo, onlyRuby := diffPairs(got, want)
 	c.mismatches++
-	if c.mismatches <= maxReportedMismatches {
-		t.Errorf("year sweep mismatch [region=%s year=%d %s]: Go=%d Ruby=%d%s",
-			region, year, f.name, len(got), len(want), formatDiff(onlyGo, onlyRuby))
-	}
+	c.recordFailure("year sweep mismatch [region=%s year=%d %s]: Go=%d Ruby=%d%s",
+		region, year, f.name, len(got), len(want), formatDiff(onlyGo, onlyRuby))
 }
 
 // isLunarRangeError reports whether a Go error is the lunar-table upper-bound
