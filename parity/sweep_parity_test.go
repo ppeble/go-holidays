@@ -83,10 +83,7 @@ func registerSweepSpecs() {
 type sweepCounters struct {
 	comparisons, mismatches, lunarBoundary int
 
-	// failCount is the total number of compareYear failures of any kind
-	// (Go errors, oracle errors, lunar-boundary mismatches, value mismatches).
-	// failMessages holds up to maxReportedMismatches formatted messages so a
-	// systemic break doesn't bury the run under tens of thousands of lines.
+	// failCount is uncapped; failMessages holds up to maxReportedMismatches.
 	failCount    int
 	failMessages []string
 }
