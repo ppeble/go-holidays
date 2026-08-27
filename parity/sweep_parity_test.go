@@ -102,17 +102,36 @@ func (c *sweepCounters) recordFailure(format string, args ...any) {
 // full year span and all flag combinations.
 func sweepRegion(t GinkgoTInterface, ro *oracle, region string, c *sweepCounters) {
 	t.Helper()
+	// One batched oracle round-trip for the whole region (year x flag combos),
+	// instead of one per (year, flag). Transport-only: compareYear still does the
+	// deduped (date, name) set comparison against these cached results.
+	combos := make([]flagPair, len(corpusFlags))
+	for i, f := range corpusFlags {
+		combos[i] = flagPair{Informal: f.informal, Observed: f.observed}
+	}
+	cache, err := ro.yearHolidaysRange(region, sweepYearStart, sweepYearEnd, combos)
+	if err != nil {
+		c.recordFailure("year_holidays_range(%s) oracle error: %v", region, err)
+		return
+	}
 	for year := sweepYearStart; year <= sweepYearEnd; year++ {
 		from := fmt.Sprintf("%04d-01-01", year)
 		for _, f := range corpusFlags {
-			compareYear(t, ro, region, year, from, f, c)
+			compareYear(t, region, year, from, f, cache, c)
 		}
 	}
 }
 
-// compareYear runs one (region, year, flag) comparison and updates the tally.
-func compareYear(t GinkgoTInterface, ro *oracle, region string, year int, from string, f flagCombo, c *sweepCounters) {
+// compareYear runs one (region, year, flag) comparison and updates the tally,
+// reading the oracle's answer from the region's batched result cache.
+func compareYear(t GinkgoTInterface, region string, year int, from string, f flagCombo, cache map[sweepKey]sweepEntry, c *sweepCounters) {
 	t.Helper()
+	entry, ok := cache[sweepKey{year: year, informal: f.informal, observed: f.observed}]
+	if !ok {
+		c.recordFailure("year sweep [region=%s year=%d %s]: no oracle entry in batched result",
+			region, year, f.name)
+		return
+	}
 	hs, err := holidays.YearHolidaysFrom(mustDate(from), opts([]string{region}, f))
 	if err != nil {
 		// Go's lunar tables stop at 2049, so lunar regions (hk, kr, vn) cannot
@@ -123,10 +142,7 @@ func compareYear(t GinkgoTInterface, ro *oracle, region string, year int, from s
 		// (go-holidays-egm; the year+1 look-ahead at 2049 is handled in Go's
 		// YearHolidaysFrom, so only the 2050 primary year reaches here.)
 		if isLunarRangeError(err) {
-			if _, oerr := ro.holidayList(request{
-				Func: "year_holidays", From: from, Regions: []string{region},
-				Informal: f.informal, Observed: f.observed,
-			}); oerr != nil {
+			if entry.oracleErr != "" {
 				c.lunarBoundary++
 				return
 			}
@@ -144,17 +160,13 @@ func compareYear(t GinkgoTInterface, ro *oracle, region string, year int, from s
 	// holiday. This dedupe is empirically required: dropping it surfaces 7290 such
 	// spurious mismatches. It is unrelated to the (now removed) per-region oracle.
 	got := dedupePairs(normalizeGo(hs))
-	want, err := ro.holidayList(request{
-		Func: "year_holidays", From: from, Regions: []string{region},
-		Informal: f.informal, Observed: f.observed,
-	})
-	if err != nil {
+	if entry.oracleErr != "" {
 		// A region serviceable at the probe year should stay serviceable; treat any
 		// later oracle error as a real failure to investigate.
-		c.recordFailure("year_holidays(%s, %s, %s) oracle error: %v", from, region, f.name, err)
+		c.recordFailure("year_holidays(%s, %s, %s) oracle error: %v", from, region, f.name, entry.oracleErr)
 		return
 	}
-	want = dedupePairs(want)
+	want := dedupePairs(entry.pairs)
 	c.comparisons++
 	if pairsEqual(got, want) {
 		return

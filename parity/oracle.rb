@@ -98,6 +98,18 @@
 #          caller load extra YAML at runtime. The standard region set is
 #          already loaded at startup, so this is rarely needed.)
 #
+# 9) year_holidays_range
+#    req:  { "func":"year_holidays_range", "region":"us",
+#            "from_year":1970, "to_year":2050,
+#            "flag_combos":[{"informal":false,"observed":false}, ...] }
+#    res:  result = [ { "year":1970, "informal":false, "observed":false,
+#                       "ok":true, "error":null, "holidays":[ {date,name}, ... ] },
+#                     ... ]   (one entry per year x flag_combo; a per-entry Ruby
+#          failure sets ok=false / error=<class>: <msg> / holidays=[] without
+#          aborting the batch. Transport-only batching of year_holidays so the
+#          exhaustive sweep makes one round-trip per region instead of one per
+#          (year, flag). The Go side still compares (date,name) as deduped SETS.)
+#
 # ----------------------------------------------------------------------------
 # STARTUP
 # ----------------------------------------------------------------------------
@@ -309,6 +321,34 @@ def dispatch(req)
     else
       normalize_holidays(Holidays.year_holidays(opts))
     end
+
+  when "year_holidays_range"
+    region = req.fetch("region")
+    from_year = Integer(req.fetch("from_year"))
+    to_year = Integer(req.fetch("to_year"))
+    combos = Array(req["flag_combos"])
+    combos = [{ "informal" => false, "observed" => false }] if combos.empty?
+    entries = []
+    (from_year..to_year).each do |y|
+      combos.each do |combo|
+        bi = combo["informal"] ? true : false
+        bo = combo["observed"] ? true : false
+        opts = [region.to_sym]
+        opts << :informal if bi
+        opts << :observed if bo
+        begin
+          hs = Holidays.year_holidays(opts, Date.new(y, 1, 1))
+          entries << { "year" => y, "informal" => bi, "observed" => bo,
+                       "ok" => true, "error" => nil,
+                       "holidays" => normalize_holidays(hs) }
+        rescue StandardError => e
+          entries << { "year" => y, "informal" => bi, "observed" => bo,
+                       "ok" => false, "error" => "#{e.class}: #{e.message}",
+                       "holidays" => [] }
+        end
+      end
+    end
+    entries
 
   when "any_holidays_during_work_week?"
     date = parse_date(req.fetch("date"))
