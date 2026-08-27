@@ -43,7 +43,7 @@ func flexYearArgs(from, region string, f flagCombo) string {
 }
 
 // knownDivergences records cases where Go and the Ruby gem genuinely disagree
-// over identical v7.0.0 data and the difference is NOT a harness bug. It is
+// over identical region data and the difference is NOT a harness bug. It is
 // deliberately empty: a populated entry must carry an exact case and a comment,
 // and every entry is reported in the completion summary for triage. The harness
 // does NOT consult this map to suppress failures; it exists only to document any
