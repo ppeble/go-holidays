@@ -101,17 +101,22 @@ func panicf(format string, args ...any) {
 	os.Exit(2)
 }
 
-// All parity specs are nested under this single top-level container so they
-// run in the order written here, matching the original `go test` execution
-// order. Ginkgo randomizes the order of top-level containers by default; the
-// specs below share one long-lived Ruby oracle process (see TestMain above),
-// and the LoadCustom spec mutates that process's global region state, so
-// running these out of declaration order previously produced spurious
-// cross-spec pollution failures (de/gb_eng informal mismatches) that do not
-// reproduce when run in file order. Nesting everything in one container
-// sidesteps that without touching the oracle harness itself. The exhaustive
-// sweep (sweep_parity_test.go) is appended last via registerSweepSpecs so it
-// keeps its own file while still sharing this single container.
+// All parity specs are nested under this single top-level container to keep
+// them in declaration order. Ginkgo randomizes top-level container order by
+// default.
+//
+// The de/gb_eng informal cross-region mismatches that originally motivated this
+// structure were the go-holidays-2z0 bug (the gem's lazy merge of its vendored
+// aggregate definitions on top of load_custom'd rules, order-dependent). That is
+// now fixed in oracle.rb (Load#call skips aggregate vendored loads) and verified:
+// querying the aggregate-parent regions (si/sk/ve/bg_bg) leaves gb_eng and de
+// byte-identical, and -ginkgo.randomize-all is green across seeds.
+//
+// The container is kept for two smaller reasons:
+// (a) registerLoadCustomSpec sends load_custom for a parity_smoke region to the
+//     shared oracle and cannot undo it (oracle has no unload_custom func);
+// (b) the exhaustive sweep (sweep_parity_test.go, appended last via
+//     registerSweepSpecs) expects the oracle already warm.
 var _ = Describe("Parity", func() {
 	registerOnSpec()
 	registerBetweenSpec()
