@@ -1,7 +1,7 @@
 //go:build parity
 
 // Package parity drives the Ruby oracle (parity/oracle.rb) as a subprocess and
-// compares its output, computed over the same v8.2.0 region YAML, against the
+// compares its output, computed over the same region YAML, against the
 // Go holidays port. This file holds the subprocess plumbing and normalization;
 // the corpus and assertions live in parity_test.go. Everything is behind the
 // `parity` build tag so it never runs under plain `make test`.
@@ -164,7 +164,7 @@ func (o *oracle) call(req request) (*response, error) {
 }
 
 // isOracleUnsupported reports whether an oracle error reflects a region the
-// gem cannot serve from our v8.2.0 YAML (rather than a real mismatch). The
+// gem cannot serve from our region YAML (rather than a real mismatch). The
 // installed gem resolves some regions (notably Japan) through Ruby-coded
 // custom methods that live in a module the gem only defines for its own bundled
 // v6 data; load_custom of our YAML does not supply Holidays::JP, so any jp
