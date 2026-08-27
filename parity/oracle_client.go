@@ -35,17 +35,27 @@ type pair struct {
 // omitted when empty so each func only carries the arguments it needs; the
 // oracle reads exactly one JSON object per line.
 type request struct {
-	ID       int      `json:"id"`
-	Func     string   `json:"func"`
-	Date     string   `json:"date,omitempty"`
-	Start    string   `json:"start,omitempty"`
-	End      string   `json:"end,omitempty"`
-	From     string   `json:"from,omitempty"`
-	Count    int      `json:"count,omitempty"`
-	Regions  []string `json:"regions,omitempty"`
-	Files    []string `json:"files,omitempty"`
-	Informal bool     `json:"informal,omitempty"`
-	Observed bool     `json:"observed,omitempty"`
+	ID         int        `json:"id"`
+	Func       string     `json:"func"`
+	Date       string     `json:"date,omitempty"`
+	Start      string     `json:"start,omitempty"`
+	End        string     `json:"end,omitempty"`
+	From       string     `json:"from,omitempty"`
+	Count      int        `json:"count,omitempty"`
+	Regions    []string   `json:"regions,omitempty"`
+	Files      []string   `json:"files,omitempty"`
+	Informal   bool       `json:"informal,omitempty"`
+	Observed   bool       `json:"observed,omitempty"`
+	Region     string     `json:"region,omitempty"`
+	FromYear   int        `json:"from_year,omitempty"`
+	ToYear     int        `json:"to_year,omitempty"`
+	FlagCombos []flagPair `json:"flag_combos,omitempty"`
+}
+
+// flagPair is one informal/observed setting sent in a year_holidays_range batch.
+type flagPair struct {
+	Informal bool `json:"informal"`
+	Observed bool `json:"observed"`
 }
 
 // response is one NDJSON response line. result is left raw and decoded by the
@@ -187,6 +197,58 @@ func (o *oracle) holidayList(req request) ([]pair, error) {
 	}
 	sortPairs(pairs)
 	return pairs, nil
+}
+
+// sweepKey identifies one (year, flag-combo) cell of a year_holidays_range batch.
+type sweepKey struct {
+	year               int
+	informal, observed bool
+}
+
+// sweepEntry is the oracle's result for one sweepKey. oracleErr is non-empty
+// when the gem raised for that specific (year, flag) cell; pairs is then empty.
+type sweepEntry struct {
+	pairs     []pair
+	oracleErr string
+}
+
+// yearHolidaysRange makes ONE oracle round-trip for a whole region: every year
+// in [fromYear, toYear] under every flag combo. It replaces the per-(year,flag)
+// year_holidays calls the exhaustive sweep used to make (~324 -> 1 per region).
+// A transport-level failure is returned as the error; per-cell Ruby errors ride
+// along in each sweepEntry.oracleErr. Transport only: the set comparison and
+// dedupe on the caller side are unchanged.
+func (o *oracle) yearHolidaysRange(region string, fromYear, toYear int, combos []flagPair) (map[sweepKey]sweepEntry, error) {
+	resp, err := o.call(request{
+		Func:       "year_holidays_range",
+		Region:     region,
+		FromYear:   fromYear,
+		ToYear:     toYear,
+		FlagCombos: combos,
+	})
+	if err != nil {
+		return nil, err
+	}
+	var rows []struct {
+		Year     int    `json:"year"`
+		Informal bool   `json:"informal"`
+		Observed bool   `json:"observed"`
+		OK       bool   `json:"ok"`
+		Error    string `json:"error"`
+		Holidays []pair `json:"holidays"`
+	}
+	if err := json.Unmarshal(resp.Result, &rows); err != nil {
+		return nil, fmt.Errorf("decode year_holidays_range for %s: %w", region, err)
+	}
+	m := make(map[sweepKey]sweepEntry, len(rows))
+	for _, r := range rows {
+		sortPairs(r.Holidays)
+		m[sweepKey{year: r.Year, informal: r.Informal, observed: r.Observed}] = sweepEntry{
+			pairs:     r.Holidays,
+			oracleErr: r.Error,
+		}
+	}
+	return m, nil
 }
 
 // boolResult runs a request whose result is a bare boolean.
