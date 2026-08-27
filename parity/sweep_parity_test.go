@@ -4,13 +4,46 @@ package parity
 
 import (
 	"fmt"
+	"os"
 	"sort"
 	"strings"
+	"sync/atomic"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 
 	holidays "github.com/ppeble/go-holidays/pkg"
 )
+
+// sweepHeartbeatInterval is how often the exhaustive sweep prints a progress
+// line. The per-region oracle call is multi-second Ruby compute and Ginkgo
+// buffers GinkgoWriter until the spec ends, so without this the run is silent
+// for minutes. The line goes straight to stdout to bypass that buffering.
+const sweepHeartbeatInterval = 15 * time.Second
+
+// startSweepHeartbeat spawns a goroutine that prints "[parity sweep] N/total,
+// Ns elapsed" every sweepHeartbeatInterval until the returned stop func is
+// called. done is read atomically by the goroutine; the caller bumps it.
+func startSweepHeartbeat(label string, done *int64, total int) (stop func()) {
+	start := time.Now()
+	ticker := time.NewTicker(sweepHeartbeatInterval)
+	quit := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-quit:
+				return
+			case <-ticker.C:
+				fmt.Fprintf(os.Stdout, "[parity sweep] %s: %d/%d, %s elapsed\n",
+					label, atomic.LoadInt64(done), total, time.Since(start).Round(time.Second))
+			}
+		}
+	}()
+	return func() {
+		ticker.Stop()
+		close(quit)
+	}
+}
 
 // sweepYearStart and sweepYearEnd bound the exhaustive year_holidays sweep. The
 // range spans weekend-boundary years (observed-date shifts), historical years,
@@ -48,7 +81,15 @@ func registerSweepSpecs() {
 			t := GinkgoT()
 			regions := availableRegionsSorted(t)
 
-			serviceable, unsupported := partitionByOracleSupport(t, regions)
+			fmt.Fprintf(os.Stdout, "[parity sweep] probing %d regions for oracle support\n", len(regions))
+			var probed int64
+			stopProbe := startSweepHeartbeat("probe", &probed, len(regions))
+			serviceable, unsupported := partitionByOracleSupport(t, regions, &probed)
+			stopProbe()
+			// Echoed to stdout as well as the buffered spec log: it frames the
+			// per-region heartbeats that follow with the count they run against.
+			fmt.Fprintf(os.Stdout, "[parity sweep] coverage: %d regions, %d serviceable, %d oracle-unsupported\n",
+				len(regions), len(serviceable), len(unsupported))
 			t.Logf("coverage: %d regions total, %d serviceable, %d oracle-unsupported",
 				len(regions), len(serviceable), len(unsupported))
 			if len(unsupported) > 0 {
@@ -63,10 +104,16 @@ func registerSweepSpecs() {
 			// all 80 YAML, ~287x) and made this sweep take minutes. Gem 9.1.2 (#344,
 			// region load-order) and 10.0.0 (#352, function_modifier merge) fixed that,
 			// so one long-lived oracle produces the same tally in a fraction of the time.
+			var swept int64
+			stopSweep := startSweepHeartbeat("regions", &swept, len(serviceable))
 			for _, region := range serviceable {
 				sweepRegion(t, ora, region, &c)
+				atomic.AddInt64(&swept, 1)
 			}
+			stopSweep()
 
+			fmt.Fprintf(os.Stdout, "[parity sweep] done: %d comparisons, %d mismatches, %d mutual lunar-boundary confirmations\n",
+				c.comparisons, c.mismatches, c.lunarBoundary)
 			t.Logf("exhaustive year sweep: %d comparisons across %d serviceable regions x %d years x %d flag combos; %d mismatches, %d mutual lunar-boundary confirmations",
 				c.comparisons, len(serviceable), years, len(corpusFlags), c.mismatches, c.lunarBoundary)
 			for _, msg := range c.failMessages {
@@ -222,11 +269,12 @@ func availableRegionsSorted(t GinkgoTInterface) []string {
 // partitionByOracleSupport probes each region once (a single year_holidays
 // call) and splits the set into regions the oracle can serve and those it
 // cannot (the gem raising "uninitialized constant Holidays::...").
-func partitionByOracleSupport(t GinkgoTInterface, regions []string) (serviceable, unsupported []string) {
+func partitionByOracleSupport(t GinkgoTInterface, regions []string, probed *int64) (serviceable, unsupported []string) {
 	t.Helper()
 	const probeFrom = "2024-01-01"
 	for _, region := range regions {
 		_, err := ora.holidayList(request{Func: "year_holidays", From: probeFrom, Regions: []string{region}})
+		atomic.AddInt64(probed, 1)
 		switch {
 		case isOracleUnsupported(err):
 			unsupported = append(unsupported, region)
