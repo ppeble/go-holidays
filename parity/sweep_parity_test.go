@@ -59,11 +59,11 @@ const (
 const maxReportedMismatches = 50
 
 // registerSweepSpecs is the broad equivalence proof. For every region the
-// oracle can serve (jp is skipped: its jp_next_weekday method body, a ruby:
-// block in the upstream YAML, reaches for Holidays::JP which load_custom never
-// defines; see isOracleUnsupported and go-holidays-xip), it compares the full
-// year_holidays list from Go's YearHolidaysFrom against the oracle for every
-// year in [sweepYearStart, sweepYearEnd] under all four flag combinations.
+// oracle can serve (all of them today; a shim in oracle.rb keeps jp serviceable
+// despite the gem's ported jp_next_weekday needing a Ruby-coded module), it
+// compares the full year_holidays list from Go's YearHolidaysFrom against the
+// oracle for every year in [sweepYearStart, sweepYearEnd] under all four flag
+// combinations.
 //
 // It first enumerates which of AvailableRegions() the oracle can serve and
 // logs an explicit coverage tally, so skipped regions are accounted for rather

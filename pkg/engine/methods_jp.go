@@ -43,7 +43,7 @@ func init() {
 		if a.Date.IsZero() || a.Date.Weekday() != time.Sunday {
 			return time.Time{}, nil
 		}
-		return jpNextWeekday(a.Date.AddDate(0, 0, 1)), nil
+		return jpNextWeekday(a.Date.AddDate(0, 0, 1), a.Year), nil
 	})
 
 	// Each named substitute wrapper computes the original holiday's date for
@@ -76,15 +76,16 @@ func jpSubstituteWrapper(originalDate func(year int) time.Time) Method {
 		if base.IsZero() || base.Weekday() != time.Sunday {
 			return time.Time{}, nil
 		}
-		return jpNextWeekday(base.AddDate(0, 0, 1)), nil
+		return jpNextWeekday(base.AddDate(0, 0, 1), a.Year), nil
 	}
 }
 
 // jpNextWeekday walks forward from date, skipping Sundays and any fixed-mday
-// holiday registered under "jp". Mirrors the Ruby implementation's
-// holidays_by_month + mday check.
-func jpNextWeekday(d time.Time) time.Time {
-	fixed := jpFixedHolidaysByMonth()
+// holiday registered under "jp" that applies in the given year. Mirrors the
+// Ruby implementation's holidays_by_month + mday check, including its
+// year_ranges filter.
+func jpNextWeekday(d time.Time, year int) time.Time {
+	fixed := jpFixedHolidaysByMonth(year)
 	for {
 		if d.Weekday() == time.Sunday || fixed[int(d.Month())][d.Day()] {
 			d = d.AddDate(0, 0, 1)
@@ -94,10 +95,10 @@ func jpNextWeekday(d time.Time) time.Time {
 	}
 }
 
-func jpFixedHolidaysByMonth() map[int]map[int]bool {
+func jpFixedHolidaysByMonth(year int) map[int]map[int]bool {
 	out := map[int]map[int]bool{}
 	for _, r := range rulesForCountry("jp") {
-		if r.Mday <= 0 || r.Function != "" {
+		if r.Mday <= 0 || r.Function != "" || !r.AppliesIn(year) {
 			continue
 		}
 		if out[r.Month] == nil {

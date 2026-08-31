@@ -15,10 +15,10 @@ var _ = Describe("NormalizeSourceTag", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(tag).To(Equal(expected))
 		},
-		Entry("bare version gains a v prefix", "8.2.0", "v8.2.0"),
-		Entry("prefixed version is left alone", "v8.2.0", "v8.2.0"),
-		Entry("trailing newline is trimmed", "8.2.0\n", "v8.2.0"),
-		Entry("surrounding whitespace is trimmed", "  \tv8.2.0 \r\n", "v8.2.0"),
+		Entry("bare version gains a v prefix", "9.0.0", "v9.0.0"),
+		Entry("prefixed version is left alone", "v9.0.0", "v9.0.0"),
+		Entry("trailing newline is trimmed", "9.0.0\n", "v9.0.0"),
+		Entry("surrounding whitespace is trimmed", "  \tv9.0.0 \r\n", "v9.0.0"),
 	)
 
 	Context("when the contents are blank", func() {
@@ -33,13 +33,13 @@ var _ = Describe("LoadSourceTag", func() {
 	Context("when VERSION.txt exists", func() {
 		It("sets SourceTag from the normalized file contents", func() {
 			dir := GinkgoT().TempDir()
-			Expect(os.WriteFile(filepath.Join(dir, "VERSION.txt"), []byte("8.2.0"), 0o644)).To(Succeed())
+			Expect(os.WriteFile(filepath.Join(dir, "VERSION.txt"), []byte("9.0.0"), 0o644)).To(Succeed())
 
 			previous := SourceTag
 			DeferCleanup(func() { SourceTag = previous })
 
 			Expect(LoadSourceTag(dir)).To(Succeed())
-			Expect(SourceTag).To(Equal("v8.2.0"))
+			Expect(SourceTag).To(Equal("v9.0.0"))
 		})
 	})
 
