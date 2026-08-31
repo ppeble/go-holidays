@@ -1,17 +1,17 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    holidays (11.4.0)
+    holidays (11.5.0)
 
 PLATFORMS
   ruby
   x86_64-linux
 
 DEPENDENCIES
-  holidays (= 11.4.0)
+  holidays (= 11.5.0)
 
 CHECKSUMS
-  holidays (11.4.0) sha256=880f3c350cf1a5e55ba36f7266127c65fd3bd2bb4650daefd32106c09ea6d34b
+  holidays (11.5.0) sha256=27a1227ffabb5b044819ac3ec7d63bdc5c4af0d5693dfba16af594123ce413ce
 
 BUNDLED WITH
   4.0.10

@@ -250,9 +250,7 @@ var _ = Describe("YearHolidaysFrom", func() {
 		//
 		// The assertion stays focused on egm: the call succeeds, clips to 2049,
 		// and yields both a lunar (설날) and a gregorian (크리스마스) holiday. It
-		// deliberately does NOT pin an exact count: kr 2049 also carries the
-		// separate go-holidays-253 설날 연휴 divergence, whose resolution would
-		// change the count without bearing on this look-ahead fix.
+		// deliberately does NOT pin an exact count.
 		from := time.Date(2049, 1, 1, 0, 0, 0, 0, time.UTC)
 		hs, err := holidays.YearHolidaysFrom(from, holidays.Options{Regions: []string{"kr"}})
 		Expect(err).NotTo(HaveOccurred())
@@ -263,13 +261,12 @@ var _ = Describe("YearHolidaysFrom", func() {
 		}
 	})
 
-	It("emits both KR Seollal holiday days when the eve rule spans the year boundary", func() {
-		// go-holidays-253: Seollal (설날) spans three lunar days, the eve being a
-		// month:12/mday:30 rule. lunar_to_solar(Y,12,30) lands in January of Y+1,
-		// so the gem rebuilds it as Date.civil(Y, month, day) to pull that eve
-		// back into year Y. So Ruby emits two 설날 연휴 per year (Jan eve + Feb
-		// day-after); Go must match. For 2022 the eve is 2022-01-21 and the
-		// day-after is 2022-02-02.
+	It("emits both KR Seollal holiday days that flank Seollal", func() {
+		// go-holidays-253: Seollal (설날) is flanked by two 설날 연휴 days. The
+		// eve is now modelled upstream as kr_seollal_eve(year, region), the day
+		// before Seollal (the first day of the first lunar month); the day-after
+		// is a plain lunar month:1/mday:2 rule. For 2022 Seollal is 2022-02-01,
+		// so the eve is 2022-01-31 and the day-after is 2022-02-02.
 		from := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 		hs, err := holidays.YearHolidaysFrom(from, holidays.Options{Regions: []string{"kr"}})
 		Expect(err).NotTo(HaveOccurred())
@@ -280,7 +277,7 @@ var _ = Describe("YearHolidaysFrom", func() {
 				got = append(got, h.Date.Format("2006-01-02"))
 			}
 		}
-		Expect(got).To(ContainElements("2022-01-21", "2022-02-02"))
+		Expect(got).To(ConsistOf("2022-01-31", "2022-02-02"))
 	})
 })
 
