@@ -59,8 +59,8 @@ const (
 const maxReportedMismatches = 50
 
 // registerSweepSpecs is the broad equivalence proof. For every region the
-// oracle can serve (a region whose gem-side resolution raises "uninitialized
-// constant Holidays::..." is skipped and reported; see isOracleUnsupported), it
+// oracle can serve (jp is skipped: the gem's own jp_next_weekday reaches for
+// Holidays::JP, which load_custom never defines; see isOracleUnsupported), it
 // compares the full year_holidays list from Go's YearHolidaysFrom against the
 // oracle for every year in [sweepYearStart, sweepYearEnd] under all four flag
 // combinations.
