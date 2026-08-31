@@ -174,13 +174,13 @@ func (o *oracle) call(req request) (*response, error) {
 }
 
 // isOracleUnsupported reports whether an oracle error reflects a region the
-// gem cannot serve from our region YAML (rather than a real mismatch). jp is
-// the one case today: the gem's own jp_next_weekday reaches for
-// Holidays::JP.holidays_by_month, a module the gem only defines when it loads
-// its own precompiled jp file, which load_custom never does. So every jp
-// request raises "uninitialized constant Holidays::JP". Go resolves jp fine via
-// its native methods_jp.go; this is an oracle-side limitation, not a Go bug, so
-// the harness skips such cases (and reports them).
+// gem cannot serve from our region YAML (rather than a real mismatch). No
+// region hits this today: jp used to, because the gem's ported jp_next_weekday
+// reaches for Holidays::JP.holidays_by_month, a module the gem only defines
+// when it loads its own precompiled jp file, which load_custom never does; a
+// shim in oracle.rb now rebuilds that module from our own loaded rules. The
+// check and the per-case guards stay as a harmless safety net for any future
+// region whose gem method needs a Ruby-coded module.
 func isOracleUnsupported(err error) bool {
 	return err != nil && strings.Contains(err.Error(), "uninitialized constant Holidays::")
 }

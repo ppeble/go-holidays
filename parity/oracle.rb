@@ -184,6 +184,26 @@ Holidays::Definition::Context::Load.class_eval do
   end
 end
 
+# The gem's ported jp_next_weekday method calls Holidays::JP.holidays_by_month,
+# a module that only exists when the gem loads its own vendored jp definitions.
+# We feed the gem our submodule YAML via load_custom instead, so that module is
+# never defined and every jp query raises NameError, which the parity harness
+# reads as "oracle unsupported". This shim rebuilds holidays_by_month from the
+# repository load_custom populated, filtered to our :jp entries, so jp resolves
+# against exactly our own rules. The body reads the repository lazily so it does
+# not matter whether this runs before or after load_all_definitions.
+module Holidays
+  module JP
+    def self.holidays_by_month
+      out = Hash.new { |h, k| h[k] = [] }
+      Holidays::Factory::Definition.holidays_by_month_repository.all.each do |month, defs|
+        out[month] = defs.select { |d| Array(d[:regions]).include?(:jp) }
+      end
+      out
+    end
+  end
+end
+
 DEFINITIONS_DIR = File.expand_path("../definitions", __dir__)
 
 # Union of every region code seen across the loaded region YAML rules. Populated
