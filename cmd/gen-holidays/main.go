@@ -1,5 +1,5 @@
 // gen-holidays parses holidays/definitions YAML files and emits Go source under
-// pkg/definitions/, one <region>.go plus one <region>_test.go per country.
+// internal/definitions/, one <region>.go plus one <region>_test.go per country.
 package main
 
 import (
@@ -11,7 +11,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ppeble/go-holidays/pkg/generator"
+	"github.com/ppeble/go-holidays/internal/generator"
 )
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
 func run(args []string) error {
 	fs := flag.NewFlagSet("gen-holidays", flag.ContinueOnError)
 	inDir := fs.String("in", "definitions", "directory containing upstream YAML definitions")
-	outDir := fs.String("out", "pkg/definitions", "output directory for generated Go code")
+	outDir := fs.String("out", "internal/definitions", "output directory for generated Go code")
 	regionsArg := fs.String("regions", "", "comma-separated region list (empty == all available)")
 	allowUnported := fs.Bool("allow-unported", false, "skip regions referencing methods that lack a Go implementation")
 	if err := fs.Parse(args); err != nil {

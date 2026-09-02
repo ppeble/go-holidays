@@ -37,7 +37,7 @@ parity:
 	$(GO) test -tags parity -v -timeout=20m ./parity/...
 
 generate: gen-holidays
-	$(BIN)/gen-holidays -in definitions -out pkg/definitions
+	$(BIN)/gen-holidays -in definitions -out internal/definitions
 
 update-definitions:
 	cd definitions && git fetch --tags && git checkout $(DEFS_TAG)

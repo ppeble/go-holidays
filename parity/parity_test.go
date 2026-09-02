@@ -11,8 +11,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	holidays "github.com/ppeble/go-holidays/pkg"
-	_ "github.com/ppeble/go-holidays/pkg/definitions"
+	holidays "github.com/ppeble/go-holidays"
 )
 
 // yearStart and yearEnd give the Jan 1 / Dec 31 literals for a calendar year.
@@ -114,9 +113,12 @@ func panicf(format string, args ...any) {
 //
 // The container is kept for two smaller reasons:
 // (a) registerLoadCustomSpec sends load_custom for a parity_smoke region to the
-//     shared oracle and cannot undo it (oracle has no unload_custom func);
+//
+//	shared oracle and cannot undo it (oracle has no unload_custom func);
+//
 // (b) the exhaustive sweep (sweep_parity_test.go, appended last via
-//     registerSweepSpecs) expects the oracle already warm.
+//
+//	registerSweepSpecs) expects the oracle already warm.
 var _ = Describe("Parity", func() {
 	registerOnSpec()
 	registerBetweenSpec()

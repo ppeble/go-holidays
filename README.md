@@ -12,11 +12,15 @@ A Go port of the top-level public API of the Ruby [`holidays`](https://github.co
 ## Layout
 
 ```
+holidays.go        # package holidays — the public API (On/Between/YearHolidays/...)
+holiday.go         #   Holiday result type
+options.go         #   Options{Regions, Informal, Observed}
+cache.go           #   CacheBetween/ResetCache + the range cache
+load_custom.go     #   LoadCustom/UnloadCustom/RegisterMethod
 cmd/
   holidays/        # CLI wrapper around the public API
   gen-holidays/    # YAML -> Go code generator
-pkg/
-  holidays.go      # package holidays — public On/Between/YearHolidays
+internal/
   calc/            # Easter, day-of-month, observance helpers, lunar stub
   definition/      # internal types (HolidayRule, YearRange)
   engine/          # method + region registries, year-range eval, resolver,
@@ -26,6 +30,11 @@ pkg/
   definitions/     # GENERATED: one <country>.go + <country>_test.go per region
 definitions/       # git submodule -> holidays/definitions (pinned tag in VERSION.txt)
 ```
+
+The public API lives at the module root, so `github.com/ppeble/go-holidays` is
+the only import a caller needs. Everything it depends on sits under `internal/`,
+including the generated region definitions, which the root package blank-imports
+so that every built-in region is registered without the caller doing anything.
 
 ## Install
 
@@ -42,8 +51,7 @@ git submodule update --init
 ```go
 import (
     "time"
-    holidays "github.com/ppeble/go-holidays/pkg"
-    _ "github.com/ppeble/go-holidays/pkg/definitions" // wire up region registrations
+    holidays "github.com/ppeble/go-holidays"
 )
 
 func example() {
@@ -96,7 +104,7 @@ Loading the same path again replaces the prior load; loading distinct paths adds
 
 ## Regenerating definitions
 
-The generated `pkg/definitions/*.go` files are checked in. Regenerate after bumping the submodule or after adding new per-region methods:
+The generated `internal/definitions/*.go` files are checked in. Regenerate after bumping the submodule or after adding new per-region methods:
 
 ```bash
 make generate                                       # all regions, fail on unported methods
@@ -106,7 +114,7 @@ bin/gen-holidays -regions us,gb                     # only specific regions
 
 The generator hard-fails on any `function:` or `observed:` YAML reference that lacks a registered Go implementation. To add a missing method:
 
-1. Write the Go function in `pkg/engine/methods_<country>.go`.
+1. Write the Go function in `internal/engine/methods_<country>.go`.
 2. Register it in that file's `init()` with `engine.RegisterMethod("<name>", func(a MethodArgs) (time.Time, error) { ... })`.
 3. Re-run `make generate`.
 
@@ -123,7 +131,7 @@ make generate
 
 ```bash
 make test          # go vet + go test ./...
-go test ./pkg/definitions/... -v
+go test ./internal/definitions/... -v
 ```
 
 Each region's YAML `tests:` block is emitted as a corresponding `_test.go` so failures point at the specific holiday.

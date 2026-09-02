@@ -12,7 +12,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 
-	holidays "github.com/ppeble/go-holidays/pkg"
+	holidays "github.com/ppeble/go-holidays"
 )
 
 // sweepHeartbeatInterval is how often the exhaustive sweep prints a progress
