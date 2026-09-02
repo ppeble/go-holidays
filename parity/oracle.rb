@@ -239,38 +239,8 @@ def load_all_definitions
     Holidays.load_custom(f)
     collect_regions_from_file(f, seen)
   end
-  backfill_observed_arguments!
   AVAILABLE_REGIONS.replace(seen.uniq.sort)
   files.size
-end
-
-# WORKAROUND for a gem bug: load_custom never sets :observed_arguments.
-#
-# An observed method may declare arguments other than the date, e.g. us.yaml's
-# `observed: juneteenth_national_independence_day(region, date)` for Utah. When
-# the gem PRE-COMPILES its shipped definitions it records those arguments
-# (definition/context/generator.rb writes :observed_arguments), and
-# finder/context/search.rb#build_observed_date reads them back as
-# `h[:observed_arguments] || [:date]`. The runtime YAML path that load_custom
-# uses never populates the key, so it silently falls back to [:date] and calls a
-# two-parameter proc with one argument: region receives the Date and date is
-# nil, raising "undefined method 'wday' for nil".
-#
-# We parse the same arguments out of the observed string the gem itself stores,
-# which is precisely what its generator does at build time. This makes the
-# load_custom path behave like the gem's own definitions, verified by comparing
-# against the gem's vendored us: both give us_ut 2024-06-17, 2027-06-21,
-# 2033-06-20. Delete this once the gem populates :observed_arguments itself.
-def backfill_observed_arguments!
-  repo = Holidays::Factory::Definition.holidays_by_month_repository
-  repo.all.each_value do |defs|
-    defs.each do |d|
-      next unless d[:observed].is_a?(String)
-      next if d.key?(:observed_arguments)
-      args = d[:observed][/\(([^)]*)\)/, 1].to_s.split(",").map { |a| a.strip.to_sym }
-      d[:observed_arguments] = args.empty? ? [:date] : args
-    end
-  end
 end
 
 # Normalize a "bare string or array" region argument to an array of symbols.
