@@ -73,9 +73,9 @@ variant that matches the gem's semantics), not `YearHolidays(year)`.
 ### `load_all` is intentionally not ported (N/A)
 
 The gem's `load_all` eagerly loads every region at runtime. The Go port already
-loads all regions eagerly via `init()` side effects (a blank import of
-`pkg/definitions`), so `load_all` would be a no-op with nothing to do. It is
-documented here as not-applicable rather than implemented.
+loads all regions eagerly via `init()` side effects (the root package
+blank-imports `internal/definitions`), so `load_all` would be a no-op with
+nothing to do. It is documented here as not-applicable rather than implemented.
 
 ## Known limitations and intentional divergences
 
