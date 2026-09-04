@@ -510,6 +510,11 @@ var ilRules = []definition.HolidayRule{
 	},
 }
 
+var ilRegionNames = map[string]string{
+	"il": "Israel",
+}
+
 func init() {
 	engine.RegisterCountry("il", ilRules)
+	engine.RegisterRegionNames("il", ilRegionNames)
 }

@@ -127,6 +127,11 @@ var fiRules = []definition.HolidayRule{
 	},
 }
 
+var fiRegionNames = map[string]string{
+	"fi": "Finland",
+}
+
 func init() {
 	engine.RegisterCountry("fi", fiRules)
+	engine.RegisterRegionNames("fi", fiRegionNames)
 }

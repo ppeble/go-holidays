@@ -110,6 +110,11 @@ var mt_enRules = []definition.HolidayRule{
 	},
 }
 
+var mt_enRegionNames = map[string]string{
+	"mt_en": "Malta",
+}
+
 func init() {
 	engine.RegisterCountry("mt_en", mt_enRules)
+	engine.RegisterRegionNames("mt_en", mt_enRegionNames)
 }

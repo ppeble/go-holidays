@@ -89,6 +89,11 @@ var nyseRules = []definition.HolidayRule{
 	},
 }
 
+var nyseRegionNames = map[string]string{
+	"nyse": "New York Stock Exchange",
+}
+
 func init() {
 	engine.RegisterCountry("nyse", nyseRules)
+	engine.RegisterRegionNames("nyse", nyseRegionNames)
 }

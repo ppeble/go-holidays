@@ -108,6 +108,11 @@ var zaRules = []definition.HolidayRule{
 	},
 }
 
+var zaRegionNames = map[string]string{
+	"za": "South Africa",
+}
+
 func init() {
 	engine.RegisterCountry("za", zaRules)
+	engine.RegisterRegionNames("za", zaRegionNames)
 }

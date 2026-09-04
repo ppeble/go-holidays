@@ -111,6 +111,11 @@ var ltRules = []definition.HolidayRule{
 	},
 }
 
+var ltRegionNames = map[string]string{
+	"lt": "Lithuania",
+}
+
 func init() {
 	engine.RegisterCountry("lt", ltRules)
+	engine.RegisterRegionNames("lt", ltRegionNames)
 }

@@ -133,6 +133,11 @@ var uaRules = []definition.HolidayRule{
 	},
 }
 
+var uaRegionNames = map[string]string{
+	"ua": "Ukraine",
+}
+
 func init() {
 	engine.RegisterCountry("ua", uaRules)
+	engine.RegisterRegionNames("ua", uaRegionNames)
 }

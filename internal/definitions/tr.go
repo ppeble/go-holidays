@@ -123,6 +123,11 @@ var trRules = []definition.HolidayRule{
 	},
 }
 
+var trRegionNames = map[string]string{
+	"tr": "Türkiye",
+}
+
 func init() {
 	engine.RegisterCountry("tr", trRules)
+	engine.RegisterRegionNames("tr", trRegionNames)
 }

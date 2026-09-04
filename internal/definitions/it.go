@@ -170,6 +170,22 @@ var itRules = []definition.HolidayRule{
 	},
 }
 
+var itRegionNames = map[string]string{
+	"it":    "Italy",
+	"it_bl": "Belluno",
+	"it_fi": "Firenze",
+	"it_ge": "Genova",
+	"it_pd": "Padova",
+	"it_rm": "Roma",
+	"it_ro": "Rovigo",
+	"it_to": "Torino",
+	"it_tv": "Treviso",
+	"it_ve": "Venezia",
+	"it_vi": "Vicenza",
+	"it_vr": "Verona",
+}
+
 func init() {
 	engine.RegisterCountry("it", itRules)
+	engine.RegisterRegionNames("it", itRegionNames)
 }

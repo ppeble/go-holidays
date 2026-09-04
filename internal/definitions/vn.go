@@ -47,6 +47,11 @@ var vnRules = []definition.HolidayRule{
 	},
 }
 
+var vnRegionNames = map[string]string{
+	"vn": "Vietnam",
+}
+
 func init() {
 	engine.RegisterCountry("vn", vnRules)
+	engine.RegisterRegionNames("vn", vnRegionNames)
 }

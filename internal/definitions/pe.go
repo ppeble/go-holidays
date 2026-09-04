@@ -199,6 +199,11 @@ var peRules = []definition.HolidayRule{
 	},
 }
 
+var peRegionNames = map[string]string{
+	"pe": "Peru",
+}
+
 func init() {
 	engine.RegisterCountry("pe", peRules)
+	engine.RegisterRegionNames("pe", peRegionNames)
 }

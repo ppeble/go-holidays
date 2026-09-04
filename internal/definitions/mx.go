@@ -171,6 +171,12 @@ var mxRules = []definition.HolidayRule{
 	},
 }
 
+var mxRegionNames = map[string]string{
+	"mx":     "Mexico",
+	"mx_pue": "Puebla",
+}
+
 func init() {
 	engine.RegisterCountry("mx", mxRules)
+	engine.RegisterRegionNames("mx", mxRegionNames)
 }

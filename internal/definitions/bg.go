@@ -234,6 +234,12 @@ var bgRules = []definition.HolidayRule{
 	},
 }
 
+var bgRegionNames = map[string]string{
+	"bg_bg": "Bulgaria",
+	"bg_en": "Bulgaria",
+}
+
 func init() {
 	engine.RegisterCountry("bg", bgRules)
+	engine.RegisterRegionNames("bg", bgRegionNames)
 }

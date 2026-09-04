@@ -172,6 +172,18 @@ func AvailableRegions() []string {
 	return engine.AvailableRegions()
 }
 
+// RegionName returns the display name for a region code, and whether it is
+// registered. Unregistered codes return ("", false).
+func RegionName(region string) (string, bool) {
+	return engine.RegionName(region)
+}
+
+// RegionNames returns every registered region code mapped to its display
+// name.
+func RegionNames() map[string]string {
+	return engine.RegionNames()
+}
+
 func inRange(d, start, end time.Time) bool {
 	if d.Before(truncateToDay(start)) {
 		return false

@@ -140,6 +140,11 @@ var byRules = []definition.HolidayRule{
 	},
 }
 
+var byRegionNames = map[string]string{
+	"by": "Belarus",
+}
+
 func init() {
 	engine.RegisterCountry("by", byRules)
+	engine.RegisterRegionNames("by", byRegionNames)
 }

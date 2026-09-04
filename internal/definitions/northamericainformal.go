@@ -98,6 +98,12 @@ var northamericainformalRules = []definition.HolidayRule{
 	},
 }
 
+var northamericainformalRegionNames = map[string]string{
+	"ca": "Canada",
+	"us": "United States",
+}
+
 func init() {
 	engine.RegisterCountry("northamericainformal", northamericainformalRules)
+	engine.RegisterRegionNames("northamericainformal", northamericainformalRegionNames)
 }

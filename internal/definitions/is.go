@@ -217,6 +217,11 @@ var isRules = []definition.HolidayRule{
 	},
 }
 
+var isRegionNames = map[string]string{
+	"is": "Iceland",
+}
+
 func init() {
 	engine.RegisterCountry("is", isRules)
+	engine.RegisterRegionNames("is", isRegionNames)
 }

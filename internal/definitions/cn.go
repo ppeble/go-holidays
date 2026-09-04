@@ -178,6 +178,11 @@ var cnRules = []definition.HolidayRule{
 	},
 }
 
+var cnRegionNames = map[string]string{
+	"cn": "China",
+}
+
 func init() {
 	engine.RegisterCountry("cn", cnRules)
+	engine.RegisterRegionNames("cn", cnRegionNames)
 }

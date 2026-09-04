@@ -470,6 +470,11 @@ var jpRules = []definition.HolidayRule{
 	},
 }
 
+var jpRegionNames = map[string]string{
+	"jp": "Japan",
+}
+
 func init() {
 	engine.RegisterCountry("jp", jpRules)
+	engine.RegisterRegionNames("jp", jpRegionNames)
 }

@@ -30,6 +30,9 @@ var (
 	regionMu  sync.RWMutex
 	countries = map[string][]definition.HolidayRule{} // keyed by country code (us, gb, ...)
 
+	regionNameMu sync.RWMutex
+	regionNames  = map[string]string{} // region code -> display name, flat/global
+
 	// flatRulesCache is the concatenation of every registered country's rules,
 	// rebuilt lazily on first use after (un)registration invalidates it. See
 	// rulesFor: every ResolveYear call used to rebuild this ~187k-entry slice
@@ -79,6 +82,43 @@ func UnregisterCountry(country string) {
 	defer regionMu.Unlock()
 	delete(countries, country)
 	flatRulesValid = false
+}
+
+// RegisterRegionNames installs the region code to display name map for a
+// country YAML (e.g. "au" from au.yaml). Registrations merge into one flat,
+// global map; a code registered by more than one file is last-write-wins.
+// Current upstream data has no conflicting values for a duplicate code (only
+// exact duplicates, e.g. "us" registered identically by both us.yaml and
+// northamericainformal.yaml), so this is safe today, but a future upstream
+// edit that introduces a genuine conflict would silently pick one value
+// rather than erroring.
+func RegisterRegionNames(country string, names map[string]string) {
+	regionNameMu.Lock()
+	defer regionNameMu.Unlock()
+	for code, name := range names {
+		regionNames[code] = name
+	}
+}
+
+// RegionName returns the display name registered for region, and whether it
+// was found.
+func RegionName(region string) (string, bool) {
+	regionNameMu.RLock()
+	defer regionNameMu.RUnlock()
+	name, ok := regionNames[region]
+	return name, ok
+}
+
+// RegionNames returns a copy of every registered region code mapped to its
+// display name. A copy is returned so callers cannot mutate internal state.
+func RegionNames() map[string]string {
+	regionNameMu.RLock()
+	defer regionNameMu.RUnlock()
+	out := make(map[string]string, len(regionNames))
+	for k, v := range regionNames {
+		out[k] = v
+	}
+	return out
 }
 
 // AvailableRegions returns every region code mentioned across all registered rules,

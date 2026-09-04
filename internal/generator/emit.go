@@ -63,8 +63,27 @@ func EmitDefinitions(rf *RegionFile) ([]byte, error) {
 	}
 	fmt.Fprintln(&buf, "}")
 	fmt.Fprintln(&buf)
+
+	namesVar := rf.Country + "RegionNames"
+	if len(rf.RegionNames) > 0 {
+		fmt.Fprintf(&buf, "var %s = map[string]string{\n", namesVar)
+		codes := make([]string, 0, len(rf.RegionNames))
+		for code := range rf.RegionNames {
+			codes = append(codes, code)
+		}
+		sort.Strings(codes)
+		for _, code := range codes {
+			fmt.Fprintf(&buf, "\t%s: %s,\n", strconv.Quote(code), strconv.Quote(rf.RegionNames[code]))
+		}
+		fmt.Fprintln(&buf, "}")
+		fmt.Fprintln(&buf)
+	}
+
 	fmt.Fprintln(&buf, "func init() {")
 	fmt.Fprintf(&buf, "\tengine.RegisterCountry(%q, %s)\n", rf.Country, varName)
+	if len(rf.RegionNames) > 0 {
+		fmt.Fprintf(&buf, "\tengine.RegisterRegionNames(%q, %s)\n", rf.Country, namesVar)
+	}
 	fmt.Fprintln(&buf, "}")
 
 	src, err := format.Source(buf.Bytes())

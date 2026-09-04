@@ -95,6 +95,11 @@ var federalreserveRules = []definition.HolidayRule{
 	},
 }
 
+var federalreserveRegionNames = map[string]string{
+	"federalreserve": "Federal Reserve",
+}
+
 func init() {
 	engine.RegisterCountry("federalreserve", federalreserveRules)
+	engine.RegisterRegionNames("federalreserve", federalreserveRegionNames)
 }

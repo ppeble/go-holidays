@@ -128,6 +128,13 @@ var frRules = []definition.HolidayRule{
 	},
 }
 
+var frRegionNames = map[string]string{
+	"fr":   "France",
+	"fr_a": "Alsace",
+	"fr_m": "Moselle",
+}
+
 func init() {
 	engine.RegisterCountry("fr", frRules)
+	engine.RegisterRegionNames("fr", frRegionNames)
 }

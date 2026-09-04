@@ -526,6 +526,11 @@ var sgRules = []definition.HolidayRule{
 	},
 }
 
+var sgRegionNames = map[string]string{
+	"sg": "Singapore",
+}
+
 func init() {
 	engine.RegisterCountry("sg", sgRules)
+	engine.RegisterRegionNames("sg", sgRegionNames)
 }

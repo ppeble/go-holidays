@@ -142,6 +142,11 @@ var noRules = []definition.HolidayRule{
 	},
 }
 
+var noRegionNames = map[string]string{
+	"no": "Norway",
+}
+
 func init() {
 	engine.RegisterCountry("no", noRules)
+	engine.RegisterRegionNames("no", noRegionNames)
 }

@@ -409,6 +409,11 @@ var unitednationsRules = []definition.HolidayRule{
 	},
 }
 
+var unitednationsRegionNames = map[string]string{
+	"unitednations": "United Nations",
+}
+
 func init() {
 	engine.RegisterCountry("unitednations", unitednationsRules)
+	engine.RegisterRegionNames("unitednations", unitednationsRegionNames)
 }

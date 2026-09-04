@@ -101,6 +101,11 @@ var ruRules = []definition.HolidayRule{
 	},
 }
 
+var ruRegionNames = map[string]string{
+	"ru": "Russian Federation",
+}
+
 func init() {
 	engine.RegisterCountry("ru", ruRules)
+	engine.RegisterRegionNames("ru", ruRegionNames)
 }

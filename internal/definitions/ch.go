@@ -206,6 +206,37 @@ var chRules = []definition.HolidayRule{
 	},
 }
 
+var chRegionNames = map[string]string{
+	"ch":    "Switzerland",
+	"ch_ag": "Aargau",
+	"ch_ai": "Appenzell Innerrhoden",
+	"ch_ar": "Appenzell Ausserrhoden",
+	"ch_be": "Bern",
+	"ch_bl": "Basel-Landschaft",
+	"ch_bs": "Basel-Stadt",
+	"ch_fr": "Fribourg",
+	"ch_ge": "Genève",
+	"ch_gl": "Glarus",
+	"ch_gr": "Graubünden",
+	"ch_ju": "Jura",
+	"ch_lu": "Luzern",
+	"ch_ne": "Neuchâtel",
+	"ch_nw": "Nidwalden",
+	"ch_ow": "Obwalden",
+	"ch_sg": "Sankt Gallen",
+	"ch_sh": "Schaffhausen",
+	"ch_so": "Solothurn",
+	"ch_sz": "Schwyz",
+	"ch_tg": "Thurgau",
+	"ch_ti": "Ticino",
+	"ch_ur": "Uri",
+	"ch_vd": "Vaud",
+	"ch_vs": "Valais",
+	"ch_zg": "Zug",
+	"ch_zh": "Zürich",
+}
+
 func init() {
 	engine.RegisterCountry("ch", chRules)
+	engine.RegisterRegionNames("ch", chRegionNames)
 }
