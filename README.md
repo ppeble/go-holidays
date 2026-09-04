@@ -1,137 +1,343 @@
 # go-holidays
 
-A Go port of the top-level public API of the Ruby [`holidays`](https://github.com/holidays/holidays) gem, driven by the same upstream YAML definitions from [`holidays/definitions`](https://github.com/holidays/definitions) (vendored as a submodule pinned to a specific tag).
+A Go library for working with statutory and other holidays.
 
-## Status
+All holiday definitions are maintained in the
+[holidays/definitions](https://github.com/holidays/definitions) repository
+(vendored here as a submodule). By default this library returns statutory
+(formally government-defined) holidays. Culturally recognized but non-statutory
+holidays (such as Valentine's Day) are available via the `Informal` option. See
+the [definitions syntax guide](https://github.com/holidays/definitions/blob/master/doc/SYNTAX.md#formalinformal)
+for details on how holidays are classified.
 
-| Item | State |
-|------|-------|
-| Top-level API | `On`, `Between`, `YearHolidays`, `NextHolidays`, `AnyHolidaysDuringWorkWeek`, `CacheBetween`, `ResetCache`, `LoadCustom`, `UnloadCustom`, `RegisterMethod`, `AvailableRegions` |
-| Upstream definitions | Vendored as a submodule, pinned to the tag in `definitions/VERSION.txt` |
-
-## Layout
-
-```
-holidays.go        # package holidays — the public API (On/Between/YearHolidays/...)
-holiday.go         #   Holiday result type
-options.go         #   Options{Regions, Informal, Observed}
-cache.go           #   CacheBetween/ResetCache + the range cache
-load_custom.go     #   LoadCustom/UnloadCustom/RegisterMethod
-cmd/
-  holidays/        # CLI wrapper around the public API
-  gen-holidays/    # YAML -> Go code generator
-internal/
-  calc/            # Easter, day-of-month, observance helpers, lunar stub
-  definition/      # internal types (HolidayRule, YearRange)
-  engine/          # method + region registries, year-range eval, resolver,
-                   #   builtins.go and one methods_<country>.go per country
-                   #   that uses custom Ruby methods we've hand-ported
-  generator/       # YAML parser + Go emitter + test emitter
-  definitions/     # GENERATED: one <country>.go + <country>_test.go per region
-definitions/       # git submodule -> holidays/definitions (pinned tag in VERSION.txt)
-```
-
-The public API lives at the module root, so `github.com/ppeble/go-holidays` is
-the only import a caller needs. Everything it depends on sits under `internal/`,
-including the generated region definitions, which the root package blank-imports
-so that every built-in region is registered without the caller doing anything.
-
-## Install
-
-Requires Go 1.22+. Clone with the submodule:
+## Installation
 
 ```bash
-git clone --recurse-submodules https://github.com/ppeble/go-holidays
-# or, in an existing clone:
-git submodule update --init
+go get github.com/ppeble/go-holidays
 ```
 
-## Library use
+## Tested versions
+
+This module requires **Go 1.24+**, the floor declared by the `go` directive in
+`go.mod`.
+
+CI runs the full test suite against the latest Go minor release and the
+previous two:
+
+  * 1.27
+  * 1.26
+  * 1.25
+
+That list lives in the `test-matrix` job in `.github/workflows/ci.yml` and moves
+forward as new Go minors are released. Versions between the declared floor and
+the oldest matrix entry are expected to work but are not exercised by CI.
+
+## Semver
+
+This module follows [semantic versioning](http://semver.org/). The guarantee
+specifically covers the exported surface of the root package
+`github.com/ppeble/go-holidays` (its functions, types, and their fields).
+
+Please note that we consider definition changes to be "minor" bumps, meaning
+they are backwards compatible with your code but might give different holiday
+results.
+
+## Time zones
+
+Dates are always constructed in UTC and truncated to the calendar day
+(`time.Date(y, m, d, 0, 0, 0, 0, time.UTC)`). Pass in whatever time zone you
+like: comparisons are done on the UTC calendar day, not on wall-clock time.
+
+## Usage
+
+Every example below assumes this import, shown once here and omitted from the
+rest for brevity:
 
 ```go
 import (
-    "time"
-    holidays "github.com/ppeble/go-holidays"
-)
+	"time"
 
-func example() {
-    d, _ := time.Parse("2006-01-02", "2024-07-04")
-    hs, err := holidays.On(d, holidays.Options{Regions: []string{"us"}})
-    // hs[0].Name == "Independence Day"
-    _ = err
-}
+	holidays "github.com/ppeble/go-holidays"
+)
 ```
 
-`Options` fields:
-- `Regions []string` — empty means "all registered regions". Trailing `_` is a subregion wildcard (`gb_` matches `gb_eng`, `gb_sct`, `gb_wls`, ...).
-- `Informal bool` — include `type: informal` holidays.
-- `Observed bool` — apply the rule's `observed:` transformation (e.g. roll weekend dates to Monday).
+This library offers multiple ways to check for holidays for a variety of
+scenarios.
 
-## CLI
+#### Checking a specific date
+
+Get all holidays on April 25, 2008 in Australia:
+
+```go
+d := time.Date(2008, time.April, 25, 0, 0, 0, 0, time.UTC)
+hs, err := holidays.On(d, holidays.Options{Regions: []string{"au"}})
+// hs[0].Name == "ANZAC Day"
+```
+
+You can check multiple regions in a single call:
+
+```go
+d := time.Date(2008, time.January, 1, 0, 0, 0, 0, time.UTC)
+hs, err := holidays.On(d, holidays.Options{Regions: []string{"us", "fr"}})
+// hs contains "New Year's Day" (regions: [us]) and "Jour de l'an" (regions: [fr])
+```
+
+You can leave `Regions` empty to get holidays for any registered region:
+
+```go
+d := time.Date(2007, time.April, 25, 0, 0, 0, 0, time.UTC)
+hs, err := holidays.On(d, holidays.Options{})
+// hs contains "ANZAC Day" (au), "Festa della Liberazione" (it), ...
+```
+
+#### Wildcard regions
+
+A region code ending in an underscore (e.g. `au_`, `ca_`) is a *wildcard*. It
+matches the parent country region and all of its sub-regions in a single call:
+
+```go
+d := time.Date(2017, time.March, 13, 0, 0, 0, 0, time.UTC)
+hs, err := holidays.On(d, holidays.Options{Regions: []string{"au_"}})
+// hs contains "Eight Hours Day" (au_tas), "Labour Day" (au_vic),
+// "March Public Holiday" (au_sa), "Canberra Day" (au_act)
+```
+
+The same date queried with the plain `au` region returns nothing, because none
+of those holidays are observed nation-wide:
+
+```go
+hs, err := holidays.On(d, holidays.Options{Regions: []string{"au"}})
+// hs is empty
+```
+
+Use a wildcard when you want "this country and every sub-region it defines"
+without listing each sub-region explicitly.
+
+Note that a wildcard always collapses to the top-level country region. The
+portion between the country prefix and the trailing underscore is ignored, so
+`au_vic_` behaves identically to `au_` (it loads every Australian sub-region,
+not just Victoria's). There is currently no way to wildcard-match only the
+children of a sub-region.
+
+#### Checking a date range
+
+Get all holidays during the month of July 2008 in Canada and the US:
+
+```go
+from := time.Date(2008, time.July, 1, 0, 0, 0, 0, time.UTC)
+to := time.Date(2008, time.July, 31, 0, 0, 0, 0, time.UTC)
+hs, err := holidays.Between(from, to, holidays.Options{Regions: []string{"ca", "us"}})
+// hs contains "Canada Day", "Independence Day"
+```
+
+#### Informal holidays
+
+Set `Options.Informal` to include holidays specified as informal in your
+results. See the [definitions syntax guide](https://github.com/holidays/definitions/blob/master/doc/SYNTAX.md#formalinformal)
+for what constitutes "informal" vs "formal".
+
+By default this option is `false`, meaning no informal holidays are returned.
+
+Get Valentine's Day in the US:
+
+```go
+d := time.Date(2018, time.February, 14, 0, 0, 0, 0, time.UTC)
+hs, err := holidays.On(d, holidays.Options{Regions: []string{"us"}, Informal: true})
+// hs[0].Name == "Valentine's Day"
+```
+
+Leaving `Informal` false means Valentine's Day is not returned:
+
+```go
+hs, err := holidays.On(d, holidays.Options{Regions: []string{"us"}})
+// hs is empty
+```
+
+#### Observed holidays
+
+Set `Options.Observed` to include holidays that are observed on different days
+than they actually occur. See the [definitions syntax guide](https://github.com/holidays/definitions/blob/master/doc/SYNTAX.md#observed)
+for further explanation of "observed".
+
+By default this option is `false`, meaning no observed logic is applied.
+
+Get holidays that are observed on Monday July 2, 2007 in British Columbia,
+Canada:
+
+```go
+d := time.Date(2007, time.July, 2, 0, 0, 0, 0, time.UTC)
+hs, err := holidays.On(d, holidays.Options{Regions: []string{"ca_bc"}, Observed: true})
+// hs[0].Name == "Canada Day"
+```
+
+Leaving `Observed` false means "Canada Day" is not returned on July 2, since it
+actually falls on Sunday July 1:
+
+```go
+hs, err := holidays.On(d, holidays.Options{Regions: []string{"ca_bc"}})
+// hs is empty
+
+d = time.Date(2007, time.July, 1, 0, 0, 0, 0, time.UTC)
+hs, err = holidays.On(d, holidays.Options{Regions: []string{"ca_bc"}})
+// hs[0].Name == "Canada Day"
+```
+
+#### Any holidays during work week
+
+`AnyHolidaysDuringWorkWeek` reports whether any holiday matching the options
+falls during the Monday-Friday work week containing the given date.
+
+Check whether a holiday falls during the first week of the year for any
+region:
+
+```go
+d := time.Date(2016, time.January, 1, 0, 0, 0, 0, time.UTC)
+any, err := holidays.AnyHolidaysDuringWorkWeek(d, holidays.Options{})
+// any == true
+```
+
+`Informal` and `Observed` apply the same way they do everywhere else:
+
+```go
+// true: Valentine's Day falls on a Wednesday
+d = time.Date(2018, time.February, 14, 0, 0, 0, 0, time.UTC)
+any, _ = holidays.AnyHolidaysDuringWorkWeek(d, holidays.Options{Regions: []string{"us"}, Informal: true})
+
+// false without Informal
+any, _ = holidays.AnyHolidaysDuringWorkWeek(d, holidays.Options{Regions: []string{"us"}})
+
+// true: Veterans Day is observed on Monday November 12, 2018
+d = time.Date(2018, time.November, 12, 0, 0, 0, 0, time.UTC)
+any, _ = holidays.AnyHolidaysDuringWorkWeek(d, holidays.Options{Regions: []string{"us"}, Observed: true})
+
+// false without Observed: the actual holiday is on Sunday November 11
+any, _ = holidays.AnyHolidaysDuringWorkWeek(d, holidays.Options{Regions: []string{"us"}})
+```
+
+#### Next holidays
+
+`NextHolidays` returns the next `count` holidays on or after a given date,
+sorted by date ascending:
+
+```go
+from := time.Date(2016, time.February, 23, 0, 0, 0, 0, time.UTC)
+hs, err := holidays.NextHolidays(from, 3, holidays.Options{Regions: []string{"us"}, Informal: true})
+// hs contains "St. Patrick's Day", "Good Friday", "Easter Sunday"
+```
+
+#### Year holidays
+
+`YearHolidays` returns every holiday matching the options in a given calendar
+year:
+
+```go
+hs, err := holidays.YearHolidays(2016, holidays.Options{Regions: []string{"ca_on"}})
+```
+
+`YearHolidaysFrom` returns every holiday from a given date through December 31
+of that date's year, sorted ascending:
+
+```go
+from := time.Date(2016, time.February, 23, 0, 0, 0, 0, time.UTC)
+hs, err := holidays.YearHolidaysFrom(from, holidays.Options{Regions: []string{"ca_on"}})
+// hs contains "Good Friday", "Easter Sunday", "Victoria Day", "Canada Day",
+// "Civic Holiday", "Labour Day", "Thanksgiving", "Remembrance Day",
+// "Christmas Day", "Boxing Day"
+```
+
+#### Available regions
+
+`AvailableRegions` returns every registered region code, sorted
+lexicographically:
+
+```go
+regions := holidays.AvailableRegions()
+// regions == []string{"ar", "at", ..., "sg", ...}
+```
+
+## Command-line interface
+
+`make build` produces `bin/holidays` and `bin/gen-holidays`. `bin/holidays`
+wraps the same public API from the command line:
 
 ```bash
-make build  # produces bin/holidays and bin/gen-holidays
-
-bin/holidays year 2024 --regions us
 bin/holidays on 2024-07-04 --regions us
 bin/holidays between 2024-12-20 2024-12-31 --regions us
+bin/holidays year 2024 --regions us
 bin/holidays next 5 2024-05-28 --regions us
 bin/holidays workweek 2024-11-25 --regions us
 bin/holidays regions
 ```
 
-Flags can appear before or after positional arguments.
+Every subcommand except `regions` also accepts `--informal` and `--observed`.
+Flags may appear before or after the positional arguments.
 
-## Custom holiday definitions
+## Loading custom definitions on the fly
 
-`LoadCustom` parses YAML files in the same format as upstream `holidays/definitions` and registers their rules at runtime alongside the built-in ones:
+In addition to the [provided definitions](https://github.com/holidays/definitions)
+you can load a custom definitions file on the fly and use it immediately.
+
+To load a custom "Company Founding" holiday on June 1st:
 
 ```go
-holidays.LoadCustom("my_team.yaml")
-hs, _ := holidays.On(date, holidays.Options{Regions: []string{"my_team"}})
+err := holidays.LoadCustom("/home/user/holiday_definitions/custom_holidays.yaml")
+hs, err := holidays.On(time.Date(2013, time.June, 1, 0, 0, 0, 0, time.UTC),
+    holidays.Options{Regions: []string{"my_custom_region"}})
+// hs[0].Name == "Company Founding"
 ```
 
-The YAML's `methods:` block (Ruby source) is parsed but ignored — we can't interpret Ruby. Any `function:` or `observed:` reference in a custom rule must point to a method registered in Go first:
+Custom definition files must match the [syntax of the existing definition files](https://github.com/holidays/definitions/blob/master/doc/SYNTAX.md).
+
+Multiple files can be loaded at the same time:
+
+```go
+err := holidays.LoadCustom(
+    "/home/user/holidays/custom_holidays1.yaml",
+    "/home/user/holidays/custom_holidays2.yaml",
+)
+```
+
+Loading the same path again replaces its prior load; loading distinct paths
+adds rules without overwriting one another. `UnloadCustom` removes rules
+previously loaded from the given paths.
+
+Custom rules can't embed executable logic in YAML: a rule's `function:` or
+`observed:` reference must point at a method already registered in Go before
+you call `LoadCustom`:
 
 ```go
 holidays.RegisterMethod("my_method", func(a holidays.MethodArgs) (time.Time, error) {
     return time.Date(a.Year, time.March, 15, 0, 0, 0, 0, time.UTC), nil
 })
-holidays.LoadCustom("my_team.yaml") // YAML can now use function: my_method(year)
+err := holidays.LoadCustom("my_team.yaml") // YAML can now use function: my_method(year)
 ```
 
-Loading the same path again replaces the prior load; loading distinct paths adds rules. `UnloadCustom(path)` removes them.
+`LoadCustom` and `UnloadCustom` both call `ResetCache` when they succeed, since
+the rule set changed.
 
-## Regenerating definitions
+## Caching holiday lookups
 
-The generated `internal/definitions/*.go` files are checked in. Regenerate after bumping the submodule or after adding new per-region methods:
+If you are checking holidays regularly you can cache your results for improved
+performance. Run this before looking up a holiday (e.g. during startup):
 
-```bash
-make generate                                       # all regions, fail on unported methods
-bin/gen-holidays --allow-unported                   # all regions, skip those with missing methods
-bin/gen-holidays -regions us,gb                     # only specific regions
+```go
+year := 365 * 24 * time.Hour
+err := holidays.CacheBetween(time.Now(), time.Now().Add(2*year), holidays.Options{
+    Regions:  []string{"ca", "us"},
+    Observed: true,
+})
 ```
 
-The generator hard-fails on any `function:` or `observed:` YAML reference that lacks a registered Go implementation. To add a missing method:
+Holidays for the regions and options specified within the dates specified will
+be pre-computed and stored in memory. Subsequent `On`/`Between` calls with the
+same options and a range fully contained in the cached window are answered
+from the cache. `ResetCache` clears every cached range.
 
-1. Write the Go function in `internal/engine/methods_<country>.go`.
-2. Register it in that file's `init()` with `engine.RegisterMethod("<name>", func(a MethodArgs) (time.Time, error) { ... })`.
-3. Re-run `make generate`.
+## How to contribute
 
-## Bumping the definitions tag
+See [CONTRIBUTING.md](CONTRIBUTING.md) for information on how to help out.
 
-```bash
-make update-definitions DEFS_TAG=v6.2.0
-git add definitions
-git commit -s -m "vendor holidays/definitions v6.2.0"
-make generate
-```
+## Credits
 
-## Tests
-
-```bash
-make test          # go vet + go test ./...
-go test ./internal/definitions/... -v
-```
-
-Each region's YAML `tests:` block is emitted as a corresponding `_test.go` so failures point at the specific holiday.
+* Holiday definitions come from [holidays/definitions](https://github.com/holidays/definitions),
+  along with all of its wonderful contributors.
