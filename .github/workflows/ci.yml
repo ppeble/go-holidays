@@ -9,16 +9,25 @@ permissions:
   contents: read
 
 jobs:
+  # Latest Go minor plus the previous two. Bump this list when a new Go minor is
+  # released; the go.mod `go` directive is the supported floor and stays lower
+  # than the oldest entry here. Each matrix entry reports its own status context
+  # ("unit + vet (go 1.27)", ...), so main's required checks must be updated to
+  # match whenever this list changes.
   test:
-    name: unit + vet
+    name: unit + vet (go ${{ matrix.go }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ["1.25", "1.26", "1.27"]
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
       - uses: actions/setup-go@v5
         with:
-          go-version-file: go.mod
+          go-version: ${{ matrix.go }}
       - name: make test (go vet + go test ./...)
         run: make test
 
@@ -29,9 +38,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+      # Parity compares Go output against the Ruby gem, so the Go toolchain
+      # version is not what is under test: pin the latest matrix entry only.
       - uses: actions/setup-go@v5
         with:
-          go-version-file: go.mod
+          go-version: "1.27"
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.4"
