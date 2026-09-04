@@ -1,7 +1,7 @@
 # go-holidays
 
-Functionality to deal with holidays in Go. A port of the top-level public API
-of the Ruby [`holidays`](https://github.com/holidays/holidays) gem.
+Functionality to deal with holidays in Go, providing the same top-level public
+API as the Ruby [`holidays`](https://github.com/holidays/holidays) gem.
 
 All holiday definitions are maintained in the
 [holidays/definitions](https://github.com/holidays/definitions) repository
@@ -336,5 +336,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for information on how to help out.
   [@ppeble](https://github.com/ppeble) and [@ttwo32](https://github.com/ttwo32),
   along with all of its wonderful contributors.
 * Holiday definitions come from [holidays/definitions](https://github.com/holidays/definitions).
-* This repository is a Go port of the gem's public API, built on the same
+* This repository provides the same public API in Go, built on the same
   upstream definitions.

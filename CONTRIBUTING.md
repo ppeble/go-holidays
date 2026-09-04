@@ -3,8 +3,8 @@
 There are multiple ways to help. We rely on the upstream
 [holidays/definitions](https://github.com/holidays/definitions) project and
 its contributors to keep holiday data accurate and up to date, and pull
-requests to this repository to address bugs or implement new features in the
-Go port are always welcome.
+requests to this repository to address bugs or implement new features are
+always welcome.
 
 ## Code of Conduct
 
@@ -111,7 +111,7 @@ change the upstream YAML or the generator, then `make generate`.
 
 ## Parity suite
 
-`parity/` compares the Go port against the Ruby gem pinned in
+`parity/` compares this library's output against the Ruby gem pinned in
 `parity/Gemfile`, loading our own `definitions/` YAML into the gem so both
 sides resolve the same rules. It is run by the required "parity" CI check on
 every PR; do not run it locally, it needs Ruby and the pinned gem installed.
