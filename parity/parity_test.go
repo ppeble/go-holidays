@@ -150,11 +150,13 @@ var _ = Describe("Parity", func() {
 	registerNextHolidaysSpec()
 	registerYearHolidaysSpec()
 	registerAnyHolidaysDuringWorkWeekSpec()
+	registerWildcardCollapseSpec()
 	registerAvailableRegionsSpec()
 	registerLoadCustomSpec()
 	registerCacheBetweenSpec()
 	registerVendoredIsolationSpec()
 	registerSweepSpecs()
+	registerWildcardSweepSpec()
 })
 
 // ---- on ----------------------------------------------------------------------
@@ -413,6 +415,86 @@ func registerAnyHolidaysDuringWorkWeekSpec() {
 						t.Errorf("any_holidays_during_work_week?(date=%s region=%s %s): Go=%v Ruby=%v",
 							c.date, c.region, f.name, got, want)
 					}
+				}
+			}
+		})
+	})
+}
+
+// ---- multi-segment wildcard collapse (go-holidays-dpt) -----------------------
+
+// wildcardCollapseFlags excludes the informal/informal+observed corpusFlags
+// entries: querying the real oracle with a trailing-underscore wildcard
+// region combined with :informal double-counts every country-wide-only
+// informal holiday (go-holidays-ysu, discovered while writing this spec;
+// reproduces on a fresh oracle.rb process, so it is not cross-region state
+// pollution like go-holidays-2z0's vendored-isolation bug). That is an oracle
+// artifact, not a Go bug: Go's own au_vic_/gb_eng_ output already matches the
+// plain and observed-only oracle counts exactly. Once go-holidays-ysu is
+// understood/fixed, this can go back to the full corpusFlags.
+var wildcardCollapseFlags = []flagCombo{corpusFlags[0], corpusFlags[1]}
+
+// registerWildcardCollapseSpec covers the go-holidays-dpt regression: a
+// multi-segment wildcard region (e.g. "au_vic_", "gb_eng_") must collapse all
+// the way to its country segment and return the exact same calendar as the
+// single-segment wildcard ("au_", "gb_"), country-wide-only holidays
+// included.
+//
+// gb_eng_ is compared against the oracle across full corpusYears ranges: it
+// is clean (verified during investigation, no unrelated divergence). au_vic_
+// is instead compared over Jan 1 - Sep 30 of each corpusYears year: a
+// full-year au_ range hits a separate, pre-existing, unrelated divergence
+// (go-holidays-67s, discovered while writing this spec) where Go drops the
+// ACT/NSW/SA Labour Day entry when it falls on the same October date as the
+// QLD Queen's Birthday entry. Restricting the range keeps this spec scoped to
+// the wildcard-collapse fix rather than tripping over that separate bug.
+func registerWildcardCollapseSpec() {
+	Context("WildcardCollapse", func() {
+		It("On surfaces a country-wide-only holiday for a multi-segment wildcard", func() {
+			// Deliberately not folded into registerOnSpec's shared cases list:
+			// a wildcard region query taints the shared oracle process for every
+			// later query of that country (self-pollution, discovered while
+			// writing this spec; see the wildcardCollapseFlags comment above for
+			// the same class of oracle-state issue). registerOnSpec runs before
+			// this Context, so its plain "au_nsw"/"gb_eng" cases must stay
+			// upstream of any wildcard query against those countries.
+			t := GinkgoT()
+			type onCase struct {
+				region, date, name string
+			}
+			cases := []onCase{
+				{"au_vic_", "2017-01-26", "Australia Day"}, // Regions: ["au"]
+				{"gb_eng_", "2024-03-29", "Good Friday"},   // Regions: ["gb"]
+			}
+			for _, c := range cases {
+				got, err := holidays.On(mustDate(c.date), holidays.Options{Regions: []string{c.region}})
+				if err != nil {
+					t.Errorf("On(%s, %s) Go error: %v", c.date, c.region, err)
+					continue
+				}
+				want, err := ora.holidayList(request{Func: "on", Date: c.date, Regions: []string{c.region}})
+				if err != nil {
+					t.Errorf("On(%s, %s) oracle error: %v", c.date, c.region, err)
+					continue
+				}
+				assertPairs(t, "on", flexArgs("date", c.date, c.region, corpusFlags[0]), normalizeGo(got), want)
+			}
+		})
+
+		It("gb_eng_ matches the oracle's gb_ calendar for a full year", func() {
+			t := GinkgoT()
+			for _, f := range wildcardCollapseFlags {
+				for _, y := range corpusYears {
+					runBetween(t, []string{"gb_eng_"}, f, yearStart(y), yearEnd(y))
+				}
+			}
+		})
+
+		It("au_vic_ matches the oracle's au_ calendar for Jan-Sep", func() {
+			t := GinkgoT()
+			for _, f := range wildcardCollapseFlags {
+				for _, y := range corpusYears {
+					runBetween(t, []string{"au_vic_"}, f, fmt.Sprintf("%04d-01-01", y), fmt.Sprintf("%04d-09-30", y))
 				}
 			}
 		})
