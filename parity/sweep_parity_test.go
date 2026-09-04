@@ -7,6 +7,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -98,18 +99,18 @@ func registerSweepSpecs() {
 
 			years := sweepYearEnd - sweepYearStart + 1
 			var c sweepCounters
-			// Reuse the single shared oracle started in TestMain. Older gems (9.1.0)
-			// accumulated cross-region global-state pollution across many load_custom
-			// queries, which once forced a fresh per-region oracle (spawn ruby + reload
-			// all 80 YAML, ~287x) and made this sweep take minutes. Gem 9.1.2 (#344,
-			// region load-order) and 10.0.0 (#352, function_modifier merge) fixed that,
-			// so one long-lived oracle produces the same tally in a fraction of the time.
+			// Shard serviceable regions across sweepPool (sweepPoolSize independent
+			// Ruby oracle subprocesses; ora is sweepPool[0]) and sweep each shard
+			// concurrently. Older gems (9.1.0) accumulated cross-region global-state
+			// pollution across many load_custom queries, which once forced a fresh
+			// per-region oracle (spawn ruby + reload all 80 YAML, ~287x) and made
+			// this sweep take minutes. Gem 9.1.2 (#344, region load-order) and
+			// 10.0.0 (#352, function_modifier merge) fixed that, so each pool member
+			// is warmed once and reused for its whole shard. sweepCounters.mu makes
+			// the shared tally safe for the concurrent writers below.
 			var swept int64
 			stopSweep := startSweepHeartbeat("regions", &swept, len(serviceable))
-			for _, region := range serviceable {
-				sweepRegion(t, ora, region, &c)
-				atomic.AddInt64(&swept, 1)
-			}
+			sweepRegionsConcurrently(t, sweepPool, serviceable, &c, &swept)
 			stopSweep()
 
 			fmt.Fprintf(os.Stdout, "[parity sweep] done: %d comparisons, %d mismatches, %d mutual lunar-boundary confirmations\n",
@@ -127,8 +128,13 @@ func registerSweepSpecs() {
 	})
 }
 
-// sweepCounters accumulates the sweep tally across all regions.
+// sweepCounters accumulates the sweep tally across all regions. Once
+// sweepRegionsConcurrently runs region shards on separate goroutines (one per
+// pool oracle), every field here is written from multiple goroutines, so mu
+// guards every mutation (see recordFailure and the increments in
+// compareYear).
 type sweepCounters struct {
+	mu                                     sync.Mutex
 	comparisons, mismatches, lunarBoundary int
 
 	// failCount is uncapped; failMessages holds up to maxReportedMismatches.
@@ -140,10 +146,62 @@ type sweepCounters struct {
 // sweep. Only the first maxReportedMismatches messages are retained; failCount
 // stays uncapped so the final summary reports the true total.
 func (c *sweepCounters) recordFailure(format string, args ...any) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	c.failCount++
 	if len(c.failMessages) < maxReportedMismatches {
 		c.failMessages = append(c.failMessages, fmt.Sprintf(format, args...))
 	}
+}
+
+// addComparison records one completed comparison (matching or not).
+func (c *sweepCounters) addComparison() {
+	c.mu.Lock()
+	c.comparisons++
+	c.mu.Unlock()
+}
+
+// addMismatch records one comparison that also mismatched.
+func (c *sweepCounters) addMismatch() {
+	c.mu.Lock()
+	c.mismatches++
+	c.mu.Unlock()
+}
+
+// addLunarBoundary records one mutual lunar-table boundary confirmation.
+func (c *sweepCounters) addLunarBoundary() {
+	c.mu.Lock()
+	c.lunarBoundary++
+	c.mu.Unlock()
+}
+
+// sweepRegionsConcurrently shards regions across pool (round-robin so each
+// pool member gets a contiguous, roughly equal-sized run of regions) and
+// sweeps each shard on its own goroutine against its own oracle. swept is
+// bumped atomically for the heartbeat; c is safe for concurrent use.
+func sweepRegionsConcurrently(t GinkgoTInterface, pool []*oracle, regions []string, c *sweepCounters, swept *int64) {
+	t.Helper()
+	shards := make([][]string, len(pool))
+	for i, region := range regions {
+		shard := i % len(pool)
+		shards[shard] = append(shards[shard], region)
+	}
+
+	var wg sync.WaitGroup
+	for i, shard := range shards {
+		if len(shard) == 0 {
+			continue
+		}
+		wg.Add(1)
+		go func(ro *oracle, regions []string) {
+			defer wg.Done()
+			for _, region := range regions {
+				sweepRegion(t, ro, region, c)
+				atomic.AddInt64(swept, 1)
+			}
+		}(pool[i], shard)
+	}
+	wg.Wait()
 }
 
 // sweepRegion compares Go against the shared oracle for one region across the
@@ -191,7 +249,7 @@ func compareYear(t GinkgoTInterface, region string, year int, from string, f fla
 		// YearHolidaysFrom, so only the 2050 primary year reaches here.)
 		if isLunarRangeError(err) {
 			if entry.oracleErr != "" {
-				c.lunarBoundary++
+				c.addLunarBoundary()
 				return
 			}
 			c.recordFailure("lunar boundary [region=%s year=%d %s]: Go errored (%v) but Ruby resolved the year",
@@ -215,12 +273,12 @@ func compareYear(t GinkgoTInterface, region string, year int, from string, f fla
 		return
 	}
 	want := dedupePairs(entry.pairs)
-	c.comparisons++
+	c.addComparison()
 	if pairsEqual(got, want) {
 		return
 	}
 	onlyGo, onlyRuby := diffPairs(got, want)
-	c.mismatches++
+	c.addMismatch()
 	c.recordFailure("year sweep mismatch [region=%s year=%d %s]: Go=%d Ruby=%d%s",
 		region, year, f.name, len(got), len(want), formatDiff(onlyGo, onlyRuby))
 }
