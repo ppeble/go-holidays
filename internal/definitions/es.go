@@ -267,6 +267,29 @@ var esRules = []definition.HolidayRule{
 	},
 }
 
+var esRegionNames = map[string]string{
+	"es":    "Spain",
+	"es_an": "Andalucía",
+	"es_ar": "Aragón",
+	"es_ce": "Ceuta",
+	"es_cl": "Castilla y León",
+	"es_cm": "Castilla-La Mancha",
+	"es_cn": "Canary Islands",
+	"es_ct": "Cataluña",
+	"es_ex": "Extremadura",
+	"es_ga": "Galicia",
+	"es_ib": "Islas Baleares",
+	"es_lo": "Rioja, La",
+	"es_m":  "Madrid",
+	"es_mu": "Murcia",
+	"es_na": "Navarra",
+	"es_o":  "Asturias",
+	"es_pv": "País Vasco",
+	"es_v":  "Valencia/València",
+	"es_vc": "Comunidad Valenciana",
+}
+
 func init() {
 	engine.RegisterCountry("es", esRules)
+	engine.RegisterRegionNames("es", esRegionNames)
 }

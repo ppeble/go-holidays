@@ -86,6 +86,11 @@ var ngRules = []definition.HolidayRule{
 	},
 }
 
+var ngRegionNames = map[string]string{
+	"ng": "Nigeria",
+}
+
 func init() {
 	engine.RegisterCountry("ng", ngRules)
+	engine.RegisterRegionNames("ng", ngRegionNames)
 }

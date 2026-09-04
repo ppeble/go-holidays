@@ -163,6 +163,11 @@ var hkRules = []definition.HolidayRule{
 	},
 }
 
+var hkRegionNames = map[string]string{
+	"hk": "Hong Kong",
+}
+
 func init() {
 	engine.RegisterCountry("hk", hkRules)
+	engine.RegisterRegionNames("hk", hkRegionNames)
 }

@@ -16,10 +16,11 @@ import (
 
 // RegionFile is the in-memory result of parsing one definitions YAML.
 type RegionFile struct {
-	Country string                // base filename without .yaml
-	Rules   []definition.HolidayRule
-	Methods map[string]MethodSpec // local custom methods (validation only)
-	Tests   []TestSpec
+	Country     string // base filename without .yaml
+	Rules       []definition.HolidayRule
+	Methods     map[string]MethodSpec // local custom methods (validation only)
+	Tests       []TestSpec
+	RegionNames map[string]string // region code -> display name, from region_names:
 }
 
 // MethodSpec captures a custom method's declared signature. The Ruby body is
@@ -114,7 +115,7 @@ func ParseRegionFile(country string, data []byte) (*RegionFile, error) {
 		return nil, fmt.Errorf("parse %s.yaml: %w", country, err)
 	}
 
-	rf := &RegionFile{Country: country, Methods: map[string]MethodSpec{}}
+	rf := &RegionFile{Country: country, Methods: map[string]MethodSpec{}, RegionNames: root.RegionNames}
 
 	months := make([]int, 0, len(root.Months))
 	for m := range root.Months {

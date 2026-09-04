@@ -172,6 +172,11 @@ var coRules = []definition.HolidayRule{
 	},
 }
 
+var coRegionNames = map[string]string{
+	"co": "Colombia",
+}
+
 func init() {
 	engine.RegisterCountry("co", coRules)
+	engine.RegisterRegionNames("co", coRegionNames)
 }

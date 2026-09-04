@@ -156,6 +156,11 @@ var lvRules = []definition.HolidayRule{
 	},
 }
 
+var lvRegionNames = map[string]string{
+	"lv": "Latvia",
+}
+
 func init() {
 	engine.RegisterCountry("lv", lvRules)
+	engine.RegisterRegionNames("lv", lvRegionNames)
 }

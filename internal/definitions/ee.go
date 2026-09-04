@@ -99,6 +99,11 @@ var eeRules = []definition.HolidayRule{
 	},
 }
 
+var eeRegionNames = map[string]string{
+	"ee": "Estonia",
+}
+
 func init() {
 	engine.RegisterCountry("ee", eeRules)
+	engine.RegisterRegionNames("ee", eeRegionNames)
 }

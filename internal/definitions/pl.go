@@ -356,6 +356,11 @@ var plRules = []definition.HolidayRule{
 	},
 }
 
+var plRegionNames = map[string]string{
+	"pl": "Poland",
+}
+
 func init() {
 	engine.RegisterCountry("pl", plRules)
+	engine.RegisterRegionNames("pl", plRegionNames)
 }

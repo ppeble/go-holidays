@@ -109,6 +109,11 @@ var atRules = []definition.HolidayRule{
 	},
 }
 
+var atRegionNames = map[string]string{
+	"at": "Austria",
+}
+
 func init() {
 	engine.RegisterCountry("at", atRules)
+	engine.RegisterRegionNames("at", atRegionNames)
 }

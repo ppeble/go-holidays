@@ -270,6 +270,23 @@ var gbRules = []definition.HolidayRule{
 	},
 }
 
+var gbRegionNames = map[string]string{
+	"gb":     "United Kingdom",
+	"gb_con": "Cornwall",
+	"gb_eaw": "England and Wales",
+	"gb_eng": "England",
+	"gb_gsy": "Guernsey",
+	"gb_iom": "Isle of Man",
+	"gb_jsy": "Jersey",
+	"gb_nir": "Northern Ireland",
+	"gb_sct": "Scotland",
+	"gb_wls": "Wales",
+	"gg":     "Guernsey",
+	"im":     "Isle of Man",
+	"je":     "Jersey",
+}
+
 func init() {
 	engine.RegisterCountry("gb", gbRules)
+	engine.RegisterRegionNames("gb", gbRegionNames)
 }

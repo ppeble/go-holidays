@@ -215,6 +215,24 @@ var nzRules = []definition.HolidayRule{
 	},
 }
 
+var nzRegionNames = map[string]string{
+	"nz":    "New Zealand",
+	"nz_ak": "Auckland",
+	"nz_ca": "Canterbury",
+	"nz_ch": "Chatham Islands",
+	"nz_hb": "Hawke's Bay",
+	"nz_mb": "Marlborough",
+	"nz_ne": "Nelson",
+	"nz_nl": "Northland",
+	"nz_ot": "Otago",
+	"nz_sc": "South Canterbury",
+	"nz_sl": "Southland",
+	"nz_ta": "Taranaki",
+	"nz_we": "Wellington",
+	"nz_wl": "Westland",
+}
+
 func init() {
 	engine.RegisterCountry("nz", nzRules)
+	engine.RegisterRegionNames("nz", nzRegionNames)
 }

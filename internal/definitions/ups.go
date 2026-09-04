@@ -77,6 +77,11 @@ var upsRules = []definition.HolidayRule{
 	},
 }
 
+var upsRegionNames = map[string]string{
+	"ups": "UPS",
+}
+
 func init() {
 	engine.RegisterCountry("ups", upsRules)
+	engine.RegisterRegionNames("ups", upsRegionNames)
 }

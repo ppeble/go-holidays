@@ -118,6 +118,11 @@ var tsxRules = []definition.HolidayRule{
 	},
 }
 
+var tsxRegionNames = map[string]string{
+	"tsx": "Toronto Stock Exchange",
+}
+
 func init() {
 	engine.RegisterCountry("tsx", tsxRules)
+	engine.RegisterRegionNames("tsx", tsxRegionNames)
 }

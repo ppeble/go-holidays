@@ -151,6 +151,11 @@ var clRules = []definition.HolidayRule{
 	},
 }
 
+var clRegionNames = map[string]string{
+	"cl": "Chile",
+}
+
 func init() {
 	engine.RegisterCountry("cl", clRules)
+	engine.RegisterRegionNames("cl", clRegionNames)
 }

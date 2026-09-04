@@ -119,6 +119,11 @@ var grRules = []definition.HolidayRule{
 	},
 }
 
+var grRegionNames = map[string]string{
+	"gr": "Greece",
+}
+
 func init() {
 	engine.RegisterCountry("gr", grRules)
+	engine.RegisterRegionNames("gr", grRegionNames)
 }

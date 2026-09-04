@@ -108,6 +108,11 @@ var kzRules = []definition.HolidayRule{
 	},
 }
 
+var kzRegionNames = map[string]string{
+	"kz": "Kazakhstan",
+}
+
 func init() {
 	engine.RegisterCountry("kz", kzRules)
+	engine.RegisterRegionNames("kz", kzRegionNames)
 }

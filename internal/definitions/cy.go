@@ -142,6 +142,11 @@ var cyRules = []definition.HolidayRule{
 	},
 }
 
+var cyRegionNames = map[string]string{
+	"cy": "Cyprus",
+}
+
 func init() {
 	engine.RegisterCountry("cy", cyRules)
+	engine.RegisterRegionNames("cy", cyRegionNames)
 }

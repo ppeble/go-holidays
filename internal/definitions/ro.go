@@ -153,6 +153,11 @@ var roRules = []definition.HolidayRule{
 	},
 }
 
+var roRegionNames = map[string]string{
+	"ro": "Romania",
+}
+
 func init() {
 	engine.RegisterCountry("ro", roRules)
+	engine.RegisterRegionNames("ro", roRegionNames)
 }

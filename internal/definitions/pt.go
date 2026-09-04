@@ -130,6 +130,13 @@ var ptRules = []definition.HolidayRule{
 	},
 }
 
+var ptRegionNames = map[string]string{
+	"pt":    "Portugal",
+	"pt_li": "Lisbon",
+	"pt_po": "Porto",
+}
+
 func init() {
 	engine.RegisterCountry("pt", ptRules)
+	engine.RegisterRegionNames("pt", ptRegionNames)
 }

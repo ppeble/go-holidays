@@ -213,6 +213,11 @@ var dkRules = []definition.HolidayRule{
 	},
 }
 
+var dkRegionNames = map[string]string{
+	"dk": "Denmark",
+}
+
 func init() {
 	engine.RegisterCountry("dk", dkRules)
+	engine.RegisterRegionNames("dk", dkRegionNames)
 }

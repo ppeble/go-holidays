@@ -102,6 +102,11 @@ var veRules = []definition.HolidayRule{
 	},
 }
 
+var veRegionNames = map[string]string{
+	"ve": "Venezuela",
+}
+
 func init() {
 	engine.RegisterCountry("ve", veRules)
+	engine.RegisterRegionNames("ve", veRegionNames)
 }

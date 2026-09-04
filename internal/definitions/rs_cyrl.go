@@ -123,6 +123,11 @@ var rs_cyrlRules = []definition.HolidayRule{
 	},
 }
 
+var rs_cyrlRegionNames = map[string]string{
+	"rs_cyrl": "Serbia",
+}
+
 func init() {
 	engine.RegisterCountry("rs_cyrl", rs_cyrlRules)
+	engine.RegisterRegionNames("rs_cyrl", rs_cyrlRegionNames)
 }

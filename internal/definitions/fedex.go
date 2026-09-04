@@ -70,6 +70,11 @@ var fedexRules = []definition.HolidayRule{
 	},
 }
 
+var fedexRegionNames = map[string]string{
+	"fedex": "FedEx",
+}
+
 func init() {
 	engine.RegisterCountry("fedex", fedexRules)
+	engine.RegisterRegionNames("fedex", fedexRegionNames)
 }

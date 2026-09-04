@@ -92,6 +92,11 @@ var keRules = []definition.HolidayRule{
 	},
 }
 
+var keRegionNames = map[string]string{
+	"ke": "Kenya",
+}
+
 func init() {
 	engine.RegisterCountry("ke", keRules)
+	engine.RegisterRegionNames("ke", keRegionNames)
 }

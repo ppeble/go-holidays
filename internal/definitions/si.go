@@ -120,6 +120,11 @@ var siRules = []definition.HolidayRule{
 	},
 }
 
+var siRegionNames = map[string]string{
+	"si": "Slovenia",
+}
+
 func init() {
 	engine.RegisterCountry("si", siRules)
+	engine.RegisterRegionNames("si", siRegionNames)
 }

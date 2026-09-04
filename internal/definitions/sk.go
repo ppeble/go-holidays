@@ -147,6 +147,11 @@ var skRules = []definition.HolidayRule{
 	},
 }
 
+var skRegionNames = map[string]string{
+	"sk": "Slovakia",
+}
+
 func init() {
 	engine.RegisterCountry("sk", skRules)
+	engine.RegisterRegionNames("sk", skRegionNames)
 }

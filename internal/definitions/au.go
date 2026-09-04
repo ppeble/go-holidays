@@ -444,6 +444,24 @@ var auRules = []definition.HolidayRule{
 	},
 }
 
+var auRegionNames = map[string]string{
+	"au":               "Australia",
+	"au_act":           "Australian Capital Territory",
+	"au_nsw":           "New South Wales",
+	"au_nt":            "Northern Territory",
+	"au_qld":           "Queensland",
+	"au_qld_brisbane":  "Brisbane",
+	"au_qld_cairns":    "Cairns",
+	"au_sa":            "South Australia",
+	"au_tas":           "Tasmania",
+	"au_tas_north":     "Northern Tasmania",
+	"au_tas_south":     "Southern Tasmania",
+	"au_vic":           "Victoria",
+	"au_vic_melbourne": "Melbourne",
+	"au_wa":            "Western Australia",
+}
+
 func init() {
 	engine.RegisterCountry("au", auRules)
+	engine.RegisterRegionNames("au", auRegionNames)
 }

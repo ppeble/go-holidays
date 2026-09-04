@@ -55,6 +55,11 @@ var nercRules = []definition.HolidayRule{
 	},
 }
 
+var nercRegionNames = map[string]string{
+	"nerc": "North American Electric Reliability Corporation",
+}
+
 func init() {
 	engine.RegisterCountry("nerc", nercRules)
+	engine.RegisterRegionNames("nerc", nercRegionNames)
 }

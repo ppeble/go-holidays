@@ -105,6 +105,11 @@ var czRules = []definition.HolidayRule{
 	},
 }
 
+var czRegionNames = map[string]string{
+	"cz": "Czechia",
+}
+
 func init() {
 	engine.RegisterCountry("cz", czRules)
+	engine.RegisterRegionNames("cz", czRegionNames)
 }

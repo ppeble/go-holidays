@@ -38,6 +38,28 @@ tests:
 			Expect(err).NotTo(HaveOccurred())
 			Expect(rf.Rules).To(HaveLen(1))
 			Expect(rf.Rules[0].Name).To(Equal("New Year's Day"))
+			Expect(rf.RegionNames).To(Equal(map[string]string{
+				"xx":     "Example Country",
+				"xx_reg": "Example Region",
+			}))
+		})
+	})
+
+	Context("when the YAML has no region_names block", func() {
+		It("leaves RegionNames nil", func() {
+			yaml := []byte(`
+months:
+  1:
+    - name: "New Year's Day"
+      regions:
+        - xx
+      mday: 1
+      type: formal
+`)
+
+			rf, err := ParseRegionFile("xx", yaml)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(rf.RegionNames).To(BeEmpty())
 		})
 	})
 })

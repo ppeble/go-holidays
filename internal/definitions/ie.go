@@ -90,6 +90,11 @@ var ieRules = []definition.HolidayRule{
 	},
 }
 
+var ieRegionNames = map[string]string{
+	"ie": "Ireland",
+}
+
 func init() {
 	engine.RegisterCountry("ie", ieRules)
+	engine.RegisterRegionNames("ie", ieRegionNames)
 }

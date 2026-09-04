@@ -66,6 +66,11 @@ var tnRules = []definition.HolidayRule{
 	},
 }
 
+var tnRegionNames = map[string]string{
+	"tn": "Tunisia",
+}
+
 func init() {
 	engine.RegisterCountry("tn", tnRules)
+	engine.RegisterRegionNames("tn", tnRegionNames)
 }

@@ -132,6 +132,11 @@ var phRules = []definition.HolidayRule{
 	},
 }
 
+var phRegionNames = map[string]string{
+	"ph": "Philippines",
+}
+
 func init() {
 	engine.RegisterCountry("ph", phRules)
+	engine.RegisterRegionNames("ph", phRegionNames)
 }

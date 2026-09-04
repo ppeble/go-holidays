@@ -136,6 +136,11 @@ var krRules = []definition.HolidayRule{
 	},
 }
 
+var krRegionNames = map[string]string{
+	"kr": "South Korea",
+}
+
 func init() {
 	engine.RegisterCountry("kr", krRules)
+	engine.RegisterRegionNames("kr", krRegionNames)
 }

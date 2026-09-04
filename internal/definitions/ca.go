@@ -401,6 +401,24 @@ var caRules = []definition.HolidayRule{
 	},
 }
 
+var caRegionNames = map[string]string{
+	"ca":    "Canada",
+	"ca_ab": "Alberta",
+	"ca_bc": "British Columbia",
+	"ca_mb": "Manitoba",
+	"ca_nb": "New Brunswick",
+	"ca_nl": "Newfoundland and Labrador",
+	"ca_ns": "Nova Scotia",
+	"ca_nt": "Northwest Territories",
+	"ca_nu": "Nunavut",
+	"ca_on": "Ontario",
+	"ca_pe": "Prince Edward Island",
+	"ca_qc": "Quebec",
+	"ca_sk": "Saskatchewan",
+	"ca_yt": "Yukon",
+}
+
 func init() {
 	engine.RegisterCountry("ca", caRules)
+	engine.RegisterRegionNames("ca", caRegionNames)
 }

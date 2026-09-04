@@ -136,6 +136,11 @@ var geRules = []definition.HolidayRule{
 	},
 }
 
+var geRegionNames = map[string]string{
+	"ge": "Georgia",
+}
+
 func init() {
 	engine.RegisterCountry("ge", geRules)
+	engine.RegisterRegionNames("ge", geRegionNames)
 }

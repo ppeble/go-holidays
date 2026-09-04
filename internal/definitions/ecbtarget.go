@@ -56,6 +56,11 @@ var ecbtargetRules = []definition.HolidayRule{
 	},
 }
 
+var ecbtargetRegionNames = map[string]string{
+	"ecbtarget": "ECB TARGET (European Central Bank)",
+}
+
 func init() {
 	engine.RegisterCountry("ecbtarget", ecbtargetRules)
+	engine.RegisterRegionNames("ecbtarget", ecbtargetRegionNames)
 }

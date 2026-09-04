@@ -330,6 +330,31 @@ var deRules = []definition.HolidayRule{
 	},
 }
 
+var deRegionNames = map[string]string{
+	"de":             "Germany",
+	"de_bb":          "Brandenburg",
+	"de_be":          "Berlin",
+	"de_bw":          "Baden-Württemberg",
+	"de_by":          "Bayern",
+	"de_by_augsburg": "Augsburg (Bayern)",
+	"de_by_cath":     "Bayern (Catholic regions)",
+	"de_hb":          "Bremen",
+	"de_he":          "Hessen",
+	"de_hh":          "Hamburg",
+	"de_mv":          "Mecklenburg-Vorpommern",
+	"de_ni":          "Niedersachsen",
+	"de_nw":          "Nordrhein-Westfalen",
+	"de_rp":          "Rheinland-Pfalz",
+	"de_sh":          "Schleswig-Holstein",
+	"de_sl":          "Saarland",
+	"de_sn":          "Sachsen",
+	"de_sn_sorbian":  "Sachsen (Sorbian regions)",
+	"de_st":          "Sachsen-Anhalt",
+	"de_th":          "Thüringen",
+	"de_th_cath":     "Thüringen (Catholic regions)",
+}
+
 func init() {
 	engine.RegisterCountry("de", deRules)
+	engine.RegisterRegionNames("de", deRegionNames)
 }

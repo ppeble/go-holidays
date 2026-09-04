@@ -255,6 +255,20 @@ regions := holidays.AvailableRegions()
 // regions == []string{"ar", "at", ..., "sg", ...}
 ```
 
+#### Region display names
+
+`RegionName` returns the display name for one region code, and whether it is
+registered. `RegionNames` returns every registered region code mapped to its
+display name:
+
+```go
+name, ok := holidays.RegionName("gb_sct")
+// name == "Scotland", ok == true
+
+names := holidays.RegionNames()
+// names["ch_ge"] == "Genève"
+```
+
 ## Command-line interface
 
 `make build` produces `bin/holidays` and `bin/gen-holidays`. `bin/holidays`
