@@ -50,6 +50,17 @@ like: comparisons are done on the UTC calendar day, not on wall-clock time.
 
 ## Usage
 
+Every example below assumes this import, shown once here and omitted from the
+rest for brevity:
+
+```go
+import (
+	"time"
+
+	holidays "github.com/ppeble/go-holidays"
+)
+```
+
 This library offers multiple ways to check for holidays for a variety of
 scenarios.
 
