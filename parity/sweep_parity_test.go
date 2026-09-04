@@ -128,6 +128,69 @@ func registerSweepSpecs() {
 	})
 }
 
+// sweepWildcardRegions is a curated representative sample for the
+// wildcard-collapse sweep (go-holidays-dpt): one subregion per country that
+// has subregions, turned into its wildcard form (e.g. "de_bb_"). Every one of
+// AvailableRegions()'s 214 underscore-containing regions is a valid Go-side
+// target (the wildcard collapse is per-country, not per-subregion, so any
+// subregion under a given country exercises the same code path as any
+// other), but sweeping all 214 would roughly double this sweep's oracle
+// round-trips for no extra coverage once one region per country has proven
+// the collapse. Two country prefixes verified clean here are deliberately
+// left out:
+//   - au_*: its wildcard form hits a separate, pre-existing, unrelated
+//     divergence (go-holidays-67s, a Labour Day/Queen's-Birthday date
+//     collision) out of scope for the wildcard fix this sweep covers.
+//   - us_*, ca_*, mx_*: the gem's own north-america aggregate bundles these
+//     three together, so a wildcard query for any one of them pulls in the
+//     other two's holidays too (e.g. us_ak_ returns Canada Day and Labour
+//     Day alongside the US calendar). Verified during investigation: this is
+//     an oracle/gem-side aggregate-loading quirk, not a Go behavior to test.
+//   - be_*, bg_*, mt_*, rs_*: the oracle errors InvalidRegion on these as
+//     wildcards (be_fr_, bg_bg_, mt_en_, rs_cyrl_), so they cannot be
+//     exercised through the oracle at all.
+var sweepWildcardRegions = []string{
+	"ch_ag_", "de_bb_", "es_an_", "fr_a_", "gb_con_",
+	"in_ap_", "it_bl_", "nz_ak_", "pt_li_",
+}
+
+// registerWildcardSweepSpec extends the exhaustive sweep to the wildcard
+// region form (go-holidays-dpt): for each entry in sweepWildcardRegions, it
+// compares Go's YearHolidaysFrom against the oracle across the same full
+// [sweepYearStart, sweepYearEnd] year span and all four flag combinations
+// that registerSweepSpecs uses for bare region codes, reusing the same
+// sweepRegion/compareYear machinery (including its set-based, deduped
+// comparison, which already absorbs an unrelated oracle artifact where a
+// wildcard region combined with :informal double-counts some rows;
+// go-holidays-ysu). oracle.rb needs no changes here: it passes any region
+// string through generically (raw string -> to_sym, no allowlist), wildcard
+// suffix included, so this is pure Go-side test coverage.
+func registerWildcardSweepSpec() {
+	Context("ExhaustiveWildcardSweep", func() {
+		It("matches the oracle for a representative sample of wildcard-collapsed regions", func() {
+			t := GinkgoT()
+			years := sweepYearEnd - sweepYearStart + 1
+			var c sweepCounters
+			var swept int64
+			stopSweep := startSweepHeartbeat("wildcard regions", &swept, len(sweepWildcardRegions))
+			sweepRegionsConcurrently(t, sweepPool, sweepWildcardRegions, &c, &swept)
+			stopSweep()
+
+			fmt.Fprintf(os.Stdout, "[parity sweep] wildcard done: %d comparisons, %d mismatches, %d mutual lunar-boundary confirmations\n",
+				c.comparisons, c.mismatches, c.lunarBoundary)
+			t.Logf("exhaustive wildcard sweep: %d comparisons across %d regions x %d years x %d flag combos; %d mismatches, %d mutual lunar-boundary confirmations",
+				c.comparisons, len(sweepWildcardRegions), years, len(corpusFlags), c.mismatches, c.lunarBoundary)
+			for _, msg := range c.failMessages {
+				t.Log(msg)
+			}
+			if c.failCount > 0 {
+				t.Errorf("wildcard sweep: %d failures total (%d reported above); see messages and summary tally",
+					c.failCount, len(c.failMessages))
+			}
+		})
+	})
+}
+
 // sweepCounters accumulates the sweep tally across all regions. Once
 // sweepRegionsConcurrently runs region shards on separate goroutines (one per
 // pool oracle), every field here is written from multiple goroutines, so mu

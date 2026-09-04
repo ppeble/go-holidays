@@ -192,18 +192,22 @@ func rulesForCountry(country string) []definition.HolidayRule {
 // Matching rules:
 //   - Exact equality: rule region == requested region.
 //   - Parent: rule region "us" applies when the user requests "us_ga".
-//   - Wildcard: requested region ending with "_" (e.g. "gb_") matches any rule
-//     region that equals the bare prefix ("gb") or starts with the prefix
-//     plus "_" ("gb_sct", "gb_wls").
+//   - Wildcard: a requested region ending with "_" always collapses to its
+//     country segment (the part before the first "_"), regardless of how
+//     many segments follow. "gb_" and the multi-segment "gb_eng_" both match
+//     any rule region that equals that country segment ("gb") or starts with
+//     the country segment plus "_" ("gb_sct", "gb_wls", "gb_eng"): a
+//     multi-segment wildcard is not scoped to its own branch, it behaves
+//     identically to the bare country wildcard.
 func ruleMatchesRequested(rule definition.HolidayRule, requested []string) bool {
 	if len(requested) == 0 {
 		return true
 	}
 	for _, req := range requested {
 		if strings.HasSuffix(req, "_") {
-			bare := strings.TrimSuffix(req, "_")
+			bare := strings.SplitN(req, "_", 2)[0]
 			for _, rr := range rule.Regions {
-				if rr == bare || strings.HasPrefix(rr, req) {
+				if rr == bare || strings.HasPrefix(rr, bare+"_") {
 					return true
 				}
 			}

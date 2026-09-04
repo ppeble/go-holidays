@@ -333,3 +333,36 @@ var _ = Describe("Between", func() {
 		Expect(goodFriday).To(Equal(2), "expected Good Friday twice for [us ca] informal 2024")
 	})
 })
+
+var _ = Describe("wildcard region collapse (go-holidays-dpt)", func() {
+	It("includes country-wide-only holidays for a multi-segment wildcard, same as the single-segment wildcard", func() {
+		// A multi-segment wildcard like "au_vic_" must collapse all the way
+		// to the country segment, matching the exact same rules as "au_"
+		// (verified live against gem 11.5.0: Holidays.between(2017, :au_vic_)
+		// returns the identical 35-entry calendar as :au_). Australia Day
+		// (Jan 26) is a country-wide-only holiday (Regions: ["au"]) that a
+		// state-scoped wildcard must still surface.
+		date := time.Date(2017, 1, 26, 0, 0, 0, 0, time.UTC)
+		hs, err := holidays.On(date, holidays.Options{Regions: []string{"au_vic_"}})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamedHoliday(hs, "Australia Day")).To(BeTrue(), "expected Australia Day for au_vic_ on 2017-01-26, got %+v", hs)
+	})
+
+	It("returns the identical full-year Australian calendar for au_vic_ as for au_", func() {
+		start := time.Date(2017, 1, 1, 0, 0, 0, 0, time.UTC)
+		end := time.Date(2017, 12, 31, 0, 0, 0, 0, time.UTC)
+		wide, err := holidays.Between(start, end, holidays.Options{Regions: []string{"au_"}})
+		Expect(err).NotTo(HaveOccurred())
+		scoped, err := holidays.Between(start, end, holidays.Options{Regions: []string{"au_vic_"}})
+		Expect(err).NotTo(HaveOccurred())
+
+		names := func(hs []holidays.Holiday) []string {
+			out := make([]string, 0, len(hs))
+			for _, h := range hs {
+				out = append(out, h.Date.Format("2006-01-02")+" "+h.Name)
+			}
+			return out
+		}
+		Expect(names(scoped)).To(ConsistOf(names(wide)), "expected au_vic_ to match au_ exactly for 2017")
+	})
+})
