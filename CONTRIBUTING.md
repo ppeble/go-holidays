@@ -33,33 +33,6 @@ Signed-off-by: Your Name <your@email.com>
 
 GPG-signed commits are not required by this repository.
 
-## Repository layout
-
-```
-holidays.go            public API (On/Between/YearHolidays/NextHolidays/
-                        AnyHolidaysDuringWorkWeek) + the blank import of
-                        internal/definitions that registers every region
-holiday.go              Holiday result type
-options.go              Options{Regions, Informal, Observed}
-cache.go                CacheBetween/ResetCache + range cache
-load_custom.go          runtime YAML rule loading (LoadCustom/UnloadCustom/RegisterMethod)
-cmd/
-  holidays/main.go       CLI wrapper (subcommands: on/between/year/next/workweek/regions)
-  gen-holidays/main.go   code generator entry point
-internal/
-  definition/types.go    HolidayRule, YearRange, HolidayType: pure data + matching
-  engine/
-    registry.go          RegisterMethod/RegisterCountry, MethodArgs, region matching
-    resolve.go            ResolveYear, computeDate, nthOrLastWeekday, applyObserved
-    builtins.go            the well-known methods (easter, to_monday_if_sunday, ...)
-    methods_<cc>.go        per-country custom methods (us, jp, nz, ...)
-  calc/                   pure date math (easter.go, lunar.go, day_of_month.go, observance.go)
-  definitions/            GENERATED: <cc>.go (rules) + <cc>_test.go (table tests) + helpers_test.go
-  generator/              parse.go (YAML -> RegionFile), emit.go, emit_tests.go, Validate
-definitions/              git submodule: upstream YAML (do not hand-edit), VERSION.txt
-parity/                   Ruby-gem-vs-Go comparison suite (build tag parity)
-```
-
 ## General note on the definitions submodule
 
 Definitions live in a git submodule. Clone with:
