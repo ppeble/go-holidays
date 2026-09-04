@@ -138,6 +138,31 @@ func startOracle() (*oracle, error) {
 	}, nil
 }
 
+// startOraclePool launches n independent `ruby parity/oracle.rb` subprocesses
+// for the exhaustive sweep's region shards to run against concurrently. Each
+// pool member is a freshly spawned process, NOT forked/cloned from an already
+// warmed oracle: measurement during the go-holidays-2vu investigation showed
+// forking a warmed oracle is slower than spawning fresh (COW + GC storms), so
+// this always starts n new subprocesses. Per-process gem state (Factory,
+// ProcResultCache, the JP shim, the aggregate-vendored-load guard) is already
+// isolated per oracle.rb instance, so sharding regions across independent
+// processes is safe. On partial failure, already-started members are closed
+// before returning the error.
+func startOraclePool(n int) ([]*oracle, error) {
+	pool := make([]*oracle, 0, n)
+	for i := 0; i < n; i++ {
+		o, err := startOracle()
+		if err != nil {
+			for _, p := range pool {
+				_ = p.Close()
+			}
+			return nil, fmt.Errorf("start oracle pool member %d/%d: %w", i+1, n, err)
+		}
+		pool = append(pool, o)
+	}
+	return pool, nil
+}
+
 // call sends one request and reads exactly one response line back, in order.
 // It serializes concurrent callers so the NDJSON request/response pairing stays
 // 1:1. A non-ok response or an id mismatch is surfaced as an error.

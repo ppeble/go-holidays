@@ -29,6 +29,13 @@ var (
 
 	regionMu  sync.RWMutex
 	countries = map[string][]definition.HolidayRule{} // keyed by country code (us, gb, ...)
+
+	// flatRulesCache is the concatenation of every registered country's rules,
+	// rebuilt lazily on first use after (un)registration invalidates it. See
+	// rulesFor: every ResolveYear call used to rebuild this ~187k-entry slice
+	// from scratch, which dominated Go-side sweep cost.
+	flatRulesCache []definition.HolidayRule
+	flatRulesValid bool
 )
 
 // RegisterMethod registers a named method. Panics if name is already registered.
@@ -62,6 +69,7 @@ func RegisterCountry(country string, rules []definition.HolidayRule) {
 	regionMu.Lock()
 	defer regionMu.Unlock()
 	countries[country] = rules
+	flatRulesValid = false
 }
 
 // UnregisterCountry removes a registered country key. Used by LoadCustom
@@ -70,6 +78,7 @@ func UnregisterCountry(country string) {
 	regionMu.Lock()
 	defer regionMu.Unlock()
 	delete(countries, country)
+	flatRulesValid = false
 }
 
 // AvailableRegions returns every region code mentioned across all registered rules,
@@ -96,14 +105,36 @@ func AvailableRegions() []string {
 // rulesFor returns the rules to scan given requested regions. Since registered
 // country keys do not always align with region prefixes (e.g. be_fr.yaml
 // registers under "be_fr", not "be"), we walk every registered country's
-// rules and let ruleMatchesRequested decide.
+// rules and let ruleMatchesRequested decide. The requested regions do not
+// narrow this slice (filtering happens per-rule in ResolveYear via
+// ruleMatchesRequested), so the flat concatenation of every registered
+// country's rules is identical across calls and worth caching: rebuilding it
+// on every ResolveYear call re-walked and re-appended ~187k rule entries.
+//
+// The cache is invalidated by RegisterCountry/UnregisterCountry (LoadCustom
+// calls these at runtime), so a stale slice is never served across a
+// registration change. Double-checked locking: the common case (cache
+// already valid) only takes the read lock.
 func rulesFor(requested []string) []definition.HolidayRule {
 	regionMu.RLock()
-	defer regionMu.RUnlock()
+	if flatRulesValid {
+		out := flatRulesCache
+		regionMu.RUnlock()
+		return out
+	}
+	regionMu.RUnlock()
+
+	regionMu.Lock()
+	defer regionMu.Unlock()
+	if flatRulesValid {
+		return flatRulesCache
+	}
 	var out []definition.HolidayRule
 	for _, rs := range countries {
 		out = append(out, rs...)
 	}
+	flatRulesCache = out
+	flatRulesValid = true
 	return out
 }
 

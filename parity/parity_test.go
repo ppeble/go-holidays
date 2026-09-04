@@ -81,8 +81,23 @@ func opts(regions []string, f flagCombo) holidays.Options {
 	return holidays.Options{Regions: regions, Informal: f.informal, Observed: f.observed}
 }
 
-// shared oracle for the whole package run; started once in TestMain.
+// sweepPoolSize is the number of independent Ruby oracle subprocesses the
+// exhaustive sweep shards regions across. Fixed at 4 rather than derived from
+// runtime.NumCPU(): CI's public ubuntu-latest runner has 4 vCPUs, so going
+// higher would oversubscribe there without buying anything (go-holidays-2vu
+// investigation measured K=1..4 and found near-linear scaling that a real
+// runner cannot exceed).
+const sweepPoolSize = 4
+
+// shared oracle for the whole package run; started once in TestMain. The
+// curated-corpus specs (registerOnSpec..registerVendoredIsolationSpec) and the
+// sweep's region-support probe all use this single oracle, unchanged.
 var ora *oracle
+
+// sweepPool holds sweepPoolSize independent oracles the exhaustive sweep
+// shards regions across (see registerSweepSpecs / sweepRegionsConcurrently).
+// ora is always sweepPool[0], so it is started once and not double-closed.
+var sweepPool []*oracle
 
 func TestMain(m *testing.M) {
 	o, err := startOracle()
@@ -90,7 +105,17 @@ func TestMain(m *testing.M) {
 		panicf("start oracle: %v", err)
 	}
 	ora = o
+
+	extra, err := startOraclePool(sweepPoolSize - 1)
+	if err != nil {
+		panicf("start oracle pool: %v", err)
+	}
+	sweepPool = append([]*oracle{ora}, extra...)
+
 	code := m.Run()
+	for _, p := range extra {
+		_ = p.Close()
+	}
 	_ = ora.Close()
 	os.Exit(code)
 }
