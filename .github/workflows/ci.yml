@@ -9,11 +9,6 @@ permissions:
   contents: read
 
 jobs:
-  # Latest Go minor plus the previous two. Bump this list when a new Go minor is
-  # released; the go.mod `go` directive is the supported floor and stays lower
-  # than the oldest entry here. Each matrix entry reports its own status context
-  # ("unit + vet (go 1.27)", ...), so main's required checks must be updated to
-  # match whenever this list changes.
   test:
     name: unit + vet (go ${{ matrix.go }})
     runs-on: ubuntu-latest
