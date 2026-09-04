@@ -1,7 +1,6 @@
 # go-holidays
 
-Functionality to deal with holidays in Go, providing the same top-level public
-API as the Ruby [`holidays`](https://github.com/holidays/holidays) gem.
+A Go library for working with statutory and other holidays.
 
 All holiday definitions are maintained in the
 [holidays/definitions](https://github.com/holidays/definitions) repository
@@ -225,8 +224,7 @@ hs, err := holidays.YearHolidays(2016, holidays.Options{Regions: []string{"ca_on
 ```
 
 `YearHolidaysFrom` returns every holiday from a given date through December 31
-of that date's year, sorted ascending, mirroring the gem's
-`Holidays.year_holidays(options, from_date)`:
+of that date's year, sorted ascending:
 
 ```go
 from := time.Date(2016, time.February, 23, 0, 0, 0, 0, time.UTC)
@@ -292,10 +290,9 @@ Loading the same path again replaces its prior load; loading distinct paths
 adds rules without overwriting one another. `UnloadCustom` removes rules
 previously loaded from the given paths.
 
-Upstream removed the YAML `methods:`/`ruby:` blocks: a rule's `function:` or
+Custom rules can't embed executable logic in YAML: a rule's `function:` or
 `observed:` reference must point at a method already registered in Go before
-you call `LoadCustom`, since there is no way to interpret arbitrary source at
-runtime:
+you call `LoadCustom`:
 
 ```go
 holidays.RegisterMethod("my_method", func(a holidays.MethodArgs) (time.Time, error) {
@@ -331,10 +328,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for information on how to help out.
 
 ## Credits
 
-* The Ruby [`holidays`](https://github.com/holidays/holidays) gem was started
-  by [@alexdunae](http://github.com/alexdunae) and is maintained by
-  [@ppeble](https://github.com/ppeble) and [@ttwo32](https://github.com/ttwo32),
+* Holiday definitions come from [holidays/definitions](https://github.com/holidays/definitions),
   along with all of its wonderful contributors.
-* Holiday definitions come from [holidays/definitions](https://github.com/holidays/definitions).
-* This repository provides the same public API in Go, built on the same
-  upstream definitions.
