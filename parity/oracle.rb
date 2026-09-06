@@ -104,9 +104,11 @@
 #            "flag_combos":[{"informal":false,"observed":false}, ...] }
 #    res:  result = [ { "year":1970, "informal":false, "observed":false,
 #                       "ok":true, "error":null, "holidays":[ {date,name}, ... ] },
-#                     ... ]   (one entry per year x flag_combo; a per-entry Ruby
-#          failure sets ok=false / error=<class>: <msg> / holidays=[] without
-#          aborting the batch. Transport-only batching of year_holidays so the
+#                     ... ]   (one entry per year x flag_combo. Each flag combo is
+#          computed as ONE full-span Holidays.between bucketed by year; if that
+#          raises, the combo falls back to a per-year year_holidays loop where a
+#          per-entry Ruby failure sets ok=false / error=<class>: <msg> /
+#          holidays=[] without aborting the batch. Transport-only batching so the
 #          exhaustive sweep makes one round-trip per region instead of one per
 #          (year, flag). The Go side still compares (date,name) as deduped SETS.)
 #
@@ -290,6 +292,41 @@ def normalize_holidays(collection)
     .sort_by { |h| [h["date"], h["name"]] }
 end
 
+# Build the per-year cells for one flag combo of a year_holidays_range request.
+#
+# Fast path: ONE Holidays.between over the whole [from_year, to_year] span, whose
+# rows are then bucketed by Date#year. Holidays.year_holidays(opts, Jan 1 Y) is
+# defined as "run the same @definition_search, then keep rows with
+# Jan 1 Y <= date <= Dec 31 Y" (finder/context/year_holiday.rb), so bucketing a
+# full-span between result by the row's actual year reproduces every per-year
+# cell exactly, at ~1.5x less Ruby work than 81 separate year_holidays calls.
+#
+# Fallback: if the full-span between raises (e.g. a lunar-table boundary year),
+# drop back to a per-year year_holidays loop so a single bad year is isolated
+# into its own ok=false cell instead of failing the whole span. This preserves
+# the pre-batching per-(year, combo) error behaviour.
+def year_holidays_range_for_combo(region, from_year, to_year, informal, observed, opts)
+  rows = Holidays.between(Date.new(from_year, 1, 1), Date.new(to_year, 12, 31), *opts)
+  buckets = Hash.new { |h, k| h[k] = [] }
+  Array(rows).each { |h| buckets[h[:date].year] << h }
+  (from_year..to_year).map do |y|
+    { "year" => y, "informal" => informal, "observed" => observed,
+      "ok" => true, "error" => nil,
+      "holidays" => normalize_holidays(buckets[y]) }
+  end
+rescue StandardError
+  (from_year..to_year).map do |y|
+    begin
+      hs = Holidays.year_holidays(opts, Date.new(y, 1, 1))
+      { "year" => y, "informal" => informal, "observed" => observed,
+        "ok" => true, "error" => nil, "holidays" => normalize_holidays(hs) }
+    rescue StandardError => e
+      { "year" => y, "informal" => informal, "observed" => observed,
+        "ok" => false, "error" => "#{e.class}: #{e.message}", "holidays" => [] }
+    end
+  end
+end
+
 # ---- dispatch ----------------------------------------------------------------
 
 def dispatch(req)
@@ -332,24 +369,13 @@ def dispatch(req)
     combos = Array(req["flag_combos"])
     combos = [{ "informal" => false, "observed" => false }] if combos.empty?
     entries = []
-    (from_year..to_year).each do |y|
-      combos.each do |combo|
-        bi = combo["informal"] ? true : false
-        bo = combo["observed"] ? true : false
-        opts = [region.to_sym]
-        opts << :informal if bi
-        opts << :observed if bo
-        begin
-          hs = Holidays.year_holidays(opts, Date.new(y, 1, 1))
-          entries << { "year" => y, "informal" => bi, "observed" => bo,
-                       "ok" => true, "error" => nil,
-                       "holidays" => normalize_holidays(hs) }
-        rescue StandardError => e
-          entries << { "year" => y, "informal" => bi, "observed" => bo,
-                       "ok" => false, "error" => "#{e.class}: #{e.message}",
-                       "holidays" => [] }
-        end
-      end
+    combos.each do |combo|
+      bi = combo["informal"] ? true : false
+      bo = combo["observed"] ? true : false
+      opts = [region.to_sym]
+      opts << :informal if bi
+      opts << :observed if bo
+      entries.concat(year_holidays_range_for_combo(region, from_year, to_year, bi, bo, opts))
     end
     entries
 
