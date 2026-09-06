@@ -138,9 +138,6 @@ func registerSweepSpecs() {
 // round-trips for no extra coverage once one region per country has proven
 // the collapse. Two country prefixes verified clean here are deliberately
 // left out:
-//   - au_*: its wildcard form hits a separate, pre-existing, unrelated
-//     divergence (go-holidays-67s, a Labour Day/Queen's-Birthday date
-//     collision) out of scope for the wildcard fix this sweep covers.
 //   - us_*, ca_*, mx_*: the gem's own north-america aggregate bundles these
 //     three together, so a wildcard query for any one of them pulls in the
 //     other two's holidays too (e.g. us_ak_ returns Canada Day and Labour
@@ -150,7 +147,7 @@ func registerSweepSpecs() {
 //     wildcards (be_fr_, bg_bg_, mt_en_, rs_cyrl_), so they cannot be
 //     exercised through the oracle at all.
 var sweepWildcardRegions = []string{
-	"ch_ag_", "de_bb_", "es_an_", "fr_a_", "gb_con_",
+	"au_vic_", "ch_ag_", "de_bb_", "es_an_", "fr_a_", "gb_con_",
 	"in_ap_", "it_bl_", "nz_ak_", "pt_li_",
 }
 

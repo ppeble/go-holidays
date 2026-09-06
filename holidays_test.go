@@ -366,3 +366,22 @@ var _ = Describe("wildcard region collapse (go-holidays-dpt)", func() {
 		Expect(names(scoped)).To(ConsistOf(names(wide)), "expected au_vic_ to match au_ exactly for 2017")
 	})
 })
+
+var _ = Describe("same-date distinct holidays for a wildcard region (go-holidays-67s)", func() {
+	It("keeps both the ACT/NSW/SA Labour Day and the QLD Queen's Birthday on 2020-10-05", func() {
+		start := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+		end := time.Date(2020, 12, 31, 0, 0, 0, 0, time.UTC)
+		hs, err := holidays.Between(start, end, holidays.Options{Regions: []string{"au_"}})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hs).To(HaveLen(36), "expected the full 36-entry au_ 2020 calendar, matching gem 11.5.0")
+
+		var onOct5 []string
+		oct5 := time.Date(2020, 10, 5, 0, 0, 0, 0, time.UTC)
+		for _, h := range hs {
+			if h.Date.Equal(oct5) {
+				onOct5 = append(onOct5, h.Name)
+			}
+		}
+		Expect(onOct5).To(ConsistOf("Labour Day", "Queen's Birthday"))
+	})
+})
