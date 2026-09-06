@@ -68,12 +68,17 @@ func ResolveYear(year int, opts ResolveOptions) ([]Resolved, error) {
 }
 
 // ruleSignature renders the fields the gem uses to decide two definitions are
-// the same holiday (and merges their regions): name, wday, mday, week, function,
-// function_modifier, type, observed, and year_ranges. Regions are deliberately
-// excluded, so rules that differ only by region collapse to one Resolved.
+// the same holiday (and merges their regions): month, name, wday, mday, week,
+// function, function_modifier, type, observed, and year_ranges. Month is part
+// of the identity because the gem buckets definitions per month
+// (HolidaysByMonth), so two rules in different months never collide even when
+// every other field matches (for example the WA "Labour Day" first Monday of
+// March and the ACT/NSW/SA "Labour Day" first Monday of October). Regions are
+// deliberately excluded, so rules that differ only by region collapse to one
+// Resolved.
 func ruleSignature(r definition.HolidayRule) string {
-	return fmt.Sprintf("%s|%d|%d|%d|%s|%d|%d|%s|%v",
-		r.Name, r.Wday, r.Mday, r.Week, r.Function, r.FunctionModifier,
+	return fmt.Sprintf("%d|%s|%d|%d|%d|%s|%d|%d|%s|%v",
+		r.Month, r.Name, r.Wday, r.Mday, r.Week, r.Function, r.FunctionModifier,
 		r.Type, r.Observed, r.YearRanges)
 }
 
