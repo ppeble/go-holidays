@@ -423,17 +423,6 @@ func registerAnyHolidaysDuringWorkWeekSpec() {
 
 // ---- multi-segment wildcard collapse (go-holidays-dpt) -----------------------
 
-// wildcardCollapseFlags excludes the informal/informal+observed corpusFlags
-// entries: querying the real oracle with a trailing-underscore wildcard
-// region combined with :informal double-counts every country-wide-only
-// informal holiday (go-holidays-ysu, discovered while writing this spec;
-// reproduces on a fresh oracle.rb process, so it is not cross-region state
-// pollution like go-holidays-2z0's vendored-isolation bug). That is an oracle
-// artifact, not a Go bug: Go's own au_vic_/gb_eng_ output already matches the
-// plain and observed-only oracle counts exactly. Once go-holidays-ysu is
-// understood/fixed, this can go back to the full corpusFlags.
-var wildcardCollapseFlags = []flagCombo{corpusFlags[0], corpusFlags[1]}
-
 // registerWildcardCollapseSpec covers the go-holidays-dpt regression: a
 // multi-segment wildcard region (e.g. "au_vic_", "gb_eng_") must collapse all
 // the way to its country segment and return the exact same calendar as the
@@ -451,12 +440,13 @@ var wildcardCollapseFlags = []flagCombo{corpusFlags[0], corpusFlags[1]}
 func registerWildcardCollapseSpec() {
 	Context("WildcardCollapse", func() {
 		It("On surfaces a country-wide-only holiday for a multi-segment wildcard", func() {
-			// Deliberately not folded into registerOnSpec's shared cases list:
-			// a wildcard region query taints the shared oracle process for every
-			// later query of that country (self-pollution, discovered while
-			// writing this spec; see the wildcardCollapseFlags comment above for
-			// the same class of oracle-state issue). registerOnSpec runs before
-			// this Context, so its plain "au_nsw"/"gb_eng" cases must stay
+			// Kept in this Context rather than folded into registerOnSpec's
+			// shared cases list: historically a wildcard query merged the gem's
+			// stale vendored country file into the shared oracle and tainted every
+			// later query of that country. oracle.rb's Load#call now short-circuits
+			// an already-loaded region (go-holidays-ysu), so that taint is gone,
+			// but the separation is cheap and left as a guard: registerOnSpec runs
+			// before this Context, so its plain "au_nsw"/"gb_eng" cases stay
 			// upstream of any wildcard query against those countries.
 			t := GinkgoT()
 			type onCase struct {
@@ -483,7 +473,7 @@ func registerWildcardCollapseSpec() {
 
 		It("gb_eng_ matches the oracle's gb_ calendar for a full year", func() {
 			t := GinkgoT()
-			for _, f := range wildcardCollapseFlags {
+			for _, f := range corpusFlags {
 				for _, y := range corpusYears {
 					runBetween(t, []string{"gb_eng_"}, f, yearStart(y), yearEnd(y))
 				}
@@ -492,7 +482,7 @@ func registerWildcardCollapseSpec() {
 
 		It("au_vic_ matches the oracle's au_ calendar for Jan-Sep", func() {
 			t := GinkgoT()
-			for _, f := range wildcardCollapseFlags {
+			for _, f := range corpusFlags {
 				for _, y := range corpusYears {
 					runBetween(t, []string{"au_vic_"}, f, fmt.Sprintf("%04d-01-01", y), fmt.Sprintf("%04d-09-30", y))
 				}

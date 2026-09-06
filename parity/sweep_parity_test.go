@@ -157,11 +157,9 @@ var sweepWildcardRegions = []string{
 // [sweepYearStart, sweepYearEnd] year span and all four flag combinations
 // that registerSweepSpecs uses for bare region codes, reusing the same
 // sweepRegion/compareYear machinery (including its set-based, deduped
-// comparison, which already absorbs an unrelated oracle artifact where a
-// wildcard region combined with :informal double-counts some rows;
-// go-holidays-ysu). oracle.rb needs no changes here: it passes any region
-// string through generically (raw string -> to_sym, no allowlist), wildcard
-// suffix included, so this is pure Go-side test coverage.
+// comparison). oracle.rb passes any region string through generically (raw
+// string -> to_sym, no allowlist), wildcard suffix included, so this is pure
+// Go-side test coverage.
 func registerWildcardSweepSpec() {
 	Context("ExhaustiveWildcardSweep", func() {
 		It("matches the oracle for a representative sample of wildcard-collapsed regions", func() {
