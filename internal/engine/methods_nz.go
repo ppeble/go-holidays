@@ -34,7 +34,7 @@ func init() {
 		return d.AddDate(0, 0, 7), nil
 	})
 	// Matariki is set in New Zealand legislation each year (lunar/astronomical).
-	// We mirror the upstream table verbatim.
+	// The matarikiDates table lists the legislated dates verbatim.
 	RegisterMethod("matariki", func(a MethodArgs) (time.Time, error) {
 		d, ok := matarikiDates[a.Year]
 		if !ok {

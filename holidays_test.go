@@ -119,7 +119,7 @@ var _ = Describe("AnyHolidaysDuringWorkWeek", func() {
 	})
 
 	It("uses the prior Mon-Fri week for a Saturday", func() {
-		// Saturday Nov 28, 2026: Ruby maps this to Mon Nov 23 - Fri Nov 27,
+		// Saturday Nov 28, 2026 maps to the prior Mon Nov 23 - Fri Nov 27,
 		// which contains Thanksgiving (Thu Nov 26).
 		sat := time.Date(2026, 11, 28, 0, 0, 0, 0, time.UTC)
 		got, err := holidays.AnyHolidaysDuringWorkWeek(sat, holidays.Options{Regions: []string{"us"}})
@@ -128,8 +128,8 @@ var _ = Describe("AnyHolidaysDuringWorkWeek", func() {
 	})
 
 	It("uses the following Mon-Fri week for a Sunday", func() {
-		// Sunday July 5, 2026: Ruby maps to Mon Jul 6 - Fri Jul 10, which has
-		// no US federal holidays. (July 4 itself is excluded since it's Saturday.)
+		// Sunday July 5, 2026 maps to the following Mon Jul 6 - Fri Jul 10, which
+		// has no US federal holidays. (July 4 itself is excluded since it's Saturday.)
 		sun := time.Date(2026, 7, 5, 0, 0, 0, 0, time.UTC)
 		got, err := holidays.AnyHolidaysDuringWorkWeek(sun, holidays.Options{Regions: []string{"us"}})
 		Expect(err).NotTo(HaveOccurred())
@@ -195,7 +195,7 @@ var _ = Describe("CacheBetween", func() {
 
 var _ = Describe("YearHolidaysFrom", func() {
 	It("returns the full year when starting from Jan 1", func() {
-		// Mirrors gem: year_holidays(["us"], Jan 1 2024) => all 10 US holidays.
+		// Starting from Jan 1 2024 for us yields all 10 US holidays.
 		from := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 		hs, err := holidays.YearHolidaysFrom(from, holidays.Options{Regions: []string{"us"}})
 		Expect(err).NotTo(HaveOccurred())
@@ -210,7 +210,7 @@ var _ = Describe("YearHolidaysFrom", func() {
 	})
 
 	It("returns only the remainder when starting mid-year", func() {
-		// Mirrors gem: year_holidays(["us"], Nov 15 2024) => only Thanksgiving
+		// Starting from Nov 15 2024 for us yields only Thanksgiving
 		// (2024-11-28) and Christmas (2024-12-25).
 		from := time.Date(2024, 11, 15, 0, 0, 0, 0, time.UTC)
 		hs, err := holidays.YearHolidaysFrom(from, holidays.Options{Regions: []string{"us"}})
@@ -222,7 +222,7 @@ var _ = Describe("YearHolidaysFrom", func() {
 	})
 
 	It("includes a next-year observed date that shifts back into range", func() {
-		// Mirrors gem: year_holidays(["us"], Jan 1 2021, observed) => 11 holidays,
+		// Starting from Jan 1 2021 for us with observed dates yields 11 holidays,
 		// including New Year's Day observed on 2021-12-31 (Jan 1 2022 is a Saturday,
 		// observed back to Friday Dec 31 2021).
 		from := time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
@@ -311,7 +311,7 @@ var _ = Describe("Between", func() {
 	It("deduplicates a holiday shared identically across multiple requested regions", func() {
 		// go-holidays-gmc: a multi-region request must not duplicate a holiday
 		// defined for more than one of the requested regions. Informal Easter
-		// Sunday exists in both us and ca; the gem emits it once.
+		// Sunday exists in both us and ca; it must be emitted once.
 		start := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
 		end := time.Date(2024, 12, 31, 0, 0, 0, 0, time.UTC)
 		hs, err := holidays.Between(start, end, holidays.Options{Regions: []string{"us", "ca"}, Informal: true})
@@ -329,7 +329,7 @@ var _ = Describe("Between", func() {
 		// Easter Sunday is one identical informal def in both regions: merged to one.
 		Expect(easter).To(Equal(1), "expected Easter Sunday exactly once for [us ca] informal 2024")
 		// Good Friday has two distinct defs (us informal vs untagged us-states/ca):
-		// they differ on type, so the gem keeps both. Dedup must not collapse them.
+		// they differ on type, so both must be kept. Dedup must not collapse them.
 		Expect(goodFriday).To(Equal(2), "expected Good Friday twice for [us ca] informal 2024")
 	})
 })
@@ -337,11 +337,10 @@ var _ = Describe("Between", func() {
 var _ = Describe("wildcard region collapse (go-holidays-dpt)", func() {
 	It("includes country-wide-only holidays for a multi-segment wildcard, same as the single-segment wildcard", func() {
 		// A multi-segment wildcard like "au_vic_" must collapse all the way
-		// to the country segment, matching the exact same rules as "au_"
-		// (verified live against gem 11.5.0: Holidays.between(2017, :au_vic_)
-		// returns the identical 35-entry calendar as :au_). Australia Day
-		// (Jan 26) is a country-wide-only holiday (Regions: ["au"]) that a
-		// state-scoped wildcard must still surface.
+		// to the country segment, matching the exact same rules as "au_": the
+		// 2017 au_vic_ calendar is identical to the au_ calendar, 35 entries.
+		// Australia Day (Jan 26) is a country-wide-only holiday (Regions: ["au"])
+		// that a state-scoped wildcard must still surface.
 		date := time.Date(2017, 1, 26, 0, 0, 0, 0, time.UTC)
 		hs, err := holidays.On(date, holidays.Options{Regions: []string{"au_vic_"}})
 		Expect(err).NotTo(HaveOccurred())

@@ -2,9 +2,9 @@ package engine
 
 import "time"
 
-// Ramadan and Sacrifice feasts are tied to the Hijri calendar, so the upstream
-// gem hard-codes proclaimed (Diyanet) start dates per year. The table is
-// extended periodically upstream; it currently runs from 2014 to 2030.
+// Ramadan and Sacrifice feasts are tied to the Hijri calendar, so proclaimed
+// (Diyanet) start dates are hard-coded per year. The table is extended
+// periodically; it currently runs from 2014 to 2030.
 func init() {
 	RegisterMethod("ramadan_feast", func(a MethodArgs) (time.Time, error) {
 		dates := map[int]time.Time{

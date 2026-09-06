@@ -9,13 +9,12 @@ import (
 )
 
 func init() {
-	// Vernal Equinox Day (春分の日): astronomical, formula from the Japanese
-	// gem. Falls in March.
+	// Vernal Equinox Day (春分の日): astronomical formula. Falls in March.
 	RegisterMethod("jp_vernal_equinox_day", func(a MethodArgs) (time.Time, error) {
 		return jpEquinox(a.Year, time.March, vernalEquinoxBase)
 	})
 	// Autumn Equinox Day (秋分の日): formula identical shape, different base
-	// constants and falls in September. The upstream Ruby gem calls this method
+	// constants and falls in September. This method is named
 	// `jp_national_culture_day` for historical reasons.
 	RegisterMethod("jp_national_culture_day", func(a MethodArgs) (time.Time, error) {
 		return jpEquinox(a.Year, time.September, autumnEquinoxBase)
@@ -81,9 +80,8 @@ func jpSubstituteWrapper(originalDate func(year int) time.Time) Method {
 }
 
 // jpNextWeekday walks forward from date, skipping Sundays and any fixed-mday
-// holiday registered under "jp" that applies in the given year. Mirrors the
-// Ruby implementation's holidays_by_month + mday check, including its
-// year_ranges filter.
+// holiday registered under "jp" that applies in the given year, honoring each
+// rule's year_ranges filter.
 func jpNextWeekday(d time.Time, year int) time.Time {
 	fixed := jpFixedHolidaysByMonth(year)
 	for {
@@ -109,7 +107,7 @@ func jpFixedHolidaysByMonth(year int) map[int]map[int]bool {
 	return out
 }
 
-// Astronomical base constants per the upstream gem (see Holidays::Definition jp.yaml).
+// Astronomical base constants, from jp.yaml.
 type equinoxBase struct {
 	ranges []struct {
 		lo, hi int

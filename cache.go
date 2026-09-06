@@ -12,8 +12,7 @@ import (
 
 // CacheBetween pre-computes and stores every holiday in [from, to] for the given
 // options. Subsequent calls to On/Between with the same options and a range
-// fully contained in [from, to] will be answered from the cache. Mirrors the
-// upstream Ruby gem's Holidays.cache_between.
+// fully contained in [from, to] will be answered from the cache.
 func CacheBetween(from, to time.Time, opts Options) error {
 	hs, err := computeBetween(from, to, opts)
 	if err != nil {
@@ -114,7 +113,7 @@ func computeBetween(start, end time.Time, opts Options) ([]Holiday, error) {
 	// New Year's Day Jan 1 observed on the preceding Dec 31) lives in the
 	// following year's ResolveYear. The inRange clip keeps only in-window dates,
 	// and a given holiday instance appears in only one year's ResolveYear, so
-	// there is no duplication. Mirrors the gem's forward-windowed between.
+	// there is no duplication.
 	for y := start.Year(); y <= end.Year()+1; y++ {
 		resolved, err := engine.ResolveYear(y, engine.ResolveOptions{
 			Regions:  opts.Regions,
