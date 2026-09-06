@@ -161,10 +161,6 @@ require "yaml"
 # that, gb resolves to BOTH its rules from our YAML and the stale ones, and the sweep
 # reports a mismatch that is not real (go-holidays-2z0).
 #
-# Note we cannot refuse the vendored load outright: load_custom does NOT mark a
-# region as loaded, so every query runs this path, and short-circuiting all of
-# it leaves the finder with no regions and every query returns nothing.
-#
 # The distinction that matters is WHAT gets merged. Loading a region's own file
 # (target :gb -> gb.rb) re-merges only that region and our rules still
 # win. Loading an aggregate (target :europe -> europe.rb) merges every European
@@ -174,11 +170,28 @@ require "yaml"
 # Testing membership against the region set derived from our own YAML keeps this
 # self-maintaining. Any aggregate upstream invents later is absent from our data
 # too, so it is skipped without needing a hardcoded list.
+#
+# There is one more path to guard. load_custom DOES register its regions in the
+# regions repository (Merger#call -> regions_repo.add), so the gem's non-wildcard
+# finder path short-circuits on regions_repo.loaded?(target) and never reaches
+# this override for an already-loaded region. The wildcard path
+# (load_wildcard_parent! -> load_region!) has no such loaded? guard, so a query
+# like :gb_ unconditionally re-runs this override for :gb and merges the gem's
+# stale vendored generated_definitions/gb.rb on top of our load_custom'd rules.
+# Our custom-YAML parser symbolizes keys only, so our String "informal" type
+# never == the vendored :informal Symbol in the merge dedup, and every
+# country-wide informal holiday ends up appended twice. To match the gem's own
+# non-wildcard behaviour we mirror its loaded?(target) check here: when the
+# region is already loaded, return its registered sub-regions (the same shape
+# vendored_call returns) instead of re-loading and re-merging.
 Holidays::Definition::Context::Load.class_eval do
   alias_method :vendored_call, :call
 
   def call(region)
     return [] unless AVAILABLE_REGIONS.include?(region.to_s)
+
+    regions_repo = Holidays::Factory::Definition.regions_repository
+    return regions_repo.search(region.to_sym) if regions_repo.loaded?(region.to_sym)
 
     vendored_call(region)
   end

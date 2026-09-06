@@ -136,19 +136,17 @@ func registerSweepSpecs() {
 // subregion under a given country exercises the same code path as any
 // other), but sweeping all 214 would roughly double this sweep's oracle
 // round-trips for no extra coverage once one region per country has proven
-// the collapse. Two country prefixes verified clean here are deliberately
-// left out:
-//   - us_*, ca_*, mx_*: the gem's own north-america aggregate bundles these
-//     three together, so a wildcard query for any one of them pulls in the
-//     other two's holidays too (e.g. us_ak_ returns Canada Day and Labour
-//     Day alongside the US calendar). Verified during investigation: this is
-//     an oracle/gem-side aggregate-loading quirk, not a Go behavior to test.
-//   - be_*, bg_*, mt_*, rs_*: the oracle errors InvalidRegion on these as
-//     wildcards (be_fr_, bg_bg_, mt_en_, rs_cyrl_), so they cannot be
-//     exercised through the oracle at all.
+// the collapse. Four country prefixes are deliberately left out:
+//   - be_*, bg_*, mt_*, rs_*: these countries have no bare-ISO region. Only
+//     language or script sub-variants exist (be_fr, bg_bg, mt_en, rs_cyrl),
+//     with no generated parent, so the gem's wildcard-base derivation
+//     (wildcard_region.split('_').first) yields be/bg/mt/rs, which is not a
+//     valid region, and the gem raises Holidays::InvalidRegion. This is a
+//     permanent gem limitation, not an oracle setup gap. Go does not error:
+//     it prefix-matches and returns both sub-variants.
 var sweepWildcardRegions = []string{
-	"au_vic_", "ch_ag_", "de_bb_", "es_an_", "fr_a_", "gb_con_",
-	"in_ap_", "it_bl_", "nz_ak_", "pt_li_",
+	"au_vic_", "ca_ab_", "ch_ag_", "de_bb_", "es_an_", "fr_a_", "gb_con_",
+	"in_ap_", "it_bl_", "mx_pue_", "nz_ak_", "pt_li_", "us_ak_",
 }
 
 // registerWildcardSweepSpec extends the exhaustive sweep to the wildcard
@@ -157,11 +155,9 @@ var sweepWildcardRegions = []string{
 // [sweepYearStart, sweepYearEnd] year span and all four flag combinations
 // that registerSweepSpecs uses for bare region codes, reusing the same
 // sweepRegion/compareYear machinery (including its set-based, deduped
-// comparison, which already absorbs an unrelated oracle artifact where a
-// wildcard region combined with :informal double-counts some rows;
-// go-holidays-ysu). oracle.rb needs no changes here: it passes any region
-// string through generically (raw string -> to_sym, no allowlist), wildcard
-// suffix included, so this is pure Go-side test coverage.
+// comparison). oracle.rb passes any region string through generically (raw
+// string -> to_sym, no allowlist), wildcard suffix included, so this is pure
+// Go-side test coverage.
 func registerWildcardSweepSpec() {
 	Context("ExhaustiveWildcardSweep", func() {
 		It("matches the oracle for a representative sample of wildcard-collapsed regions", func() {
