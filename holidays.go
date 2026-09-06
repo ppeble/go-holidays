@@ -33,7 +33,7 @@ func Between(start, end time.Time, opts Options) ([]Holiday, error) {
 		return nil, fmt.Errorf("holidays.Between: end %s is before start %s",
 			end.Format("2006-01-02"), start.Format("2006-01-02"))
 	}
-	if hs, ok := cacheFind(truncateToDay(start), truncateToDay(end), opts); ok {
+	if hs, ok := cacheFind(startOfDay(start), startOfDay(end), opts); ok {
 		return hs, nil
 	}
 	return computeBetween(start, end, opts)
@@ -66,7 +66,7 @@ func YearHolidays(year int, opts Options) ([]Holiday, error) {
 // captures those without duplication: a given holiday instance appears in only
 // one year's ResolveYear.
 func YearHolidaysFrom(from time.Time, opts Options) ([]Holiday, error) {
-	fromDay := truncateToDay(from)
+	fromDay := startOfDay(from)
 	upper := time.Date(fromDay.Year(), 12, 31, 0, 0, 0, 0, fromDay.Location())
 	resolveOpts := engine.ResolveOptions{
 		Regions:  opts.Regions,
@@ -119,7 +119,7 @@ func NextHolidays(from time.Time, count int, opts Options) ([]Holiday, error) {
 	if count <= 0 {
 		return nil, fmt.Errorf("holidays.NextHolidays: count must be positive, got %d", count)
 	}
-	fromDay := truncateToDay(from)
+	fromDay := startOfDay(from)
 	resolveOpts := engine.ResolveOptions{
 		Regions:  opts.Regions,
 		Informal: opts.Informal,
@@ -156,7 +156,7 @@ func NextHolidays(from time.Time, count int, opts Options) ([]Holiday, error) {
 // gem's Holidays.any_holidays_during_work_week?: for a Saturday input, the
 // work week is the preceding Mon-Fri; for a Sunday input, the following.
 func AnyHolidaysDuringWorkWeek(date time.Time, opts Options) (bool, error) {
-	d := truncateToDay(date)
+	d := startOfDay(date)
 	wday := int(d.Weekday())
 	monday := d.AddDate(0, 0, -(wday - 1))
 	friday := d.AddDate(0, 0, 5-wday)
@@ -185,16 +185,16 @@ func RegionNames() map[string]string {
 }
 
 func inRange(d, start, end time.Time) bool {
-	if d.Before(truncateToDay(start)) {
+	if d.Before(startOfDay(start)) {
 		return false
 	}
-	if d.After(truncateToDay(end)) {
+	if d.After(startOfDay(end)) {
 		return false
 	}
 	return true
 }
 
-func truncateToDay(t time.Time) time.Time {
+func startOfDay(t time.Time) time.Time {
 	y, m, d := t.Date()
 	return time.Date(y, m, d, 0, 0, 0, 0, t.Location())
 }
