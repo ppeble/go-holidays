@@ -8,14 +8,13 @@ import (
 )
 
 // Regression coverage for go-holidays-67s: two definitions that share every
-// field the gem compares for identity (name, wday, mday, week, function,
+// field compared for identity (name, wday, mday, week, function,
 // function_modifier, type, observed, year_ranges) but fall in different
-// months are distinct holidays. The gem keeps them apart because it buckets
-// definitions per month (HolidaysByMonth), so month is implicitly part of a
-// definition's identity. ruleSignature must therefore include the month, or
-// ResolveYear's dedup silently drops the second one on an aggregate query
-// (e.g. "au_" losing the ACT/NSW/SA October Labour Day because it collides
-// with the WA March Labour Day).
+// months are distinct holidays. Definitions are bucketed per month, so month
+// is implicitly part of a definition's identity. ruleSignature must therefore
+// include the month, or ResolveYear's dedup silently drops the second one on an
+// aggregate query (e.g. "au_" losing the ACT/NSW/SA October Labour Day because
+// it collides with the WA March Labour Day).
 var _ = Describe("ruleSignature month component", func() {
 	AfterEach(func() {
 		UnregisterCountry("zz")

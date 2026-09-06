@@ -25,11 +25,10 @@ type ResolveOptions struct {
 // Rules that are identical except for their regions are de-duplicated, keeping
 // the first occurrence, so a multi-region request whose regions each define the
 // same holiday (for example informal Easter Sunday in both us and ca) yields it
-// once. This mirrors the gem, which merges definitions at load time when they
-// match on name, wday, mday, week, function, function_modifier, type, observed,
-// and year_ranges (HolidaysByMonth#definition_exists?); definitions that differ
-// on any of those fields (for example us Good Friday tagged informal vs the
-// untagged us-states/ca Good Friday) stay distinct.
+// once. Two definitions merge when they match on name, wday, mday, week,
+// function, function_modifier, type, observed, and year_ranges; definitions that
+// differ on any of those fields (for example us Good Friday tagged informal vs
+// the untagged us-states/ca Good Friday) stay distinct.
 func ResolveYear(year int, opts ResolveOptions) ([]Resolved, error) {
 	rules := rulesFor(opts.Regions)
 	out := make([]Resolved, 0, len(rules))
@@ -67,15 +66,14 @@ func ResolveYear(year int, opts ResolveOptions) ([]Resolved, error) {
 	return out, nil
 }
 
-// ruleSignature renders the fields the gem uses to decide two definitions are
+// ruleSignature renders the fields that decide whether two definitions are
 // the same holiday (and merges their regions): month, name, wday, mday, week,
 // function, function_modifier, type, observed, and year_ranges. Month is part
-// of the identity because the gem buckets definitions per month
-// (HolidaysByMonth), so two rules in different months never collide even when
-// every other field matches (for example the WA "Labour Day" first Monday of
-// March and the ACT/NSW/SA "Labour Day" first Monday of October). Regions are
-// deliberately excluded, so rules that differ only by region collapse to one
-// Resolved.
+// of the identity because definitions are bucketed per month, so two rules in
+// different months never collide even when every other field matches (for
+// example the WA "Labour Day" first Monday of March and the ACT/NSW/SA
+// "Labour Day" first Monday of October). Regions are deliberately excluded, so
+// rules that differ only by region collapse to one Resolved.
 func ruleSignature(r definition.HolidayRule) string {
 	return fmt.Sprintf("%d|%s|%d|%d|%d|%s|%d|%d|%s|%v",
 		r.Month, r.Name, r.Wday, r.Mday, r.Week, r.Function, r.FunctionModifier,
@@ -118,25 +116,22 @@ func computeDate(rule definition.HolidayRule, year int) (time.Time, error) {
 		base = base.AddDate(0, 0, rule.FunctionModifier)
 	}
 	if rule.HasFunction() && !base.IsZero() {
-		// Mirror the gem (finder/context/search.rb: Date.civil(year, result.month,
-		// result.mday)): for a function holiday, keep the computed month/day but
-		// force the resolution year. This is a no-op for mid-year results (they
-		// already fall in `year`); it pulls a lunar month-12 eve, whose solar date
-		// lands in the next gregorian year, back into `year`, so a region like kr
-		// emits both Seollal holiday days (eve + day-after) as the gem does.
+		// For a function holiday, keep the computed month/day but force the
+		// resolution year. This is a no-op for mid-year results (they already
+		// fall in `year`); it pulls a lunar month-12 eve, whose solar date lands
+		// in the next gregorian year, back into `year`, so a region like kr emits
+		// both Seollal holiday days (eve + day-after).
 		base = time.Date(year, base.Month(), base.Day(), 0, 0, 0, 0, time.UTC)
 	}
 	return base, nil
 }
 
-// requestedRegion picks the region an observed method sees. The gem builds an
-// observed method's input with the holiday's own regions left out
-// (finder/context/search.rb build_observed_date), so the region is the first
-// region the caller ASKED for, not the first the rule declares. That distinction
-// is what lets one shared definition observe differently in a sub-region: us
-// Juneteenth is defined once for [us], and only a us_ut request gets Utah's
-// substitution rule. An all-regions request has no queried region, matching the
-// gem's :any.
+// requestedRegion picks the region an observed method sees. The observed
+// method's input leaves the holiday's own regions out, so the region is the
+// first region the caller ASKED for, not the first the rule declares. That
+// distinction is what lets one shared definition observe differently in a
+// sub-region: us Juneteenth is defined once for [us], and only a us_ut request
+// gets Utah's substitution rule. An all-regions request has no queried region.
 func requestedRegion(regions []string) string {
 	if len(regions) == 0 {
 		return ""

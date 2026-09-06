@@ -1,5 +1,5 @@
-// Package holidays is a Go port of the top-level public API of the Ruby
-// `holidays` gem. It answers three questions: "what holidays fall on this
+// Package holidays is the top-level public API for computing public holidays
+// by region. It answers three questions: "what holidays fall on this
 // date?", "what holidays fall in this range?", and "what holidays are in
 // this year?", scoped to a set of regions.
 package holidays
@@ -18,8 +18,8 @@ import (
 )
 
 // On returns every holiday matching the given options on the calendar date of `date`.
-// Mirrors Ruby's Holidays.on, which delegates to Holidays.between(date, date),
-// so a cached range covering `date` will satisfy this call from the cache.
+// It delegates to Between(date, date), so a cached range covering `date` will
+// satisfy this call from the cache.
 func On(date time.Time, opts Options) ([]Holiday, error) {
 	return Between(date, date, opts)
 }
@@ -58,10 +58,9 @@ func YearHolidays(year int, opts Options) ([]Holiday, error) {
 
 // YearHolidaysFrom returns every holiday matching the given options from `from`
 // (truncated to its UTC calendar day) through Dec 31 of `from`'s year, sorted by
-// date ascending. Mirrors the upstream Ruby gem's Holidays.year_holidays(options,
-// from_date), which clips a 12-month forward window to Dec 31: this includes
-// next-year holidays whose observed date shifts back on or before Dec 31 of
-// `from`'s year (for example New Year's Day observed on Dec 31). Resolving both
+// date ascending. It clips a 12-month forward window to Dec 31, so the result
+// includes next-year holidays whose observed date shifts back on or before Dec 31
+// of `from`'s year (for example New Year's Day observed on Dec 31). Resolving both
 // `from`'s year and the following year, then applying the [fromDay, Dec31] clip,
 // captures those without duplication: a given holiday instance appears in only
 // one year's ResolveYear.
@@ -82,8 +81,8 @@ func YearHolidaysFrom(from time.Time, opts Options) ([]Holiday, error) {
 			// shifts back into [fromDay, Dec 31]; if it cannot resolve (e.g. a
 			// lunar region whose tables end at the primary year, so year+1 is out
 			// of range) it contributes no in-window holidays. Skip it rather than
-			// failing the whole query, matching Ruby, which never needs the
-			// look-ahead year's data to answer for the primary year.
+			// failing the whole query: the look-ahead year's data is never needed
+			// to answer for the primary year.
 			if i == 0 {
 				return nil, err
 			}
@@ -108,13 +107,12 @@ func YearHolidaysFrom(from time.Time, opts Options) ([]Holiday, error) {
 const nextHolidaysMaxForwardYears = 100
 
 // NextHolidays returns the next `count` holidays on or after `from`, sorted by
-// date ascending. Mirrors the upstream Ruby gem's Holidays.next_holidays: it
-// keeps resolving forward, year by year, accumulating holidays with date >=
-// `from` until at least `count` are gathered, then truncates to `count`. Unlike
-// a fixed 12-month window, this returns the full `count` even when the count-th
-// holiday lands more than a year out (for example a January holiday relative to
-// a January start). If the region has fewer than `count` holidays within the
-// safety cap, it returns however many were found.
+// date ascending. It keeps resolving forward, year by year, accumulating
+// holidays with date >= `from` until at least `count` are gathered, then
+// truncates to `count`. Unlike a fixed 12-month window, this returns the full
+// `count` even when the count-th holiday lands more than a year out (for example
+// a January holiday relative to a January start). If the region has fewer than
+// `count` holidays within the safety cap, it returns however many were found.
 func NextHolidays(from time.Time, count int, opts Options) ([]Holiday, error) {
 	if count <= 0 {
 		return nil, fmt.Errorf("holidays.NextHolidays: count must be positive, got %d", count)
@@ -152,8 +150,7 @@ func NextHolidays(from time.Time, count int, opts Options) ([]Holiday, error) {
 }
 
 // AnyHolidaysDuringWorkWeek reports whether any holiday matching opts falls
-// during the Mon-Fri work week containing `date`. Mirrors the upstream Ruby
-// gem's Holidays.any_holidays_during_work_week?: for a Saturday input, the
+// during the Mon-Fri work week containing `date`. For a Saturday input, the
 // work week is the preceding Mon-Fri; for a Sunday input, the following.
 func AnyHolidaysDuringWorkWeek(date time.Time, opts Options) (bool, error) {
 	d := startOfDay(date)

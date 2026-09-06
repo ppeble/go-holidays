@@ -9,8 +9,8 @@ import (
 func init() {
 	RegisterMethod("afl_grand_final", func(a MethodArgs) (time.Time, error) {
 		// AFL Grand Final is officially declared each year by the Victorian
-		// government; the upstream gem hard-codes known years and falls back
-		// to the last Friday of September.
+		// government; known years are hard-coded, with a fallback to the last
+		// Friday of September.
 		switch a.Year {
 		case 2015:
 			return time.Date(2015, 10, 2, 0, 0, 0, 0, time.UTC), nil

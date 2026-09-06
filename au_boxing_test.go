@@ -10,15 +10,14 @@ import (
 )
 
 // go-holidays-coi: the two AU year-based Boxing/Proclamation observance methods
-// must match holidays gem 11.0.0 exactly. Ground truth captured from the gem
-// (Holidays.on(..., :observed)) across every Dec-26 weekday.
+// and their expected observed dates across every Dec-26 weekday.
 //
-//   Boxing Day (au_tas, au_nt) uses to_weekday_if_boxing_weekend_from_year, which
-//   the gem defines as to_tuesday_if_sunday_or_monday_if_saturday(Dec26):
+//   Boxing Day (au_tas, au_nt) uses to_weekday_if_boxing_weekend_from_year,
+//   defined as to_tuesday_if_sunday_or_monday_if_saturday(Dec26):
 //   Sat->+2, Sun->+2, Mon UNCHANGED, otherwise unchanged.
 //
-//   Proclamation Day (au_sa) uses ..._or_to_tuesday_if_monday, which the gem
-//   defines as to_weekday_if_boxing_weekend(Dec26):
+//   Proclamation Day (au_sa) uses ..._or_to_tuesday_if_monday,
+//   defined as to_weekday_if_boxing_weekend(Dec26):
 //   Sat->+2, Sun->+2, Mon->+1, otherwise unchanged.
 
 func mustOn(dateStr, region string) []holidays.Holiday {
@@ -31,7 +30,7 @@ func mustOn(dateStr, region string) []holidays.Holiday {
 
 var _ = Describe("AU Boxing/Proclamation Day observance", func() {
 	It("matches the gem for Boxing Day (au_tas, au_nt) across every Dec-26 weekday", func() {
-		// date string -> observed Boxing Day date per the gem, keyed by Dec-26 weekday.
+		// date string -> expected observed Boxing Day date, keyed by Dec-26 weekday.
 		cases := []struct {
 			year int
 			wday string

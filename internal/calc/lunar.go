@@ -10,9 +10,8 @@ import (
 var solarStartDate = time.Date(1900, time.January, 31, 0, 0, 0, 0, time.UTC)
 
 // LunarToSolar converts a lunar calendar date (year/month/day in the region's
-// lunar calendar) to its Gregorian equivalent. The lookup tables ported from
-// the upstream Ruby gem cover cn, hk, kr, sg, and vn from 1900 onward (cn, hk
-// and sg share the Chinese table, matching the gem's CALENDAR_YEAR_INFO_MAP).
+// lunar calendar) to its Gregorian equivalent. The lookup tables cover cn, hk,
+// kr, sg, and vn from 1900 onward (cn, hk and sg share the Chinese table).
 func LunarToSolar(year, month, day int, region string) (time.Time, error) {
 	info := calendarYearInfoForRegion(region)
 	if info == nil {

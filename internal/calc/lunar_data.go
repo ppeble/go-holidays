@@ -1,7 +1,6 @@
 package calc
 
-// Lunar-to-solar lookup tables, ported verbatim from the upstream Ruby gem's
-// lib/holidays/date_calculator/lunar_date.rb. Each row is:
+// Lunar-to-solar lookup tables. Each row is:
 //   {days_in_year, month1_type, month2_type, ..., month12_type}
 // where month type is an index into lunarDaysForMonthType. Years are indexed
 // starting at 1900 (i.e. row 0 is year 1900).
