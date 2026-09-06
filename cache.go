@@ -19,7 +19,7 @@ func CacheBetween(from, to time.Time, opts Options) error {
 	if err != nil {
 		return err
 	}
-	cacheStore(truncateToDay(from), truncateToDay(to), opts, hs)
+	cacheStore(startOfDay(from), startOfDay(to), opts, hs)
 	return nil
 }
 
