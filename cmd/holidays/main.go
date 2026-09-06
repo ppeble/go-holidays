@@ -193,13 +193,16 @@ func parseLeading(fs *flag.FlagSet, args []string, n int) error {
 
 // reorderFlagsFirst lets users put flags after positional args (e.g.
 // `year 2024 --regions us`) by moving flags to the front before flag.Parse.
+// The reordered positionals are placed after a "--" terminator so flag.Parse
+// treats them as operands: without it a positional that looks like a flag
+// (a bare negative integer such as "-3") would be rejected as undefined.
 var boolFlagNames = map[string]bool{"informal": true, "observed": true}
 
 func reorderFlagsFirst(args []string) []string {
 	var flags, positional []string
 	for i := 0; i < len(args); i++ {
 		a := args[i]
-		if !strings.HasPrefix(a, "-") {
+		if !strings.HasPrefix(a, "-") || isNegativeInt(a) {
 			positional = append(positional, a)
 			continue
 		}
@@ -216,7 +219,26 @@ func reorderFlagsFirst(args []string) []string {
 			i++
 		}
 	}
-	return append(flags, positional...)
+	if len(positional) == 0 {
+		return flags
+	}
+	return append(flags, append([]string{"--"}, positional...)...)
+}
+
+// isNegativeInt reports whether s is a bare negative integer (for example
+// "-3"). Such a token is a positional argument (a count or year), not a flag,
+// so reorderFlagsFirst must not route it into the flags bucket where
+// flag.Parse would reject it as an undefined flag.
+func isNegativeInt(s string) bool {
+	if len(s) < 2 || s[0] != '-' {
+		return false
+	}
+	for _, r := range s[1:] {
+		if r < '0' || r > '9' {
+			return false
+		}
+	}
+	return true
 }
 
 func optionsFrom(regions *string, informal, observed *bool) holidays.Options {
