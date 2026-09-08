@@ -109,6 +109,30 @@ Ginkgo v2 and Gomega are the required test framework. Region tests under
 `internal/definitions` are generated table tests and must not be hand-edited;
 change the upstream YAML or the generator, then `make generate`.
 
+### Test taxonomy
+
+The same categories the Ruby gem uses (see
+[`holidays/holidays` `test/e2e/README.md`](https://github.com/holidays/holidays/blob/master/test/e2e/README.md)),
+adapted to Go's rule that a white-box test must live in the directory of the
+package it tests:
+
+* **unit** - isolated, no dependency on real definition data. Lives next to the
+  code it covers. White-box (`package <pkg>`, file named `*_internal_test.go`)
+  only when it must reach unexported internals. Examples: `cache_internal_test.go`
+  beside `cache.go`; the `internal/calc`, `internal/engine`, and
+  `internal/generator` suites.
+* **integration** - uses controlled fixture YAML created at test time, so it stays
+  stable across `definitions/` bumps. Black-box (`package holidays_test`). Example:
+  `load_custom_test.go`.
+* **e2e** - end-user-visible behavior through the public API against the real
+  pinned `definitions/`. Intentionally coupled to that data: a definitions bump
+  can legitimately change what these assert. Black-box. Examples:
+  `holidays_test.go`, `region_test.go`, and the generated
+  `internal/definitions/<cc>_test.go` tables.
+
+A test with no dependency on real definition content belongs in the unit or
+integration category, never e2e.
+
 ## Parity suite
 
 `parity/` compares this library's output against the Ruby gem pinned in
