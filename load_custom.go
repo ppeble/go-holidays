@@ -68,6 +68,28 @@ type loadedFile struct {
 	rf  *generator.RegionFile
 }
 
+// normalizeCustomRegionCodes lowercases and trims every region code on every
+// rule in a freshly parsed custom file. The request path (normalizeRegions in
+// holidays.go) does the same to Options.Regions, so without this a custom rule
+// written with mixed-case or padded codes (e.g. "MyTeam") would be unreachable
+// by any query. Built-in generated regions are already lowercase, so this only
+// matters for LoadCustom. region_names: keys are normalized to match.
+func normalizeCustomRegionCodes(rf *generator.RegionFile) {
+	norm := func(s string) string { return strings.ToLower(strings.TrimSpace(s)) }
+	for i := range rf.Rules {
+		for j := range rf.Rules[i].Regions {
+			rf.Rules[i].Regions[j] = norm(rf.Rules[i].Regions[j])
+		}
+	}
+	if len(rf.RegionNames) > 0 {
+		normalized := make(map[string]string, len(rf.RegionNames))
+		for code, name := range rf.RegionNames {
+			normalized[norm(code)] = name
+		}
+		rf.RegionNames = normalized
+	}
+}
+
 func parseAndValidate(path string) (loadedFile, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -81,6 +103,7 @@ func parseAndValidate(path string) (loadedFile, error) {
 	if err != nil {
 		return loadedFile{}, fmt.Errorf("holidays.LoadCustom: %s: %w", path, err)
 	}
+	normalizeCustomRegionCodes(rf)
 	for _, r := range rf.Rules {
 		if r.Function != "" && !engine.IsMethodRegistered(r.Function) {
 			return loadedFile{}, fmt.Errorf("holidays.LoadCustom: %s: rule %q references unregistered method %q; call holidays.RegisterMethod first",
