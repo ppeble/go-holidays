@@ -7,12 +7,12 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-// TestHolidays is the single Ginkgo bootstrap for the whole pkg/ test binary.
+// TestHolidays is the single Ginkgo bootstrap for the whole root test binary.
 // The binary compiles two test packages, holidays (white-box, cache_internal_test.go)
 // and holidays_test (black-box, the rest), that share one process-global Ginkgo
 // spec tree. Exactly one RunSpecs call may exist for the binary; a second one
 // would panic or double-run the suite. Do not add another RunSpecs anywhere
-// else in pkg/.
+// else in the root package.
 func TestHolidays(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "holidays suite")

@@ -7,10 +7,13 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-// Test cache internals directly. Lives in `package holidays` (not _test) so it
-// can poke the unexported store. This file's Describe/It blocks register into
-// the same process-global Ginkgo spec tree as the holidays_test package; the
-// single RunSpecs bootstrap for the whole pkg/ binary lives in
+// Unit test for the cache internals (see the test taxonomy in
+// .claude/rules/project-conventions.md): sentinel data only, no real definition
+// content. It is white-box (`package holidays`, not `holidays_test`) so it can
+// reach the unexported store, and it lives at the module root only because
+// cache.go does. This file's Describe/It blocks register into the same
+// process-global Ginkgo spec tree as the holidays_test package; the single
+// RunSpecs bootstrap for the whole root test binary lives in
 // holidays_suite_test.go. Do not add another RunSpecs call here.
 
 var _ = Describe("cache internals", func() {
