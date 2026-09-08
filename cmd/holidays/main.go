@@ -164,6 +164,13 @@ func cmdWorkweek(args []string) error {
 }
 
 func cmdRegions(args []string) error {
+	fs := newFlags("regions")
+	if err := parseLeading(fs, args, 0); err != nil {
+		return err
+	}
+	if fs.NArg() > 0 {
+		return fmt.Errorf("regions takes no arguments")
+	}
 	for _, r := range holidays.AvailableRegions() {
 		fmt.Println(r)
 	}
