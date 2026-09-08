@@ -73,6 +73,39 @@ months:
 		Expect(hasNamedHoliday(hs, "Custom April Holiday")).To(BeTrue(), "expected Custom April Holiday in us results; got %+v", hs)
 	})
 
+	It("normalizes mixed-case and whitespace-padded custom region codes", func() {
+		// The request path lowercases and trims Options.Regions, so a custom
+		// rule's region codes must be normalized the same way at load time or
+		// the region becomes unreachable by any query.
+		path := writeYAML("MixedCase.yaml", `
+months:
+  6:
+  - name: Mixed Case Region Day
+    regions:
+      - MyTeam
+      - " Other_Team "
+    mday: 15
+`)
+		Expect(holidays.LoadCustom(path)).To(Succeed())
+		defer holidays.UnloadCustom(path)
+
+		d := time.Date(2026, 6, 15, 0, 0, 0, 0, time.UTC)
+		for _, req := range []string{"MyTeam", "myteam", " MyTeam ", "MYTEAM"} {
+			hs, err := holidays.On(d, holidays.Options{Regions: []string{req}})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(hasNamedHoliday(hs, "Mixed Case Region Day")).To(BeTrue(),
+				"request %q should resolve the custom region", req)
+		}
+
+		hs, err := holidays.On(d, holidays.Options{Regions: []string{"other_team"}})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamedHoliday(hs, "Mixed Case Region Day")).To(BeTrue(),
+			"whitespace-padded code should normalize to other_team")
+
+		Expect(holidays.AvailableRegions()).To(ContainElement("myteam"))
+		Expect(holidays.AvailableRegions()).NotTo(ContainElement("MyTeam"))
+	})
+
 	It("errors for a rule referencing an unregistered function", func() {
 		path := writeYAML("bad.yaml", `
 months:
