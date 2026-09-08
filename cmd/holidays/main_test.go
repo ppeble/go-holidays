@@ -32,6 +32,20 @@ var _ = Describe("reorderFlagsFirst", func() {
 	})
 })
 
+var _ = Describe("cmdRegions", func() {
+	It("lists regions when given no arguments", func() {
+		Expect(cmdRegions(nil)).To(Succeed())
+	})
+
+	It("rejects a trailing positional argument", func() {
+		Expect(cmdRegions([]string{"extra-arg"})).To(MatchError("regions takes no arguments"))
+	})
+
+	It("rejects an unknown flag", func() {
+		Expect(cmdRegions([]string{"--informal"})).To(HaveOccurred())
+	})
+})
+
 var _ = Describe("cmdNext", func() {
 	It("surfaces the library's count-must-be-positive error for a negative count", func() {
 		err := cmdNext([]string{"-3", "2026-01-01", "--regions", "us"})
