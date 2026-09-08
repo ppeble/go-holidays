@@ -384,3 +384,38 @@ var _ = Describe("same-date distinct holidays for a wildcard region (go-holidays
 		Expect(onOct5).To(ConsistOf("Labour Day", "Queen's Birthday"))
 	})
 })
+
+var _ = Describe("region string normalization (go-holidays-9tl)", func() {
+	It("treats an uppercase region code the same as lowercase", func() {
+		date := time.Date(2026, 7, 4, 0, 0, 0, 0, time.UTC)
+		lower, err := holidays.On(date, holidays.Options{Regions: []string{"us"}})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(lower).NotTo(BeEmpty())
+
+		upper, err := holidays.On(date, holidays.Options{Regions: []string{"US"}})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(upper).To(Equal(lower))
+	})
+
+	It("trims surrounding whitespace from a region code", func() {
+		date := time.Date(2026, 7, 4, 0, 0, 0, 0, time.UTC)
+		lower, err := holidays.On(date, holidays.Options{Regions: []string{"us"}})
+		Expect(err).NotTo(HaveOccurred())
+
+		padded, err := holidays.On(date, holidays.Options{Regions: []string{" us "}})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(padded).To(Equal(lower))
+	})
+
+	It("normalizes a wildcard region code, preserving the trailing underscore", func() {
+		start := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+		end := time.Date(2020, 12, 31, 0, 0, 0, 0, time.UTC)
+		want, err := holidays.Between(start, end, holidays.Options{Regions: []string{"au_"}})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(want).NotTo(BeEmpty())
+
+		got, err := holidays.Between(start, end, holidays.Options{Regions: []string{" AU_ "}})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(got).To(Equal(want))
+	})
+})

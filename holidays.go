@@ -3,6 +3,7 @@ package holidays
 import (
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/ppeble/go-holidays/internal/engine"
@@ -22,6 +23,7 @@ func On(date time.Time, opts Options) ([]Holiday, error) {
 // Between returns every holiday matching the given options whose date falls in
 // [start, end] (inclusive on both ends, compared by calendar day).
 func Between(start, end time.Time, opts Options) ([]Holiday, error) {
+	opts.Regions = normalizeRegions(opts.Regions)
 	if end.Before(start) {
 		return nil, fmt.Errorf("holidays.Between: end %s is before start %s",
 			end.Format("2006-01-02"), start.Format("2006-01-02"))
@@ -34,6 +36,7 @@ func Between(start, end time.Time, opts Options) ([]Holiday, error) {
 
 // YearHolidays returns every holiday matching the given options in the given year.
 func YearHolidays(year int, opts Options) ([]Holiday, error) {
+	opts.Regions = normalizeRegions(opts.Regions)
 	resolved, err := engine.ResolveYear(year, engine.ResolveOptions{
 		Regions:  opts.Regions,
 		Informal: opts.Informal,
@@ -55,6 +58,7 @@ func YearHolidays(year int, opts Options) ([]Holiday, error) {
 // includes next-year holidays whose observed date shifts back on or before Dec 31
 // of `from`'s year (for example New Year's Day observed on Dec 31).
 func YearHolidaysFrom(from time.Time, opts Options) ([]Holiday, error) {
+	opts.Regions = normalizeRegions(opts.Regions)
 	fromDay := startOfDay(from)
 	upper := time.Date(fromDay.Year(), 12, 31, 0, 0, 0, 0, fromDay.Location())
 	resolveOpts := engine.ResolveOptions{
@@ -95,6 +99,7 @@ func NextHolidays(from time.Time, count int, opts Options) ([]Holiday, error) {
 	if count <= 0 {
 		return nil, fmt.Errorf("holidays.NextHolidays: count must be positive, got %d", count)
 	}
+	opts.Regions = normalizeRegions(opts.Regions)
 	fromDay := startOfDay(from)
 	resolveOpts := engine.ResolveOptions{
 		Regions:  opts.Regions,
@@ -156,6 +161,26 @@ func RegionName(region string) (string, bool) {
 // RegionNames returns every registered region code mapped to its display name.
 func RegionNames() map[string]string {
 	return engine.RegionNames()
+}
+
+// normalizeRegions cleans up the requested region codes so that "US", " us ",
+// and "us" all behave identically: each code is trimmed of surrounding
+// whitespace and lowercased, and codes that are empty after trimming are
+// dropped. A nil or empty slice (meaning "all regions") is returned unchanged.
+// This runs only on the request path (Options.Regions); region registration
+// and AvailableRegions are untouched. A genuinely unknown code still yields an
+// empty result rather than an error, as everywhere else in the package.
+func normalizeRegions(regions []string) []string {
+	if len(regions) == 0 {
+		return regions
+	}
+	out := make([]string, 0, len(regions))
+	for _, r := range regions {
+		if r = strings.ToLower(strings.TrimSpace(r)); r != "" {
+			out = append(out, r)
+		}
+	}
+	return out
 }
 
 func inRange(d, start, end time.Time) bool {

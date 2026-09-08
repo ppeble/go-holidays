@@ -14,6 +14,7 @@ import (
 // options. Subsequent calls to On/Between with the same options and a range
 // fully contained in [from, to] will be answered from the cache.
 func CacheBetween(from, to time.Time, opts Options) error {
+	opts.Regions = normalizeRegions(opts.Regions)
 	hs, err := computeBetween(from, to, opts)
 	if err != nil {
 		return err
