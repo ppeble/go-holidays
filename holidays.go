@@ -1,7 +1,3 @@
-// Package holidays is the top-level public API for computing public holidays
-// by region. It answers three questions: "what holidays fall on this
-// date?", "what holidays fall in this range?", and "what holidays are in
-// this year?", scoped to a set of regions.
 package holidays
 
 import (
@@ -11,23 +7,20 @@ import (
 
 	"github.com/ppeble/go-holidays/internal/engine"
 
-	// Registers every built-in region's rules through its init(). Importing
-	// this package is the only way regions reach the engine registry, so it
-	// lives here rather than being pushed onto callers.
 	_ "github.com/ppeble/go-holidays/internal/definitions"
 )
 
-// On returns every holiday matching the given options on the calendar date of `date`.
-// It delegates to Between(date, date), so a cached range covering `date` will
-// satisfy this call from the cache.
+// nextHolidaysMaxForwardYears bounds the forward scan in NextHolidays so a
+// region with too few holidays cannot loop unbounded; the loop stops once it
+// has collected `count` holidays or has scanned this many years past `from`.
+const nextHolidaysMaxForwardYears = 100
+
 func On(date time.Time, opts Options) ([]Holiday, error) {
 	return Between(date, date, opts)
 }
 
 // Between returns every holiday matching the given options whose date falls in
-// [start, end] (inclusive on both ends, compared by calendar day). If a previous
-// CacheBetween call covers [start, end] for the same options, the result is
-// returned from the cache.
+// [start, end] (inclusive on both ends, compared by calendar day).
 func Between(start, end time.Time, opts Options) ([]Holiday, error) {
 	if end.Before(start) {
 		return nil, fmt.Errorf("holidays.Between: end %s is before start %s",
@@ -60,10 +53,7 @@ func YearHolidays(year int, opts Options) ([]Holiday, error) {
 // (truncated to its UTC calendar day) through Dec 31 of `from`'s year, sorted by
 // date ascending. It clips a 12-month forward window to Dec 31, so the result
 // includes next-year holidays whose observed date shifts back on or before Dec 31
-// of `from`'s year (for example New Year's Day observed on Dec 31). Resolving both
-// `from`'s year and the following year, then applying the [fromDay, Dec31] clip,
-// captures those without duplication: a given holiday instance appears in only
-// one year's ResolveYear.
+// of `from`'s year (for example New Year's Day observed on Dec 31).
 func YearHolidaysFrom(from time.Time, opts Options) ([]Holiday, error) {
 	fromDay := startOfDay(from)
 	upper := time.Date(fromDay.Year(), 12, 31, 0, 0, 0, 0, fromDay.Location())
@@ -78,11 +68,7 @@ func YearHolidaysFrom(from time.Time, opts Options) ([]Holiday, error) {
 		if err != nil {
 			// The primary year must resolve. The following year is only a
 			// look-ahead to pull boundary-adjacent holidays whose observed date
-			// shifts back into [fromDay, Dec 31]; if it cannot resolve (e.g. a
-			// lunar region whose tables end at the primary year, so year+1 is out
-			// of range) it contributes no in-window holidays. Skip it rather than
-			// failing the whole query: the look-ahead year's data is never needed
-			// to answer for the primary year.
+			// shifts back into [fromDay, Dec 31]
 			if i == 0 {
 				return nil, err
 			}
@@ -101,18 +87,10 @@ func YearHolidaysFrom(from time.Time, opts Options) ([]Holiday, error) {
 	return out, nil
 }
 
-// nextHolidaysMaxForwardYears bounds the forward scan in NextHolidays so a
-// region with too few holidays cannot loop unbounded; the loop stops once it
-// has collected `count` holidays or has scanned this many years past `from`.
-const nextHolidaysMaxForwardYears = 100
-
 // NextHolidays returns the next `count` holidays on or after `from`, sorted by
 // date ascending. It keeps resolving forward, year by year, accumulating
 // holidays with date >= `from` until at least `count` are gathered, then
-// truncates to `count`. Unlike a fixed 12-month window, this returns the full
-// `count` even when the count-th holiday lands more than a year out (for example
-// a January holiday relative to a January start). If the region has fewer than
-// `count` holidays within the safety cap, it returns however many were found.
+// truncates to `count`.
 func NextHolidays(from time.Time, count int, opts Options) ([]Holiday, error) {
 	if count <= 0 {
 		return nil, fmt.Errorf("holidays.NextHolidays: count must be positive, got %d", count)
@@ -175,8 +153,7 @@ func RegionName(region string) (string, bool) {
 	return engine.RegionName(region)
 }
 
-// RegionNames returns every registered region code mapped to its display
-// name.
+// RegionNames returns every registered region code mapped to its display name.
 func RegionNames() map[string]string {
 	return engine.RegionNames()
 }
