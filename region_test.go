@@ -9,11 +9,40 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-// Hand-written black-box regression tests for individual per-country observance
-// methods whose weekday or lunar edge cases came out of a specific parity
-// divergence or upstream bump. Each block locks one method's behavior so a
-// future refactor cannot silently regress it. The generated table tests in
-// internal/definitions cover the broad date corpus; these pin the tricky spots.
+// Hand-written black-box tests for region-scoped behavior: the RegionName /
+// RegionNames lookup API, and regression tests for individual per-country
+// observance methods whose weekday or lunar edge cases came out of a specific
+// parity divergence or upstream bump. Each method block locks one method's
+// behavior so a future refactor cannot silently regress it. The generated table
+// tests in internal/definitions cover the broad date corpus; these pin the
+// tricky spots.
+
+var _ = Describe("RegionName / RegionNames", func() {
+	It("returns the display name for a known region", func() {
+		name, ok := holidays.RegionName("gb")
+		Expect(ok).To(BeTrue())
+		Expect(name).To(Equal("United Kingdom"))
+	})
+
+	It("returns comma-ok false for an unknown region", func() {
+		name, ok := holidays.RegionName("does_not_exist")
+		Expect(ok).To(BeFalse())
+		Expect(name).To(Equal(""))
+	})
+
+	It("round-trips a non-ASCII display name", func() {
+		name, ok := holidays.RegionName("ch_ge")
+		Expect(ok).To(BeTrue())
+		Expect(name).To(Equal("Genève"))
+	})
+
+	It("returns every registered region with the expected count", func() {
+		names := holidays.RegionNames()
+		Expect(names).To(HaveLen(290))
+		Expect(names).To(HaveKeyWithValue("gb", "United Kingdom"))
+		Expect(names).To(HaveKeyWithValue("ch_ge", "Genève"))
+	})
+})
 
 // mustOn resolves holidays for a single date and region with observed dates on.
 func mustOn(dateStr, region string) []holidays.Holiday {
@@ -56,13 +85,13 @@ var _ = Describe("KR Seollal eve", func() {
 // go-holidays-coi: the two AU year-based Boxing/Proclamation observance methods
 // and their expected observed dates across every Dec-26 weekday.
 //
-//   Boxing Day (au_tas, au_nt) uses to_weekday_if_boxing_weekend_from_year,
-//   defined as to_tuesday_if_sunday_or_monday_if_saturday(Dec26):
-//   Sat->+2, Sun->+2, Mon UNCHANGED, otherwise unchanged.
+//	Boxing Day (au_tas, au_nt) uses to_weekday_if_boxing_weekend_from_year,
+//	defined as to_tuesday_if_sunday_or_monday_if_saturday(Dec26):
+//	Sat->+2, Sun->+2, Mon UNCHANGED, otherwise unchanged.
 //
-//   Proclamation Day (au_sa) uses ..._or_to_tuesday_if_monday,
-//   defined as to_weekday_if_boxing_weekend(Dec26):
-//   Sat->+2, Sun->+2, Mon->+1, otherwise unchanged.
+//	Proclamation Day (au_sa) uses ..._or_to_tuesday_if_monday,
+//	defined as to_weekday_if_boxing_weekend(Dec26):
+//	Sat->+2, Sun->+2, Mon->+1, otherwise unchanged.
 var _ = Describe("AU Boxing/Proclamation Day observance", func() {
 	It("matches the gem for Boxing Day (au_tas, au_nt) across every Dec-26 weekday", func() {
 		// date string -> expected observed Boxing Day date, keyed by Dec-26 weekday.

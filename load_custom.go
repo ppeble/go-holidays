@@ -11,10 +11,6 @@ import (
 	"github.com/ppeble/go-holidays/internal/generator"
 )
 
-// MethodArgs re-exports engine.MethodArgs so callers using RegisterMethod do
-// not need to import pkg/engine.
-type MethodArgs = engine.MethodArgs
-
 // RegisterMethod registers a named method usable from a YAML rule's
 // `function:` or `observed:` field. Must be called before LoadCustom for any
 // custom YAML that references the name. Wraps engine.RegisterMethod.
