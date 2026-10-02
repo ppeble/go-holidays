@@ -65,6 +65,27 @@ import (
 This library offers multiple ways to check for holidays for a variety of
 scenarios.
 
+Lookups return a `[]holidays.Holiday`. Each one has a `Date`, a `Name` and the
+`Regions` it applies to, which you can print like this (with `fmt` and
+`strings` imported):
+
+```go
+for _, h := range hs {
+	fmt.Printf("%s  %s  [%s]\n", h.Date.Format("2006-01-02"), h.Name, strings.Join(h.Regions, ", "))
+}
+```
+
+The results under each example below are shown in that form, with the names
+padded so the columns line up, or as `(no holidays)` when the result is empty.
+`Regions` holds the regions listed on the matching definition, which can be
+more than the ones you asked for. A `Holiday` also has an `Informal` field,
+which is `true` for informal observances and can only be set when the lookup
+used the `Informal` option.
+
+`On`, `Between` and `YearHolidays` return holidays in no guaranteed order, so
+sort them if the order matters. The results below are listed by date, then
+name.
+
 #### Checking a specific date
 
 Get all holidays on April 25, 2008 in Australia:
@@ -72,7 +93,9 @@ Get all holidays on April 25, 2008 in Australia:
 ```go
 d := time.Date(2008, time.April, 25, 0, 0, 0, 0, time.UTC)
 hs, err := holidays.On(d, holidays.Options{Regions: []string{"au"}})
-// hs[0].Name == "ANZAC Day"
+```
+```
+2008-04-25  ANZAC Day  [au]
 ```
 
 You can check multiple regions in a single call:
@@ -80,7 +103,10 @@ You can check multiple regions in a single call:
 ```go
 d := time.Date(2008, time.January, 1, 0, 0, 0, 0, time.UTC)
 hs, err := holidays.On(d, holidays.Options{Regions: []string{"us", "fr"}})
-// hs contains "New Year's Day" (regions: [us]) and "Jour de l'an" (regions: [fr])
+```
+```
+2008-01-01  Jour de l'an    [fr]
+2008-01-01  New Year's Day  [us]
 ```
 
 You can leave `Regions` empty to get holidays for any registered region:
@@ -88,7 +114,14 @@ You can leave `Regions` empty to get holidays for any registered region:
 ```go
 d := time.Date(2007, time.April, 25, 0, 0, 0, 0, time.UTC)
 hs, err := holidays.On(d, holidays.Options{})
-// hs contains "ANZAC Day" (au), "Festa della Liberazione" (it), ...
+```
+```
+2007-04-25  ANZAC Day                       [au]
+2007-04-25  ANZAC Day                       [au_qld, au_nt, au_act, au_sa]
+2007-04-25  ANZAC Day                       [nz]
+2007-04-25  Dia da Liberdade                [pt]
+2007-04-25  Festa della Liberazione         [it]
+2007-04-25  Festa di San Marco Evangelista  [it_ve]
 ```
 
 #### Wildcard regions
@@ -99,8 +132,12 @@ matches the parent country region and all of its sub-regions in a single call:
 ```go
 d := time.Date(2017, time.March, 13, 0, 0, 0, 0, time.UTC)
 hs, err := holidays.On(d, holidays.Options{Regions: []string{"au_"}})
-// hs contains "Eight Hours Day" (au_tas), "Labour Day" (au_vic),
-// "March Public Holiday" (au_sa), "Canberra Day" (au_act)
+```
+```
+2017-03-13  Canberra Day          [au_act]
+2017-03-13  Eight Hours Day       [au_tas]
+2017-03-13  Labour Day            [au_vic]
+2017-03-13  March Public Holiday  [au_sa]
 ```
 
 The same date queried with the plain `au` region returns nothing, because none
@@ -108,7 +145,9 @@ of those holidays are observed nation-wide:
 
 ```go
 hs, err := holidays.On(d, holidays.Options{Regions: []string{"au"}})
-// hs is empty
+```
+```
+(no holidays)
 ```
 
 Use a wildcard when you want "this country and every sub-region it defines"
@@ -128,7 +167,10 @@ Get all holidays during the month of July 2008 in Canada and the US:
 from := time.Date(2008, time.July, 1, 0, 0, 0, 0, time.UTC)
 to := time.Date(2008, time.July, 31, 0, 0, 0, 0, time.UTC)
 hs, err := holidays.Between(from, to, holidays.Options{Regions: []string{"ca", "us"}})
-// hs contains "Canada Day", "Independence Day"
+```
+```
+2008-07-01  Canada Day        [ca]
+2008-07-04  Independence Day  [us]
 ```
 
 #### Informal holidays
@@ -144,14 +186,18 @@ Get Valentine's Day in the US:
 ```go
 d := time.Date(2018, time.February, 14, 0, 0, 0, 0, time.UTC)
 hs, err := holidays.On(d, holidays.Options{Regions: []string{"us"}, Informal: true})
-// hs[0].Name == "Valentine's Day"
+```
+```
+2018-02-14  Valentine's Day  [us, ca]
 ```
 
 Leaving `Informal` false means Valentine's Day is not returned:
 
 ```go
 hs, err := holidays.On(d, holidays.Options{Regions: []string{"us"}})
-// hs is empty
+```
+```
+(no holidays)
 ```
 
 #### Observed holidays
@@ -168,7 +214,9 @@ Canada:
 ```go
 d := time.Date(2007, time.July, 2, 0, 0, 0, 0, time.UTC)
 hs, err := holidays.On(d, holidays.Options{Regions: []string{"ca_bc"}, Observed: true})
-// hs[0].Name == "Canada Day"
+```
+```
+2007-07-02  Canada Day  [ca]
 ```
 
 Leaving `Observed` false means "Canada Day" is not returned on July 2, since it
@@ -176,11 +224,16 @@ actually falls on Sunday July 1:
 
 ```go
 hs, err := holidays.On(d, holidays.Options{Regions: []string{"ca_bc"}})
-// hs is empty
-
+```
+```
+(no holidays)
+```
+```go
 d = time.Date(2007, time.July, 1, 0, 0, 0, 0, time.UTC)
 hs, err = holidays.On(d, holidays.Options{Regions: []string{"ca_bc"}})
-// hs[0].Name == "Canada Day"
+```
+```
+2007-07-01  Canada Day  [ca]
 ```
 
 #### Any holidays during work week
@@ -223,7 +276,11 @@ sorted by date ascending:
 ```go
 from := time.Date(2016, time.February, 23, 0, 0, 0, 0, time.UTC)
 hs, err := holidays.NextHolidays(from, 3, holidays.Options{Regions: []string{"us"}, Informal: true})
-// hs contains "St. Patrick's Day", "Good Friday", "Easter Sunday"
+```
+```
+2016-03-17  St. Patrick's Day  [us, ca]
+2016-03-25  Good Friday        [us]
+2016-03-27  Easter Sunday      [us]
 ```
 
 #### Year holidays
@@ -234,6 +291,17 @@ year:
 ```go
 hs, err := holidays.YearHolidays(2016, holidays.Options{Regions: []string{"ca_on"}})
 ```
+```
+2016-01-01  New Year's Day  [ca]
+2016-02-15  Family Day      [ca_on]
+2016-03-25  Good Friday     [ca]
+2016-05-23  Victoria Day    [ca_ab, ca_bc, ca_mb, ca_nt, ca_nu, ca_on, ca_sk, ca_yt]
+2016-07-01  Canada Day      [ca]
+2016-09-05  Labour Day      [ca]
+2016-10-10  Thanksgiving    [ca_ab, ca_bc, ca_mb, ca_nt, ca_nu, ca_on, ca_qc, ca_sk, ca_yt]
+2016-12-25  Christmas Day   [ca_on]
+2016-12-26  Boxing Day      [ca_on]
+```
 
 `YearHolidaysFrom` returns every holiday from a given date through December 31
 of that date's year, sorted ascending:
@@ -241,9 +309,15 @@ of that date's year, sorted ascending:
 ```go
 from := time.Date(2016, time.February, 23, 0, 0, 0, 0, time.UTC)
 hs, err := holidays.YearHolidaysFrom(from, holidays.Options{Regions: []string{"ca_on"}})
-// hs contains "Good Friday", "Easter Sunday", "Victoria Day", "Canada Day",
-// "Civic Holiday", "Labour Day", "Thanksgiving", "Remembrance Day",
-// "Christmas Day", "Boxing Day"
+```
+```
+2016-03-25  Good Friday    [ca]
+2016-05-23  Victoria Day   [ca_ab, ca_bc, ca_mb, ca_nt, ca_nu, ca_on, ca_sk, ca_yt]
+2016-07-01  Canada Day     [ca]
+2016-09-05  Labour Day     [ca]
+2016-10-10  Thanksgiving   [ca_ab, ca_bc, ca_mb, ca_nt, ca_nu, ca_on, ca_qc, ca_sk, ca_yt]
+2016-12-25  Christmas Day  [ca_on]
+2016-12-26  Boxing Day     [ca_on]
 ```
 
 #### Available regions
@@ -253,7 +327,10 @@ lexicographically:
 
 ```go
 regions := holidays.AvailableRegions()
-// regions == []string{"ar", "at", ..., "sg", ...}
+fmt.Println(len(regions), regions[:5])
+```
+```
+290 [ar at au au_act au_nsw]
 ```
 
 #### Region display names
@@ -264,10 +341,14 @@ display name:
 
 ```go
 name, ok := holidays.RegionName("gb_sct")
-// name == "Scotland", ok == true
+fmt.Println(name, ok)
 
 names := holidays.RegionNames()
-// names["ch_ge"] == "Genève"
+fmt.Println(len(names), names["ch_ge"])
+```
+```
+Scotland true
+290 Genève
 ```
 
 ## Command-line interface
@@ -277,12 +358,66 @@ wraps the same public API from the command line:
 
 ```bash
 bin/holidays on 2024-07-04 --regions us
+```
+```
+2024-07-04  Independence Day  us
+```
+```bash
 bin/holidays between 2024-12-20 2024-12-31 --regions us
+```
+```
+2024-12-25  Christmas Day  us
+```
+```bash
 bin/holidays year 2024 --regions us
+```
+```
+2024-01-01  New Year's Day                        us
+2024-01-15  Martin Luther King, Jr. Day           us
+2024-02-19  Presidents' Day                       us
+2024-05-27  Memorial Day                          us
+2024-06-19  Juneteenth National Independence Day  us
+2024-07-04  Independence Day                      us
+2024-09-02  Labor Day                             us
+2024-11-11  Veterans Day                          us
+2024-11-28  Thanksgiving                          us
+2024-12-25  Christmas Day                         us
+```
+```bash
 bin/holidays next 5 2024-05-28 --regions us
+```
+```
+2024-06-19  Juneteenth National Independence Day  us
+2024-07-04  Independence Day                      us
+2024-09-02  Labor Day                             us
+2024-11-11  Veterans Day                          us
+2024-11-28  Thanksgiving                          us
+```
+```bash
 bin/holidays workweek 2024-11-25 --regions us
+```
+```
+true
+```
+```bash
 bin/holidays regions
 ```
+```
+ar
+at
+au
+au_act
+au_nsw
+au_nt
+au_qld
+au_qld_brisbane
+au_qld_cairns
+au_sa
+... (280 more)
+```
+
+Holidays print one per line as date, name and comma-separated regions,
+separated by tabs (shown aligned here) and sorted by date, then name.
 
 Every subcommand except `regions` also accepts `--informal` and `--observed`.
 Flags may appear before or after the positional arguments.
@@ -309,7 +444,9 @@ Then load it and query it by the region code from its `regions:` list:
 err := holidays.LoadCustom("/home/user/holiday_definitions/custom_holidays.yaml")
 hs, err := holidays.On(time.Date(2013, time.June, 1, 0, 0, 0, 0, time.UTC),
     holidays.Options{Regions: []string{"my_custom_region"}})
-// hs[0].Name == "Company Founding"
+```
+```
+2013-06-01  Company Founding  [my_custom_region]
 ```
 
 Custom definition files must match the [syntax of the existing definition files](https://github.com/holidays/definitions/blob/master/doc/SYNTAX.md).
