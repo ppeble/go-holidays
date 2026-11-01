@@ -106,6 +106,56 @@ months:
 		Expect(holidays.AvailableRegions()).NotTo(ContainElement("MyTeam"))
 	})
 
+	It("honors excluded_regions and normalizes their codes", func() {
+		path := writeYAML("excluded.yaml", `
+months:
+  6:
+  - name: Excluded Region Day
+    regions:
+      - ZzCountry
+    excluded_regions:
+      - " ZZCOUNTRY_Hi "
+    mday: 19
+`)
+		Expect(holidays.LoadCustom(path)).To(Succeed())
+		defer holidays.UnloadCustom(path)
+
+		d := time.Date(2026, 6, 19, 0, 0, 0, 0, time.UTC)
+		for req, want := range map[string]bool{
+			"zzcountry":    true,
+			"zzcountry_ca": true,
+			"zzcountry_hi": false,
+			"ZZCOUNTRY_HI": false,
+			"zzcountry_":   true,
+		} {
+			hs, err := holidays.On(d, holidays.Options{Regions: []string{req}})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(hasNamedHoliday(hs, "Excluded Region Day")).To(Equal(want), "request %q", req)
+		}
+
+		hs, err := holidays.On(d, holidays.Options{Regions: []string{"zzcountry"}})
+		Expect(err).NotTo(HaveOccurred())
+		for _, h := range hs {
+			if h.Name == "Excluded Region Day" {
+				Expect(h.Regions).To(Equal([]string{"zzcountry"}))
+			}
+		}
+	})
+
+	It("errors for an excluded region outside the rule's regions", func() {
+		path := writeYAML("badexcluded.yaml", `
+months:
+  6:
+  - name: Bad Exclusion Day
+    regions: [zzcountry_a]
+    excluded_regions: [zzcountry_b]
+    mday: 19
+`)
+		err := holidays.LoadCustom(path)
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(ContainSubstring(`excluded region "zzcountry_b" is not a strict descendant`))
+	})
+
 	It("errors for a rule referencing an unregistered function", func() {
 		path := writeYAML("bad.yaml", `
 months:

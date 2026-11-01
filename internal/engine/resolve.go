@@ -27,7 +27,8 @@ type ResolveOptions struct {
 // the first occurrence, so a multi-region request whose regions each define the
 // same holiday (for example informal Easter Sunday in both us and ca) yields it
 // once. Two definitions merge when they match on name, wday, mday, week,
-// function, function_modifier, type, observed, and year_ranges; definitions that
+// function, function_modifier, type, observed, year_ranges, and
+// excluded_regions; definitions that
 // differ on any of those fields (for example us Good Friday tagged informal vs
 // the untagged us-states/ca Good Friday) stay distinct.
 func ResolveYear(year int, opts ResolveOptions) ([]Resolved, error) {
@@ -71,16 +72,17 @@ func ResolveYear(year int, opts ResolveOptions) ([]Resolved, error) {
 
 // ruleSignature renders the fields that decide whether two definitions are
 // the same holiday (and merges their regions): month, name, wday, mday, week,
-// function, function_modifier, type, observed, and year_ranges. Month is part
+// function, function_modifier, type, observed, year_ranges, and
+// excluded_regions (rules with different exclusions never merge). Month is part
 // of the identity because definitions are bucketed per month, so two rules in
 // different months never collide even when every other field matches (for
 // example the WA "Labour Day" first Monday of March and the ACT/NSW/SA
 // "Labour Day" first Monday of October). Regions are deliberately excluded, so
 // rules that differ only by region collapse to one Resolved.
 func ruleSignature(r definition.HolidayRule) string {
-	return fmt.Sprintf("%d|%s|%d|%d|%d|%s|%d|%d|%s|%v",
+	return fmt.Sprintf("%d|%s|%d|%d|%d|%s|%d|%d|%s|%v|%q",
 		r.Month, r.Name, r.Wday, r.Mday, r.Week, r.Function, r.FunctionModifier,
-		r.Type, r.Observed, r.YearRanges)
+		r.Type, r.Observed, r.YearRanges, r.ExcludedRegions)
 }
 
 func computeDate(rule definition.HolidayRule, year int) (time.Time, error) {

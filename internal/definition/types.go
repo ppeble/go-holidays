@@ -28,11 +28,17 @@ type YearRange struct {
 }
 
 // HolidayRule is one upstream holiday definition: its name, the regions it
-// applies to, how its date is computed (a fixed month/day, an nth weekday, or a
-// named function), and any observed-date or year-range restrictions.
+// applies to (minus any excluded subregions), how its date is computed (a
+// fixed month/day, an nth weekday, or a named function), and any
+// observed-date or year-range restrictions.
+//
+// ExcludedRegions lists subregions of Regions the rule does not apply to: a
+// requested region equal to, or a descendant of, an excluded region does not
+// qualify. Nil means no exclusions.
 type HolidayRule struct {
 	Name             string
 	Regions          []string
+	ExcludedRegions  []string
 	Month            int
 	Mday             int
 	Wday             int

@@ -49,6 +49,34 @@ tests:
 		})
 	})
 
+	Context("when a rule has an excluded_regions list", func() {
+		It("parses the key under strict decoding", func() {
+			rf, err := ParseRegionFile("xx", []byte(`
+months:
+  6:
+    - name: "Example Day"
+      regions: [xx]
+      excluded_regions: [xx_a]
+      mday: 19
+`))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(rf.Rules).To(HaveLen(1))
+			Expect(rf.Rules[0].ExcludedRegions).To(Equal([]string{"xx_a"}))
+		})
+
+		It("wraps an invalid exclusion with the month and entry index", func() {
+			_, err := ParseRegionFile("xx", []byte(`
+months:
+  6:
+    - name: "Example Day"
+      regions: [xx_a]
+      excluded_regions: [xx]
+      mday: 19
+`))
+			Expect(err).To(MatchError(`xx.yaml month 6 entry 0: excluded region "xx" is not a strict descendant of any of regions [xx_a]`))
+		})
+	})
+
 	Context("when the YAML has no region_names block", func() {
 		It("leaves RegionNames nil", func() {
 			yaml := []byte(`
@@ -239,6 +267,47 @@ var _ = Describe("convertRule", func() {
 		Expect(err).NotTo(HaveOccurred())
 		Expect(rule.YearRanges).To(HaveLen(1))
 		Expect(rule.YearRanges[0].Kind).To(Equal(definition.YearRangeUntil))
+	})
+
+	It("leaves ExcludedRegions nil when the key is absent", func() {
+		rule, err := convertRule("xx", 1, rawRule{Name: "N", Regions: []string{"xx"}})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(rule.ExcludedRegions).To(BeNil())
+	})
+
+	It("carries excluded regions that are strict descendants of a listed region", func() {
+		rule, err := convertRule("xx", 1, rawRule{
+			Name: "N", Regions: []string{"yy", "xx"},
+			ExcludedRegions: []string{"xx_a", "xx_b_c"},
+		})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(rule.Regions).To(Equal([]string{"yy", "xx"}))
+		Expect(rule.ExcludedRegions).To(Equal([]string{"xx_a", "xx_b_c"}))
+	})
+
+	It("compares excluded regions to listed regions case- and whitespace-insensitively", func() {
+		rule, err := convertRule("xx", 1, rawRule{
+			Name: "N", Regions: []string{"XX"},
+			ExcludedRegions: []string{" xx_a "},
+		})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(rule.ExcludedRegions).To(Equal([]string{" xx_a "}))
+	})
+
+	It("errors when an excluded region equals a listed region", func() {
+		_, err := convertRule("xx", 1, rawRule{
+			Name: "N", Regions: []string{"xx"},
+			ExcludedRegions: []string{"xx"},
+		})
+		Expect(err).To(MatchError(`excluded region "xx" is not a strict descendant of any of regions [xx]`))
+	})
+
+	It("errors when an excluded region is outside every listed region", func() {
+		_, err := convertRule("xx", 1, rawRule{
+			Name: "N", Regions: []string{"xx_a"},
+			ExcludedRegions: []string{"xx_b"},
+		})
+		Expect(err).To(MatchError(`excluded region "xx_b" is not a strict descendant of any of regions [xx_a]`))
 	})
 
 	It("propagates a year_ranges conversion error", func() {

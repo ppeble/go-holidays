@@ -62,6 +62,7 @@ type rawRoot struct {
 type rawRule struct {
 	Name             string         `yaml:"name"`
 	Regions          []string       `yaml:"regions"`
+	ExcludedRegions  []string       `yaml:"excluded_regions"`
 	Mday             int            `yaml:"mday"`
 	Wday             *int           `yaml:"wday"`
 	Week             int            `yaml:"week"`
@@ -175,6 +176,12 @@ func convertRule(country string, month int, rr rawRule) (definition.HolidayRule,
 	if rr.Wday != nil {
 		rule.Wday = *rr.Wday
 	}
+	if len(rr.ExcludedRegions) > 0 {
+		if err := validateExcludedRegions(rr.Regions, rr.ExcludedRegions); err != nil {
+			return definition.HolidayRule{}, err
+		}
+		rule.ExcludedRegions = rr.ExcludedRegions
+	}
 	switch strings.ToLower(rr.Type) {
 	case "", "formal":
 		rule.Type = definition.Formal
@@ -207,6 +214,31 @@ func convertRule(country string, month int, rr rawRule) (definition.HolidayRule,
 	}
 	return rule, nil
 }
+
+// validateExcludedRegions requires every excluded region to be a strict
+// descendant of one of the rule's listed regions (us_hi under us). Codes are
+// compared lowercased and trimmed, matching how LoadCustom normalizes them.
+func validateExcludedRegions(regions, excluded []string) error {
+	for _, ex := range excluded {
+		if !hasStrictAncestor(regions, normRegion(ex)) {
+			return fmt.Errorf("excluded region %q is not a strict descendant of any of regions %v", ex, regions)
+		}
+	}
+	return nil
+}
+
+// hasStrictAncestor reports whether some region in regions is a proper
+// ancestor of the normalized code.
+func hasStrictAncestor(regions []string, code string) bool {
+	for _, r := range regions {
+		if strings.HasPrefix(code, normRegion(r)+"_") {
+			return true
+		}
+	}
+	return false
+}
+
+func normRegion(s string) string { return strings.ToLower(strings.TrimSpace(s)) }
 
 func convertYearRange(rr rawYearRanges) (definition.YearRange, error) {
 	count := 0

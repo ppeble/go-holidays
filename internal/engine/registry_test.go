@@ -219,3 +219,45 @@ var _ = Describe("ruleMatchesRequested", func() {
 		})
 	})
 })
+
+// excluded_regions semantics (go-holidays-ko5, shared with the Ruby gem):
+// each concrete requested region qualifies on its own when a listed region
+// equals it or is its ancestor and no excluded region equals it or is its
+// ancestor. Empty and country-wildcard requests are never blocked.
+var _ = Describe("ruleMatchesRequested with excluded regions", func() {
+	rule := definition.HolidayRule{
+		Name:            "Juneteenth",
+		Regions:         []string{"us"},
+		ExcludedRegions: []string{"us_hi"},
+	}
+
+	DescribeTable("matching a rule for us that excludes us_hi",
+		func(requested []string, want bool) {
+			Expect(ruleMatchesRequested(rule, requested)).To(Equal(want))
+		},
+		Entry("the listed region itself", []string{"us"}, true),
+		Entry("a non-excluded child", []string{"us_ca"}, true),
+		Entry("the excluded region", []string{"us_hi"}, false),
+		Entry("a child of the excluded region", []string{"us_hi_xx"}, false),
+		Entry("the listed region alongside the excluded one", []string{"us", "us_hi"}, true),
+		Entry("the excluded region before a qualifying one", []string{"us_hi", "us_ca"}, true),
+		Entry("all regions (empty request)", nil, true),
+		Entry("the country wildcard", []string{"us_"}, true),
+		Entry("a multi-segment wildcard under the excluded branch", []string{"us_hi_"}, true),
+		Entry("an unrelated region", []string{"ca"}, false),
+	)
+
+	It("does not treat a sibling sharing the excluded prefix as excluded", func() {
+		Expect(ruleMatchesRequested(rule, []string{"us_hix"})).To(BeTrue())
+	})
+
+	It("lets another listed region qualify a request the exclusion does not cover", func() {
+		multi := definition.HolidayRule{
+			Name:            "Multi",
+			Regions:         []string{"us", "ca"},
+			ExcludedRegions: []string{"us_hi"},
+		}
+		Expect(ruleMatchesRequested(multi, []string{"ca_on"})).To(BeTrue())
+		Expect(ruleMatchesRequested(multi, []string{"us_hi"})).To(BeFalse())
+	})
+})
