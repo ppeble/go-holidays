@@ -39,3 +39,41 @@ var _ = Describe("ruleSignature month component", func() {
 			"expected both the March and October Labour Day, got %+v", got)
 	})
 })
+
+// Rules that differ only by excluded_regions are distinct definitions (the
+// gem's generator never merges them), so ResolveYear must not collapse them.
+var _ = Describe("ruleSignature excluded regions component", func() {
+	AfterEach(func() {
+		UnregisterCountry("zz")
+	})
+
+	It("keeps two rules that differ only by their exclusions", func() {
+		RegisterCountry("zz", []definition.HolidayRule{
+			{Name: "Example Day", Regions: []string{"zz"}, ExcludedRegions: []string{"zz_a"}, Month: 6, Mday: 19, Wday: -1},
+			{Name: "Example Day", Regions: []string{"zz_a"}, Month: 6, Mday: 19, Wday: -1},
+		})
+
+		got, err := ResolveYear(2020, ResolveOptions{Regions: []string{"zz", "zz_a"}})
+		Expect(err).NotTo(HaveOccurred())
+
+		var regions [][]string
+		for _, r := range got {
+			if r.Name == "Example Day" {
+				regions = append(regions, r.Regions)
+			}
+		}
+		Expect(regions).To(ConsistOf([]string{"zz"}, []string{"zz_a"}))
+	})
+
+	It("still merges rules whose exclusions match", func() {
+		RegisterCountry("zz", []definition.HolidayRule{
+			{Name: "Example Day", Regions: []string{"zz"}, ExcludedRegions: []string{"zz_b_x"}, Month: 6, Mday: 19, Wday: -1},
+			{Name: "Example Day", Regions: []string{"zz_b"}, ExcludedRegions: []string{"zz_b_x"}, Month: 6, Mday: 19, Wday: -1},
+		})
+
+		got, err := ResolveYear(2020, ResolveOptions{Regions: []string{"zz_b"}})
+		Expect(err).NotTo(HaveOccurred())
+		Expect(got).To(HaveLen(1))
+		Expect(got[0].Regions).To(Equal([]string{"zz"}))
+	})
+})

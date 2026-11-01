@@ -98,12 +98,16 @@ func UnloadCustom(paths ...string) {
 // holidays.go) does the same to Options.Regions, so without this a custom rule
 // written with mixed-case or padded codes (e.g. "MyTeam") would be unreachable
 // by any query. Built-in generated regions are already lowercase, so this only
-// matters for LoadCustom. region_names: keys are normalized to match.
+// matters for LoadCustom. excluded_regions: codes and region_names: keys are
+// normalized to match.
 func normalizeCustomRegionCodes(rf *generator.RegionFile) {
 	norm := func(s string) string { return strings.ToLower(strings.TrimSpace(s)) }
 	for i := range rf.Rules {
 		for j := range rf.Rules[i].Regions {
 			rf.Rules[i].Regions[j] = norm(rf.Rules[i].Regions[j])
+		}
+		for j := range rf.Rules[i].ExcludedRegions {
+			rf.Rules[i].ExcludedRegions[j] = norm(rf.Rules[i].ExcludedRegions[j])
 		}
 	}
 	if len(rf.RegionNames) > 0 {

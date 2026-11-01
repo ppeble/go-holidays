@@ -99,6 +99,9 @@ func writeRuleLiteral(buf *bytes.Buffer, r definition.HolidayRule) {
 	fmt.Fprintln(buf, "\t{")
 	fmt.Fprintf(buf, "\t\tName: %s,\n", strconv.Quote(r.Name))
 	fmt.Fprintf(buf, "\t\tRegions: %s,\n", stringSliceLit(r.Regions))
+	if len(r.ExcludedRegions) > 0 {
+		fmt.Fprintf(buf, "\t\tExcludedRegions: %s,\n", stringSliceLit(r.ExcludedRegions))
+	}
 	fmt.Fprintf(buf, "\t\tMonth: %d,\n", r.Month)
 	if r.Mday != 0 {
 		fmt.Fprintf(buf, "\t\tMday: %d,\n", r.Mday)

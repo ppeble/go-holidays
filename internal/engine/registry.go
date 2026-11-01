@@ -209,6 +209,11 @@ func rulesForCountry(country string) []definition.HolidayRule {
 //     the country segment plus "_" ("gb_sct", "gb_wls", "gb_eng"): a
 //     multi-segment wildcard is not scoped to its own branch, it behaves
 //     identically to the bare country wildcard.
+//
+// Exclusions: each concrete (non-wildcard) requested region is judged on its
+// own, and does not qualify when one of the rule's ExcludedRegions equals it
+// or is its ancestor ("us_hi" blocks "us_hi" and "us_hi_xx"). An empty request
+// and wildcard requests are never blocked by exclusions.
 func ruleMatchesRequested(rule definition.HolidayRule, requested []string) bool {
 	if len(requested) == 0 {
 		return true
@@ -223,10 +228,18 @@ func ruleMatchesRequested(rule definition.HolidayRule, requested []string) bool 
 			}
 			continue
 		}
-		for _, rr := range rule.Regions {
-			if rr == req || isParentOf(rr, req) {
-				return true
-			}
+		if coversRegion(rule.Regions, req) && !coversRegion(rule.ExcludedRegions, req) {
+			return true
+		}
+	}
+	return false
+}
+
+// coversRegion reports whether some region in regions equals req or is its ancestor.
+func coversRegion(regions []string, req string) bool {
+	for _, r := range regions {
+		if r == req || isParentOf(r, req) {
+			return true
 		}
 	}
 	return false

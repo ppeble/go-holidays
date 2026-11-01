@@ -130,6 +130,16 @@ var _ = Describe("writeRuleLiteral", func() {
 		Expect(out).NotTo(ContainSubstring("Observed:"))
 		Expect(out).NotTo(ContainSubstring("definition.Informal"))
 		Expect(out).NotTo(ContainSubstring("YearRanges:"))
+		Expect(out).NotTo(ContainSubstring("ExcludedRegions:"))
+	})
+
+	It("prints ExcludedRegions right after Regions when present", func() {
+		var buf bytes.Buffer
+		writeRuleLiteral(&buf, definition.HolidayRule{
+			Name: "D", Regions: []string{"xx"}, ExcludedRegions: []string{"xx_a", "xx_b"}, Month: 6, Wday: -1,
+		})
+		Expect(buf.String()).To(ContainSubstring(
+			"\t\tRegions: []string{\"xx\"},\n\t\tExcludedRegions: []string{\"xx_a\", \"xx_b\"},\n"))
 	})
 
 	It("prints a function with no arguments without a FunctionArgs field", func() {
