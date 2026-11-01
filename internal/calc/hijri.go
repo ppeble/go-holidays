@@ -34,16 +34,28 @@ func HijriToGregorian(hijriYear, hijriMonth, hijriDay int) time.Time {
 // A fixed Hijri date drifts about 11 days earlier each Gregorian year, so
 // roughly once every 33 years it falls twice in the same Gregorian year
 // (once in early January, once in late December). Only the earlier
-// occurrence is returned.
+// occurrence is returned; see HijriYearOccurrences for both.
 func HijriYearOccurrence(gregorianYear, hijriMonth, hijriDay int) (time.Time, bool) {
+	occurrences := HijriYearOccurrences(gregorianYear, hijriMonth, hijriDay)
+	if len(occurrences) == 0 {
+		return time.Time{}, false
+	}
+	return occurrences[0], true
+}
+
+// HijriYearOccurrences returns every Gregorian date of the given Hijri
+// month/day that falls within gregorianYear, earliest first. It is empty
+// when none falls in that year.
+func HijriYearOccurrences(gregorianYear, hijriMonth, hijriDay int) []time.Time {
+	var occurrences []time.Time
 	candidateHijriYear := gregorianYear - 579
 	for _, hijriYear := range [3]int{candidateHijriYear - 1, candidateHijriYear, candidateHijriYear + 1} {
 		date := HijriToGregorian(hijriYear, hijriMonth, hijriDay)
 		if date.Year() == gregorianYear {
-			return date, true
+			occurrences = append(occurrences, date)
 		}
 	}
-	return time.Time{}, false
+	return occurrences
 }
 
 // hijriToJDN computes the Julian day number for a Hijri calendar date.

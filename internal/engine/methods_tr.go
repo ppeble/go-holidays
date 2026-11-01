@@ -22,7 +22,8 @@ type trFeastKey struct {
 // trDiyanetOverrides holds proclaimed first days that differ from the pure
 // arithmetic Hijri calculation, keyed by (method, Gregorian year). Ported
 // verbatim from Holidays::Definition::CustomMethods::TR::DIYANET_OVERRIDES
-// in the definitions repo (definitions PR #385, "tr-hijri-date-calculator").
+// in the definitions repo (definitions PR #385, "tr-hijri-date-calculator"),
+// extended through 2035 to match holidays#527.
 // Years with no entry fall back to calc.HijriYearOccurrence.
 var trDiyanetOverrides = map[trFeastKey]time.Time{
 	{"ramadan_feast", 2014}: time.Date(2014, time.July, 28, 0, 0, 0, 0, time.UTC),
@@ -36,6 +37,9 @@ var trDiyanetOverrides = map[trFeastKey]time.Time{
 	{"ramadan_feast", 2027}: time.Date(2027, time.March, 9, 0, 0, 0, 0, time.UTC),
 	{"ramadan_feast", 2028}: time.Date(2028, time.February, 26, 0, 0, 0, 0, time.UTC),
 	{"ramadan_feast", 2030}: time.Date(2030, time.February, 4, 0, 0, 0, 0, time.UTC),
+	{"ramadan_feast", 2031}: time.Date(2031, time.January, 24, 0, 0, 0, 0, time.UTC),
+	{"ramadan_feast", 2033}: time.Date(2033, time.January, 2, 0, 0, 0, 0, time.UTC),
+	{"ramadan_feast", 2035}: time.Date(2035, time.December, 1, 0, 0, 0, 0, time.UTC),
 
 	{"sacrifice_feast", 2014}: time.Date(2014, time.October, 4, 0, 0, 0, 0, time.UTC),
 	{"sacrifice_feast", 2016}: time.Date(2016, time.September, 12, 0, 0, 0, 0, time.UTC),
@@ -48,6 +52,8 @@ var trDiyanetOverrides = map[trFeastKey]time.Time{
 	{"sacrifice_feast", 2025}: time.Date(2025, time.June, 6, 0, 0, 0, 0, time.UTC),
 	{"sacrifice_feast", 2027}: time.Date(2027, time.May, 16, 0, 0, 0, 0, time.UTC),
 	{"sacrifice_feast", 2030}: time.Date(2030, time.April, 13, 0, 0, 0, 0, time.UTC),
+	{"sacrifice_feast", 2031}: time.Date(2031, time.April, 2, 0, 0, 0, 0, time.UTC),
+	{"sacrifice_feast", 2033}: time.Date(2033, time.March, 11, 0, 0, 0, 0, time.UTC),
 }
 
 // Ramazan Bayramı (Ramadan/Sacrifice feasts) are tied to the Hijri calendar.
@@ -57,9 +63,20 @@ var trDiyanetOverrides = map[trFeastKey]time.Time{
 // arithmetic result; trDiyanetOverrides pins those years to the proclaimed
 // date. Years with no entry fall back to the calculation. See
 // definitions#377 / PR #385.
+//
+// ramadan_feast only returns the first occurrence of a Gregorian year;
+// ramadan_feast_second_in_year returns the second one in the rare years that
+// have two (2033), and the zero Time otherwise. See definitions#402.
 func init() {
 	RegisterMethod("ramadan_feast", func(a MethodArgs) (time.Time, error) {
 		return trFeastDate("ramadan_feast", a.Year, trShawwal, 1)
+	})
+	RegisterMethod("ramadan_feast_second_in_year", func(a MethodArgs) (time.Time, error) {
+		occurrences := calc.HijriYearOccurrences(a.Year, trShawwal, 1)
+		if len(occurrences) < 2 {
+			return time.Time{}, nil
+		}
+		return occurrences[len(occurrences)-1], nil
 	})
 	RegisterMethod("sacrifice_feast", func(a MethodArgs) (time.Time, error) {
 		return trFeastDate("sacrifice_feast", a.Year, trDhuAlHijjah, 10)
