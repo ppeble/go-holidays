@@ -71,4 +71,30 @@ var _ = Describe("vn", func() {
 		Entry("2023-04-29", "2023-04-29"),
 	)
 
+	DescribeTable("005_GiỗTổHùngVương", func(s string) {
+		opts := holidays.Options{Regions: []string{"vn"}}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Giỗ tổ Hùng Vương")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Giỗ tổ Hùng Vương", hols))
+	},
+		Entry("2009-04-04", "2009-04-04"),
+		Entry("2037-04-24", "2037-04-24"),
+		Entry("2038-04-13", "2038-04-13"),
+	)
+
+	DescribeTable("006_Negative", func(s string) {
+		opts := holidays.Options{Regions: []string{"vn"}}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hols).To(BeEmpty(), fmt.Sprintf("On(%s, %v): expected no holiday, got %v", s, opts.Regions, hols))
+	},
+		Entry("2009-04-05", "2009-04-05"),
+		Entry("2037-04-25", "2037-04-25"),
+		Entry("2038-04-14", "2038-04-14"),
+	)
+
 })

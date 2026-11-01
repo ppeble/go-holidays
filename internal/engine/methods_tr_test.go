@@ -43,15 +43,46 @@ var _ = Describe("tr feast methods", func() {
 		})
 	})
 
-	Context("years past the old static table (2031, 2032), with no override", func() {
+	Context("years Diyanet proclaims a day before the calculation (2031-2035)", func() {
+		It("ramadan_feast returns the proclaimed date", func() {
+			Expect(call(ramadanFeast, 2031)).To(Equal(time.Date(2031, time.January, 24, 0, 0, 0, 0, time.UTC)))
+			Expect(call(ramadanFeast, 2033)).To(Equal(time.Date(2033, time.January, 2, 0, 0, 0, 0, time.UTC)))
+			Expect(call(ramadanFeast, 2035)).To(Equal(time.Date(2035, time.December, 1, 0, 0, 0, 0, time.UTC)))
+		})
+
+		It("sacrifice_feast returns the proclaimed date", func() {
+			Expect(call(sacrificeFeast, 2031)).To(Equal(time.Date(2031, time.April, 2, 0, 0, 0, 0, time.UTC)))
+			Expect(call(sacrificeFeast, 2033)).To(Equal(time.Date(2033, time.March, 11, 0, 0, 0, 0, time.UTC)))
+		})
+	})
+
+	Context("years past the old static table with no override (2032, 2034)", func() {
 		It("ramadan_feast falls back to the Hijri calculation", func() {
-			Expect(call(ramadanFeast, 2031)).To(Equal(time.Date(2031, time.January, 25, 0, 0, 0, 0, time.UTC)))
 			Expect(call(ramadanFeast, 2032)).To(Equal(time.Date(2032, time.January, 14, 0, 0, 0, 0, time.UTC)))
+			Expect(call(ramadanFeast, 2034)).To(Equal(time.Date(2034, time.December, 12, 0, 0, 0, 0, time.UTC)))
 		})
 
 		It("sacrifice_feast falls back to the Hijri calculation", func() {
-			Expect(call(sacrificeFeast, 2031)).To(Equal(time.Date(2031, time.April, 3, 0, 0, 0, 0, time.UTC)))
 			Expect(call(sacrificeFeast, 2032)).To(Equal(time.Date(2032, time.March, 22, 0, 0, 0, 0, time.UTC)))
+			Expect(call(sacrificeFeast, 2034)).To(Equal(time.Date(2034, time.March, 1, 0, 0, 0, 0, time.UTC)))
+		})
+	})
+
+	Context("ramadan_feast_second_in_year", func() {
+		var secondRamadanFeast Method
+
+		BeforeEach(func() {
+			var ok bool
+			secondRamadanFeast, ok = LookupMethod("ramadan_feast_second_in_year")
+			Expect(ok).To(BeTrue(), "ramadan_feast_second_in_year must be registered")
+		})
+
+		It("returns the late-December occurrence in a year with two (2033)", func() {
+			Expect(call(secondRamadanFeast, 2033)).To(Equal(time.Date(2033, time.December, 23, 0, 0, 0, 0, time.UTC)))
+		})
+
+		It("returns the zero time in a year with only one", func() {
+			Expect(call(secondRamadanFeast, 2032).IsZero()).To(BeTrue())
 		})
 	})
 

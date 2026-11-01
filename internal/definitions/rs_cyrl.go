@@ -124,7 +124,7 @@ var rs_cyrlRules = []definition.HolidayRule{
 }
 
 var rs_cyrlRegionNames = map[string]string{
-	"rs_cyrl": "Serbia",
+	"rs_cyrl": "Serbia (Cyrillic)",
 }
 
 func init() {

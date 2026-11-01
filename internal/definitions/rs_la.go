@@ -124,7 +124,7 @@ var rs_laRules = []definition.HolidayRule{
 }
 
 var rs_laRegionNames = map[string]string{
-	"rs_la": "Serbia",
+	"rs_la": "Serbia (Latin)",
 }
 
 func init() {

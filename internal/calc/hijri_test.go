@@ -48,6 +48,25 @@ var _ = Describe("HijriYearOccurrence", func() {
 	)
 })
 
+var _ = Describe("HijriYearOccurrences", func() {
+	It("returns both occurrences, earliest first, in a year with two (Shawwal 1 in 2033)", func() {
+		Expect(calc.HijriYearOccurrences(2033, 10, 1)).To(Equal([]time.Time{
+			time.Date(2033, time.January, 3, 0, 0, 0, 0, time.UTC),
+			time.Date(2033, time.December, 23, 0, 0, 0, 0, time.UTC),
+		}))
+	})
+
+	It("returns a single occurrence in an ordinary year", func() {
+		Expect(calc.HijriYearOccurrences(2032, 10, 1)).To(Equal([]time.Time{
+			time.Date(2032, time.January, 14, 0, 0, 0, 0, time.UTC),
+		}))
+	})
+
+	It("returns nothing when the search window misses the date", func() {
+		Expect(calc.HijriYearOccurrences(1970, 12, 10)).To(BeEmpty())
+	})
+})
+
 var _ = Describe("HijriToGregorian", func() {
 	It("converts a known Hijri date (1 Shawwal 1435) to its Gregorian equivalent", func() {
 		// 1 Shawwal 1435 AH is Eid al-Fitr for Gregorian year 2014, i.e. the
