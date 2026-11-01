@@ -331,4 +331,92 @@ var _ = Describe("cl", func() {
 		Entry("2014-12-25", "2014-12-25"),
 	)
 
+	DescribeTable("029_DíaNacionalDeLosPueblosIndígenas", func(s string) {
+		opts := holidays.Options{Regions: []string{"cl"}}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Día Nacional de los Pueblos Indígenas")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Día Nacional de los Pueblos Indígenas", hols))
+	},
+		Entry("2021-06-21", "2021-06-21"),
+	)
+
+	DescribeTable("030_DíaNacionalDeLosPueblosIndígenas", func(s string) {
+		opts := holidays.Options{Regions: []string{"cl"}}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Día Nacional de los Pueblos Indígenas")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Día Nacional de los Pueblos Indígenas", hols))
+	},
+		Entry("2022-06-21", "2022-06-21"),
+	)
+
+	DescribeTable("031_DíaNacionalDeLosPueblosIndígenas", func(s string) {
+		opts := holidays.Options{Regions: []string{"cl"}}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Día Nacional de los Pueblos Indígenas")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Día Nacional de los Pueblos Indígenas", hols))
+	},
+		Entry("2023-06-21", "2023-06-21"),
+	)
+
+	DescribeTable("032_DíaNacionalDeLosPueblosIndígenas", func(s string) {
+		opts := holidays.Options{Regions: []string{"cl"}}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Día Nacional de los Pueblos Indígenas")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Día Nacional de los Pueblos Indígenas", hols))
+	},
+		Entry("2024-06-20", "2024-06-20"),
+	)
+
+	DescribeTable("033_DíaNacionalDeLosPueblosIndígenas", func(s string) {
+		opts := holidays.Options{Regions: []string{"cl"}}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Día Nacional de los Pueblos Indígenas")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Día Nacional de los Pueblos Indígenas", hols))
+	},
+		Entry("2025-06-20", "2025-06-20"),
+	)
+
+	DescribeTable("034_DíaNacionalDeLosPueblosIndígenas", func(s string) {
+		opts := holidays.Options{Regions: []string{"cl"}}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Día Nacional de los Pueblos Indígenas")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Día Nacional de los Pueblos Indígenas", hols))
+	},
+		Entry("2026-06-21", "2026-06-21"),
+	)
+
+	DescribeTable("035_DíaNacionalDeLosPueblosIndígenas", func(s string) {
+		opts := holidays.Options{Regions: []string{"cl"}}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Día Nacional de los Pueblos Indígenas")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Día Nacional de los Pueblos Indígenas", hols))
+	},
+		Entry("2029-06-20", "2029-06-20"),
+	)
+
+	DescribeTable("036_DíaNacionalDeLosPueblosIndígenas", func(s string) {
+		opts := holidays.Options{Regions: []string{"cl"}}
+		d, err := parseFlex(s)
+		Expect(err).NotTo(HaveOccurred())
+		hols, err := holidays.On(d, opts)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(hasNamed(hols, "Día Nacional de los Pueblos Indígenas")).To(BeTrue(), fmt.Sprintf("On(%s, %v): want holiday %q, got %v", s, opts.Regions, "Día Nacional de los Pueblos Indígenas", hols))
+	},
+		Entry("2046-06-21", "2046-06-21"),
+	)
+
 })

@@ -49,6 +49,17 @@ var clRules = []definition.HolidayRule{
 		},
 	},
 	{
+		Name:         "Día Nacional de los Pueblos Indígenas",
+		Regions:      []string{"cl"},
+		Month:        0,
+		Wday:         -1,
+		Function:     "indigenous_peoples_day_cl",
+		FunctionArgs: []string{"year"},
+		YearRanges: []definition.YearRange{
+			{Kind: definition.YearRangeFrom, Years: []int{2021}},
+		},
+	},
+	{
 		Name:    "Año Nuevo",
 		Regions: []string{"cl"},
 		Month:   1,

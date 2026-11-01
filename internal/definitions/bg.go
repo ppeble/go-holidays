@@ -235,8 +235,8 @@ var bgRules = []definition.HolidayRule{
 }
 
 var bgRegionNames = map[string]string{
-	"bg_bg": "Bulgaria",
-	"bg_en": "Bulgaria",
+	"bg_bg": "Bulgaria (Bulgarian)",
+	"bg_en": "Bulgaria (English)",
 }
 
 func init() {

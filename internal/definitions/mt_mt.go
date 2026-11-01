@@ -111,7 +111,7 @@ var mt_mtRules = []definition.HolidayRule{
 }
 
 var mt_mtRegionNames = map[string]string{
-	"mt_mt": "Malta",
+	"mt_mt": "Malta (Maltese)",
 }
 
 func init() {
